@@ -1,0 +1,773 @@
+{
+  "ida": [
+    {
+      "numeroLinha": "15",
+      "kmProgramadaIda": 4417.372799999998,
+      "kmRealizadaIda": 2783.5689999999995
+    },
+    {
+      "numeroLinha": "21",
+      "kmProgramadaIda": 6979.240799999998,
+      "kmRealizadaIda": 4928.2780999999995
+    },
+    {
+      "numeroLinha": "22",
+      "kmProgramadaIda": 6112.324799999999,
+      "kmRealizadaIda": 4396.4682
+    },
+    {
+      "numeroLinha": "22A",
+      "kmProgramadaIda": 243.30740000000011,
+      "kmRealizadaIda": 139.4273
+    },
+    {
+      "numeroLinha": "24",
+      "kmProgramadaIda": 7748.867000000003,
+      "kmRealizadaIda": 5845.7651000000005
+    },
+    {
+      "numeroLinha": "26",
+      "kmProgramadaIda": 6932.599799999999,
+      "kmRealizadaIda": 6993.349099999999
+    },
+    {
+      "numeroLinha": "26A",
+      "kmProgramadaIda": 5948.906500000004,
+      "kmRealizadaIda": 4893.2034
+    },
+    {
+      "numeroLinha": "28",
+      "kmProgramadaIda": 408.3023999999999,
+      "kmRealizadaIda": 426.9057
+    },
+    {
+      "numeroLinha": "30",
+      "kmProgramadaIda": 26933.131800000014,
+      "kmRealizadaIda": 11550.756399999998
+    },
+    {
+      "numeroLinha": "31",
+      "kmProgramadaIda": 17930.7766,
+      "kmRealizadaIda": 12903.782099999999
+    },
+    {
+      "numeroLinha": "32",
+      "kmProgramadaIda": 13856.49069999998,
+      "kmRealizadaIda": 8687.998599999999
+    },
+    {
+      "numeroLinha": "33",
+      "kmProgramadaIda": 49680.330800000076,
+      "kmRealizadaIda": 34082.8001
+    },
+    {
+      "numeroLinha": "34A",
+      "kmProgramadaIda": 18001.485600000004,
+      "kmRealizadaIda": 12240.995900000002
+    },
+    {
+      "numeroLinha": "34B",
+      "kmProgramadaIda": 5246.9799,
+      "kmRealizadaIda": 3648.7200000000003
+    },
+    {
+      "numeroLinha": "35",
+      "kmProgramadaIda": 16171.375,
+      "kmRealizadaIda": 22678.970699999998
+    },
+    {
+      "numeroLinha": "36",
+      "kmProgramadaIda": 30505.35519999996,
+      "kmRealizadaIda": 23249.656199999998
+    },
+    {
+      "numeroLinha": "37",
+      "kmProgramadaIda": 11576.001600000003,
+      "kmRealizadaIda": 8166.541900000002
+    },
+    {
+      "numeroLinha": "38A",
+      "kmProgramadaIda": 48322.054500000035,
+      "kmRealizadaIda": 30359.8889
+    },
+    {
+      "numeroLinha": "39A",
+      "kmProgramadaIda": 43851.45800000003,
+      "kmRealizadaIda": 33457.6487
+    },
+    {
+      "numeroLinha": "40",
+      "kmProgramadaIda": 13063.129199999992,
+      "kmRealizadaIda": 8783.3865
+    },
+    {
+      "numeroLinha": "41BC",
+      "kmProgramadaIda": 9815.651999999998,
+      "kmRealizadaIda": 7069.9766
+    },
+    {
+      "numeroLinha": "41JB",
+      "kmProgramadaIda": 9440.579999999996,
+      "kmRealizadaIda": 6482.2825
+    },
+    {
+      "numeroLinha": "42S",
+      "kmProgramadaIda": 7011.480299999999,
+      "kmRealizadaIda": 5119.225600000002
+    },
+    {
+      "numeroLinha": "42T",
+      "kmProgramadaIda": 4978.022700000001,
+      "kmRealizadaIda": 3552.449
+    },
+    {
+      "numeroLinha": "43.2",
+      "kmProgramadaIda": 611.7764000000001,
+      "kmRealizadaIda": 532.4802
+    },
+    {
+      "numeroLinha": "44",
+      "kmProgramadaIda": 19109.484999999993,
+      "kmRealizadaIda": 14098.678399999999
+    },
+    {
+      "numeroLinha": "45",
+      "kmProgramadaIda": 28245.054000000015,
+      "kmRealizadaIda": 20783.7209
+    },
+    {
+      "numeroLinha": "46",
+      "kmProgramadaIda": 61212.64400000009,
+      "kmRealizadaIda": 44787.42129999999
+    },
+    {
+      "numeroLinha": "47",
+      "kmProgramadaIda": 40338.0220999999,
+      "kmRealizadaIda": 15508.701800000003
+    },
+    {
+      "numeroLinha": "47A",
+      "kmProgramadaIda": 11230.232600000003,
+      "kmRealizadaIda": 2799.9211
+    },
+    {
+      "numeroLinha": "47B",
+      "kmProgramadaIda": 10961.87820000001,
+      "kmRealizadaIda": 3348.1196999999997
+    },
+    {
+      "numeroLinha": "48",
+      "kmProgramadaIda": 51031.279599999994,
+      "kmRealizadaIda": 36950.898799999995
+    },
+    {
+      "numeroLinha": "48B",
+      "kmProgramadaIda": 1058.3280000000004,
+      "kmRealizadaIda": 876.8952999999999
+    },
+    {
+      "numeroLinha": "48SP",
+      "kmProgramadaIda": 4958.403100000001,
+      "kmRealizadaIda": 3924.8974000000003
+    },
+    {
+      "numeroLinha": "49.1",
+      "kmProgramadaIda": 17877.431599999993,
+      "kmRealizadaIda": 13438.761199999999
+    },
+    {
+      "numeroLinha": "49.2",
+      "kmProgramadaIda": 31464.440000000028,
+      "kmRealizadaIda": 21662.324100000005
+    },
+    {
+      "numeroLinha": "52",
+      "kmProgramadaIda": 21831.320100000015,
+      "kmRealizadaIda": 13898.461000000003
+    },
+    {
+      "numeroLinha": "52A",
+      "kmProgramadaIda": 2680.883399999996,
+      "kmRealizadaIda": 2141.2679
+    },
+    {
+      "numeroLinha": "53",
+      "kmProgramadaIda": 21255.397200000003,
+      "kmRealizadaIda": 16238.288600000002
+    },
+    {
+      "numeroLinha": "54",
+      "kmProgramadaIda": 2850.4409999999993,
+      "kmRealizadaIda": 2332.7829
+    },
+    {
+      "numeroLinha": "55A",
+      "kmProgramadaIda": 24611.04180000002,
+      "kmRealizadaIda": 12819.0101
+    },
+    {
+      "numeroLinha": "57",
+      "kmProgramadaIda": 9998.2974,
+      "kmRealizadaIda": 6614.6926
+    },
+    {
+      "numeroLinha": "60",
+      "kmProgramadaIda": 6365.659399999999,
+      "kmRealizadaIda": 5002.9371
+    },
+    {
+      "numeroLinha": "61",
+      "kmProgramadaIda": 29425.960800000015,
+      "kmRealizadaIda": 19618.7971
+    },
+    {
+      "numeroLinha": "62",
+      "kmProgramadaIda": 37241.86000000001,
+      "kmRealizadaIda": 24916.395500000002
+    },
+    {
+      "numeroLinha": "66C",
+      "kmProgramadaIda": 583.9159999999999,
+      "kmRealizadaIda": 421.087
+    },
+    {
+      "numeroLinha": "67",
+      "kmProgramadaIda": 33967.1026,
+      "kmRealizadaIda": 24909.6642
+    },
+    {
+      "numeroLinha": "OC1",
+      "kmProgramadaIda": 28413.1988,
+      "kmRealizadaIda": 20092.249000000003
+    },
+    {
+      "numeroLinha": "OC2",
+      "kmProgramadaIda": 30615.0396,
+      "kmRealizadaIda": 21041.6012
+    },
+    {
+      "numeroLinha": "OC3",
+      "kmProgramadaIda": 38819.91409999999,
+      "kmRealizadaIda": 33228.76529999999
+    },
+    {
+      "numeroLinha": "OC3A",
+      "kmProgramadaIda": 2559.8609999999976,
+      "kmRealizadaIda": 2001.3504999999998
+    }
+  ],
+  "volta": [
+    {
+      "numeroLinha": "15",
+      "kmProgramadaVolta": 4639.497900000001,
+      "kmRealizadaVolta": 2151.4983
+    },
+    {
+      "numeroLinha": "21",
+      "kmProgramadaVolta": 5187.114,
+      "kmRealizadaVolta": 3368.2032
+    },
+    {
+      "numeroLinha": "22",
+      "kmProgramadaVolta": 4222.755000000001,
+      "kmRealizadaVolta": 3122.1468
+    },
+    {
+      "numeroLinha": "22A",
+      "kmProgramadaVolta": 403.767,
+      "kmRealizadaVolta": 83.09169999999999
+    },
+    {
+      "numeroLinha": "24",
+      "kmProgramadaVolta": 5269.850200000002,
+      "kmRealizadaVolta": 3886.098599999999
+    },
+    {
+      "numeroLinha": "26",
+      "kmProgramadaVolta": 9665.455800000002,
+      "kmRealizadaVolta": 4729.7152000000015
+    },
+    {
+      "numeroLinha": "26A",
+      "kmProgramadaVolta": 6312.605000000002,
+      "kmRealizadaVolta": 3856.045
+    },
+    {
+      "numeroLinha": "28",
+      "kmProgramadaVolta": 692.8768000000002,
+      "kmRealizadaVolta": 499.6275
+    },
+    {
+      "numeroLinha": "30",
+      "kmProgramadaVolta": 32631.74910000003,
+      "kmRealizadaVolta": 15951.351400000001
+    },
+    {
+      "numeroLinha": "31",
+      "kmProgramadaVolta": 15177.8082,
+      "kmRealizadaVolta": 10626.678499999998
+    },
+    {
+      "numeroLinha": "32",
+      "kmProgramadaVolta": 13583.555499999995,
+      "kmRealizadaVolta": 8438.989699999998
+    },
+    {
+      "numeroLinha": "33",
+      "kmProgramadaVolta": 59438.759599999954,
+      "kmRealizadaVolta": 35038.657600000006
+    },
+    {
+      "numeroLinha": "34A",
+      "kmProgramadaVolta": 18108.179099999994,
+      "kmRealizadaVolta": 12578.545500000002
+    },
+    {
+      "numeroLinha": "34B",
+      "kmProgramadaVolta": 4133.150999999998,
+      "kmRealizadaVolta": 2768.4206000000004
+    },
+    {
+      "numeroLinha": "35",
+      "kmProgramadaVolta": 17168.067899999987,
+      "kmRealizadaVolta": 23208.1466
+    },
+    {
+      "numeroLinha": "36",
+      "kmProgramadaVolta": 32725.59300000003,
+      "kmRealizadaVolta": 25048.5761
+    },
+    {
+      "numeroLinha": "37",
+      "kmProgramadaVolta": 11646.450900000007,
+      "kmRealizadaVolta": 8448.8781
+    },
+    {
+      "numeroLinha": "38A",
+      "kmProgramadaVolta": 50707.29580000002,
+      "kmRealizadaVolta": 29842.084500000008
+    },
+    {
+      "numeroLinha": "39A",
+      "kmProgramadaVolta": 48742.87050000006,
+      "kmRealizadaVolta": 36442.77359999999
+    },
+    {
+      "numeroLinha": "40",
+      "kmProgramadaVolta": 11331.737999999996,
+      "kmRealizadaVolta": 7866.1952
+    },
+    {
+      "numeroLinha": "41BC",
+      "kmProgramadaVolta": 8399.343200000003,
+      "kmRealizadaVolta": 6359.2119999999995
+    },
+    {
+      "numeroLinha": "41JB",
+      "kmProgramadaVolta": 8611.495200000008,
+      "kmRealizadaVolta": 5942.1649
+    },
+    {
+      "numeroLinha": "42S",
+      "kmProgramadaVolta": 7200.668499999996,
+      "kmRealizadaVolta": 5291.925300000001
+    },
+    {
+      "numeroLinha": "42T",
+      "kmProgramadaVolta": 5781.3248,
+      "kmRealizadaVolta": 3824.0978
+    },
+    {
+      "numeroLinha": "43.2",
+      "kmProgramadaVolta": 420.3656999999998,
+      "kmRealizadaVolta": 407.17120000000006
+    },
+    {
+      "numeroLinha": "44",
+      "kmProgramadaVolta": 24570.97999999999,
+      "kmRealizadaVolta": 17793.4811
+    },
+    {
+      "numeroLinha": "45",
+      "kmProgramadaVolta": 33642.57599999998,
+      "kmRealizadaVolta": 23471.6095
+    },
+    {
+      "numeroLinha": "46",
+      "kmProgramadaVolta": 64085.883000000045,
+      "kmRealizadaVolta": 41443.47580000001
+    },
+    {
+      "numeroLinha": "47",
+      "kmProgramadaVolta": 40042.30999999988,
+      "kmRealizadaVolta": 17109.2187
+    },
+    {
+      "numeroLinha": "47A",
+      "kmProgramadaVolta": 0,
+      "kmRealizadaVolta": 0.0162
+    },
+    {
+      "numeroLinha": "47B",
+      "kmProgramadaVolta": 0,
+      "kmRealizadaVolta": 8.9352
+    },
+    {
+      "numeroLinha": "48",
+      "kmProgramadaVolta": 53934.22399999999,
+      "kmRealizadaVolta": 36840.149999999994
+    },
+    {
+      "numeroLinha": "48B",
+      "kmProgramadaVolta": 0,
+      "kmRealizadaVolta": 0.9279000000000001
+    },
+    {
+      "numeroLinha": "48SP",
+      "kmProgramadaVolta": 5007.271499999992,
+      "kmRealizadaVolta": 3711.657
+    },
+    {
+      "numeroLinha": "49.1",
+      "kmProgramadaVolta": 31176.704299999976,
+      "kmRealizadaVolta": 21865.352
+    },
+    {
+      "numeroLinha": "49.2",
+      "kmProgramadaVolta": 20932.921799999996,
+      "kmRealizadaVolta": 13714.549299999999
+    },
+    {
+      "numeroLinha": "52",
+      "kmProgramadaVolta": 20024.025000000005,
+      "kmRealizadaVolta": 12319.3092
+    },
+    {
+      "numeroLinha": "52A",
+      "kmProgramadaVolta": 2810.8287999999984,
+      "kmRealizadaVolta": 2133.5523999999996
+    },
+    {
+      "numeroLinha": "53",
+      "kmProgramadaVolta": 27197.953199999993,
+      "kmRealizadaVolta": 15659.094399999998
+    },
+    {
+      "numeroLinha": "54",
+      "kmProgramadaVolta": 2645.057600000002,
+      "kmRealizadaVolta": 2208.7381
+    },
+    {
+      "numeroLinha": "55A",
+      "kmProgramadaVolta": 25088.29399999994,
+      "kmRealizadaVolta": 12132.84
+    },
+    {
+      "numeroLinha": "57",
+      "kmProgramadaVolta": 0,
+      "kmRealizadaVolta": 1.1719
+    },
+    {
+      "numeroLinha": "60",
+      "kmProgramadaVolta": 2598.824799999999,
+      "kmRealizadaVolta": 1759.0583000000001
+    },
+    {
+      "numeroLinha": "61",
+      "kmProgramadaVolta": 23618.672499999986,
+      "kmRealizadaVolta": 17355.0525
+    },
+    {
+      "numeroLinha": "62",
+      "kmProgramadaVolta": 30701.122199999998,
+      "kmRealizadaVolta": 24774.535300000003
+    },
+    {
+      "numeroLinha": "66C",
+      "kmProgramadaVolta": 630.7927999999999,
+      "kmRealizadaVolta": 388.22239999999994
+    },
+    {
+      "numeroLinha": "67",
+      "kmProgramadaVolta": 34695.80239999997,
+      "kmRealizadaVolta": 24479.1296
+    },
+    {
+      "numeroLinha": "OC1",
+      "kmProgramadaVolta": 31397.769600000032,
+      "kmRealizadaVolta": 21802.249799999998
+    },
+    {
+      "numeroLinha": "OC2",
+      "kmProgramadaVolta": 33387.043800000036,
+      "kmRealizadaVolta": 22562.7149
+    },
+    {
+      "numeroLinha": "OC3",
+      "kmProgramadaVolta": 39259.74949999994,
+      "kmRealizadaVolta": 30907.723500000007
+    },
+    {
+      "numeroLinha": "OC3A",
+      "kmProgramadaVolta": 4337.5799999999945,
+      "kmRealizadaVolta": 3474.0322
+    }
+  ],
+  "totais": [
+    {
+      "linha": "15",
+      "total_programada": 9056.8707,
+      "total_realizada": 4935.0673
+    },
+    {
+      "linha": "21",
+      "total_programada": 12166.354799999997,
+      "total_realizada": 8296.4813
+    },
+    {
+      "linha": "22",
+      "total_programada": 10335.0798,
+      "total_realizada": 7518.615
+    },
+    {
+      "linha": "22A",
+      "total_programada": 647.0744000000001,
+      "total_realizada": 222.519
+    },
+    {
+      "linha": "24",
+      "total_programada": 13018.717200000005,
+      "total_realizada": 9731.8637
+    },
+    {
+      "linha": "26",
+      "total_programada": 16598.0556,
+      "total_realizada": 11723.064300000002
+    },
+    {
+      "linha": "26A",
+      "total_programada": 12261.511500000006,
+      "total_realizada": 8749.2484
+    },
+    {
+      "linha": "28",
+      "total_programada": 1101.1792,
+      "total_realizada": 926.5332000000001
+    },
+    {
+      "linha": "30",
+      "total_programada": 59564.88090000005,
+      "total_realizada": 27502.107799999998
+    },
+    {
+      "linha": "31",
+      "total_programada": 33108.5848,
+      "total_realizada": 23530.4606
+    },
+    {
+      "linha": "32",
+      "total_programada": 27440.046199999975,
+      "total_realizada": 17126.988299999997
+    },
+    {
+      "linha": "33",
+      "total_programada": 109119.09040000003,
+      "total_realizada": 69121.4577
+    },
+    {
+      "linha": "34A",
+      "total_programada": 36109.664699999994,
+      "total_realizada": 24819.541400000002
+    },
+    {
+      "linha": "34B",
+      "total_programada": 9380.130899999998,
+      "total_realizada": 6417.140600000001
+    },
+    {
+      "linha": "35",
+      "total_programada": 33339.44289999999,
+      "total_realizada": 45887.1173
+    },
+    {
+      "linha": "36",
+      "total_programada": 63230.94819999999,
+      "total_realizada": 48298.232299999996
+    },
+    {
+      "linha": "37",
+      "total_programada": 23222.45250000001,
+      "total_realizada": 16615.420000000002
+    },
+    {
+      "linha": "38A",
+      "total_programada": 99029.35030000005,
+      "total_realizada": 60201.97340000001
+    },
+    {
+      "linha": "39A",
+      "total_programada": 92594.32850000009,
+      "total_realizada": 69900.42229999999
+    },
+    {
+      "linha": "40",
+      "total_programada": 24394.867199999986,
+      "total_realizada": 16649.581700000002
+    },
+    {
+      "linha": "41BC",
+      "total_programada": 18214.9952,
+      "total_realizada": 13429.1886
+    },
+    {
+      "linha": "41JB",
+      "total_programada": 18052.075200000007,
+      "total_realizada": 12424.447400000001
+    },
+    {
+      "linha": "42S",
+      "total_programada": 14212.148799999995,
+      "total_realizada": 10411.150900000002
+    },
+    {
+      "linha": "42T",
+      "total_programada": 10759.347500000002,
+      "total_realizada": 7376.5468
+    },
+    {
+      "linha": "43.2",
+      "total_programada": 1032.1420999999998,
+      "total_realizada": 939.6514
+    },
+    {
+      "linha": "44",
+      "total_programada": 43680.46499999998,
+      "total_realizada": 31892.1595
+    },
+    {
+      "linha": "45",
+      "total_programada": 61887.62999999999,
+      "total_realizada": 44255.3304
+    },
+    {
+      "linha": "46",
+      "total_programada": 125298.52700000013,
+      "total_realizada": 86230.8971
+    },
+    {
+      "linha": "47",
+      "total_programada": 80380.33209999978,
+      "total_realizada": 32617.920500000004
+    },
+    {
+      "linha": "47A",
+      "total_programada": 11230.232600000003,
+      "total_realizada": 2799.9373
+    },
+    {
+      "linha": "47B",
+      "total_programada": 10961.87820000001,
+      "total_realizada": 3357.0548999999996
+    },
+    {
+      "linha": "48",
+      "total_programada": 104965.50359999998,
+      "total_realizada": 73791.04879999999
+    },
+    {
+      "linha": "48B",
+      "total_programada": 1058.3280000000004,
+      "total_realizada": 877.8231999999999
+    },
+    {
+      "linha": "48SP",
+      "total_programada": 9965.674599999993,
+      "total_realizada": 7636.554400000001
+    },
+    {
+      "linha": "49.1",
+      "total_programada": 49054.135899999965,
+      "total_realizada": 35304.1132
+    },
+    {
+      "linha": "49.2",
+      "total_programada": 52397.36180000003,
+      "total_realizada": 35376.873400000004
+    },
+    {
+      "linha": "52",
+      "total_programada": 41855.34510000002,
+      "total_realizada": 26217.770200000003
+    },
+    {
+      "linha": "52A",
+      "total_programada": 5491.7121999999945,
+      "total_realizada": 4274.820299999999
+    },
+    {
+      "linha": "53",
+      "total_programada": 48453.350399999996,
+      "total_realizada": 31897.383
+    },
+    {
+      "linha": "54",
+      "total_programada": 5495.498600000001,
+      "total_realizada": 4541.521000000001
+    },
+    {
+      "linha": "55A",
+      "total_programada": 49699.33579999996,
+      "total_realizada": 24951.8501
+    },
+    {
+      "linha": "57",
+      "total_programada": 9998.2974,
+      "total_realizada": 6615.864500000001
+    },
+    {
+      "linha": "60",
+      "total_programada": 8964.484199999997,
+      "total_realizada": 6761.9954
+    },
+    {
+      "linha": "61",
+      "total_programada": 53044.6333,
+      "total_realizada": 36973.8496
+    },
+    {
+      "linha": "62",
+      "total_programada": 67942.9822,
+      "total_realizada": 49690.9308
+    },
+    {
+      "linha": "66C",
+      "total_programada": 1214.7087999999999,
+      "total_realizada": 809.3093999999999
+    },
+    {
+      "linha": "67",
+      "total_programada": 68662.90499999997,
+      "total_realizada": 49388.7938
+    },
+    {
+      "linha": "OC1",
+      "total_programada": 59810.96840000003,
+      "total_realizada": 41894.4988
+    },
+    {
+      "linha": "OC2",
+      "total_programada": 64002.08340000003,
+      "total_realizada": 43604.3161
+    },
+    {
+      "linha": "OC3",
+      "total_programada": 78079.66359999993,
+      "total_realizada": 64136.4888
+    },
+    {
+      "linha": "OC3A",
+      "total_programada": 6897.440999999992,
+      "total_realizada": 5475.3827
+    }
+  ]
+}
