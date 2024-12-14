@@ -1,13 +1,8 @@
 import requests
-
+import pandas as pd
 
 MOBNIT_API_URL = "https://mobnit.niteroi.rj.gov.br/api/website/v1"
 MANAGER_TOKEN = "qkiybj2rx8rwnn6cnhyweiwx6bt1kq5e"
-linhas = f"%2735%27%2C%2734A%27"
-treshold = f"%270%27"
-inicio = "1727740800000"
-fim = "1730419199999"
-
 
 def km_programada(linhas, treshold, inicio, fim):
     # Item 2- Quilometragem programada
@@ -48,16 +43,23 @@ def km_programada(linhas, treshold, inicio, fim):
     return struct_km
 
 
-def quantiade_onibus(treshold, inicio, fim):
+def quantidade_onibus(inicio, fim, empresas):
     # Item 4- Quantidade de ônibus programada
     treshold = f"%270%27"
     inicio = f"1727740800000"
     fim = "1730419199999"
-    url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/indicadores/frota/disponivel-programada?Threshold={treshold}&from={inicio}&to={fim}"
+    url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/indicadores/frota/disponivel-programada?Threshold={treshold}&from={inicio}&to={fim}&Empresas={empresas}"
 
     response = requests.get(url).json()
 
+    return response
+
+if __name__ == '__main__':
+    linhas = f"%2735%27%2C%2734A%27"
+    inicio = "1727740800000"
+    fim = "1730419199999"
+    empresas = 'Transportes Peixoto Ltda'
+
+    response = quantidade_onibus(inicio, fim, empresas)
     print(response)
-
-
-print(km_programada(linhas, treshold, inicio, fim))
+    
