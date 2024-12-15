@@ -1,5 +1,8 @@
 import requests
 import pandas as pd
+from eth_abi import encode_abi
+from eth_utils import function_signature_to_4byte_selector
+from web3 import Web3, EthereumTesterProvider
 
 MOBNIT_API_URL = "https://mobnit.niteroi.rj.gov.br/api/website/v1"
 MANAGER_TOKEN = "qkiybj2rx8rwnn6cnhyweiwx6bt1kq5e"
@@ -60,6 +63,34 @@ if __name__ == '__main__':
     fim = "1730419199999"
     empresas = 'Transportes Peixoto Ltda'
 
-    response = quantidade_onibus(inicio, fim, empresas)
-    print(response)
+    DAPP_ADDRESS = "0xab7528bb862fB57E8A2BCd567a2e929a0Be56a5e"
+
+    w3 = Web3(Web3.HTTPProvider('http://localhost:8545'))
+    if w3.isConnected:
+        print("conectado")
+        print(w3.eth.get_logs())
+
+    inputBoxAddress = '0x593E5BCf894D6829Dd26D0810DA7F064406aebB6'
+    abi = '[ { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" }, { "internalType": "uint256", "name": "inputLength", "type": "uint256" }, { "internalType": "uint256", "name": "maxInputLength", "type": "uint256" } ], "name": "InputTooLarge", "type": "error" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "appContract", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "index", "type": "uint256" }, { "indexed": false, "internalType": "bytes", "name": "input", "type": "bytes" } ], "name": "InputAdded", "type": "event" }, { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" }, { "internalType": "bytes", "name": "payload", "type": "bytes" } ], "name": "addInput", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" }, { "internalType": "uint256", "name": "index", "type": "uint256" } ], "name": "getInputHash", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" } ], "name": "getNumberOfInputs", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" } ]'
     
+    contract_instance = w3.eth.contract(address=inputBoxAddress, abi=abi)
+    transaction = contract_instance.functions.addInput(DAPP_ADDRESS, b"hello world").buildTransaction({
+        'value': 1000000014,
+        'from': w3.eth.accounts[0],
+        'nonce': w3.eth.getTransactionCount(w3.eth.accounts[0]),
+    })
+    print(transaction)
+    signed_txn = w3.eth.account.sign_transaction(transaction, 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')
+    print(signed_txn)
+    # Enviar a transação
+    txn_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+
+    # receipt = w3.eth.wait_for_transaction_receipt(txn_hash)
+    # print(receipt)
+    
+
+    # try:
+    #     result = contract_instance.functions.addInput(DAPP_ADDRESS, b"hello world").buildTransaction()
+    #     print(f"Resultado da chamada: {result}")
+    # except Exception as e:
+    #     print(f"Erro na simulação: {e}")

@@ -11,11 +11,14 @@ logger.info(f"HTTP rollup_server url is {rollup_server}")
 
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
+
+    payload = data["payload"]
+
     return "accept"
 
 
 def handle_inspect(data):
-    logger.info(f"Received inspect request data {data}")
+    logger.info(f"Received Brandão e Marcelo inspect request data {data}")
     return "accept"
 
 
