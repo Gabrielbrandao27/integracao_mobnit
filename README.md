@@ -9,10 +9,12 @@ Projeto de integração com a aplicação de mobilidade niteroiense "MobNit".
 # 3- Climatização da frota
 # 4- Quantidade de ônibus circulando em relação à quantidade de ônibus programada
 
-# Escala                  Subsídio a
-# de Cumprimento(%)       Receber (%)
-# 100-95                      100
-# 94-90                       95
-# 89-85                       85
-# 84-80                       70
-# <80                         0
+# Tabela de relação Escala de Cumprimento x Subsídio a Receber
+
+| Escala de Cumprimento(%)   | Subsídio a Receber (%) |
+|:--------------------------:|:----------------------:|
+|        100-95              |        100             |
+|         94-90              |         95             |
+|         89-85              |         85             |
+|         84-80              |         70             |
+|         <80                |          0             |
