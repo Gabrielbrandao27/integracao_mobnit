@@ -1,12 +1,17 @@
 import requests
 import pandas as pd
 import json
+import os
 from eth_abi import encode_abi
-from eth_utils import function_signature_to_4byte_selector
-from web3 import Web3, EthereumTesterProvider
+from web3 import Web3
+from dotenv import load_dotenv
 
-MOBNIT_API_URL = "https://mobnit.niteroi.rj.gov.br/api/website/v1"
-MANAGER_TOKEN = "qkiybj2rx8rwnn6cnhyweiwx6bt1kq5e"
+
+load_dotenv()
+
+MOBNIT_API_URL = os.getenv('MOBNIT_API_URL')
+MANAGER_TOKEN = os.getenv('MANAGER_TOKEN')
+
 
 def km_programada(linhas, treshold, inicio, fim):
     # Item 2- Quilometragem programada
@@ -47,6 +52,26 @@ def km_programada(linhas, treshold, inicio, fim):
     return struct_km
 
 
+def calcular_subsidio(compliance):
+
+    if 100 <= compliance and compliance >= 95:
+        return 100
+    if 94 <= compliance and compliance >= 90:
+        return 95
+    if 89 <= compliance and compliance >= 85:
+        return 85
+    if 84 <= compliance and compliance >= 80:
+        return 70
+    return 0
+    # Escala                  Subsídio a
+    # de Cumprimento(%)       Receber (%)
+    # 100-95                      100
+    # 94-90                       95
+    # 89-85                       85
+    # 84-80                       70
+    # <80                         0
+
+
 def quantidade_onibus(inicio, fim, empresas):
     # Item 4- Quantidade de ônibus programada
     treshold = f"%270%27"
@@ -58,38 +83,40 @@ def quantidade_onibus(inicio, fim, empresas):
 
     return response
 
+
 if __name__ == '__main__':
     linhas = f"%2735%27%2C%2734A%27"
     inicio = "1727740800000"
     fim = "1730419199999"
     empresas = 'Transportes Peixoto Ltda'
 
+    # Busca as métricas da API da MobNit
     response = quantidade_onibus(inicio, fim, empresas)
     dados_onibus_df = pd.DataFrame.from_dict(response['dados'])
     print(dados_onibus_df)
+    
+    # Calcula a porcentagem da Escala de Cumprimento
     compliance_frota = dados_onibus_df['frotaDisponivel'].sum() / dados_onibus_df['frotaProgramada'].sum()
     print(compliance_frota)
+    
+    # Calcula a porcentagem do Subsídio
     response['complianceSubsidio'] = "%.2f" % (compliance_frota * 100) 
-
+    response['subsidioConcedido'] = calcular_subsidio(compliance_frota * 100)
+    print(response)
     response_binario = json.dumps(response, indent=2).encode('utf-8')
 
-    DAPP_ADDRESS = "0xab7528bb862fB57E8A2BCd567a2e929a0Be56a5e"
+    # Conecta à rede Foundry para interagir com o dApp
+    DAPP_ADDRESS = os.getenv('DAPP_ADDRESS')
 
     w3 = Web3(Web3.HTTPProvider('http://localhost:8545'))
     if w3.isConnected:
         print("conectado")
 
-    inputBoxAddress = '0x59b22D57D4f067708AB0c00552767405926dc768'
+    # Busca os dados do Contrato que usaremos para enviar Inputs para o dApp (InputBox)
+    INPUT_BOX_ADDRESS = os.getenv('INPUT_BOX_ADDRESS')
     abi = '[ { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" }, { "internalType": "uint256", "name": "inputLength", "type": "uint256" }, { "internalType": "uint256", "name": "maxInputLength", "type": "uint256" } ], "name": "InputTooLarge", "type": "error" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "appContract", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "index", "type": "uint256" }, { "indexed": false, "internalType": "bytes", "name": "input", "type": "bytes" } ], "name": "InputAdded", "type": "event" }, { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" }, { "internalType": "bytes", "name": "payload", "type": "bytes" } ], "name": "addInput", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" }, { "internalType": "uint256", "name": "index", "type": "uint256" } ], "name": "getInputHash", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" } ], "name": "getNumberOfInputs", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" } ]'
+    contract_instance = w3.eth.contract(address=INPUT_BOX_ADDRESS, abi=abi)
     
-    contract_instance = w3.eth.contract(address=inputBoxAddress, abi=abi)
+    # Cria e executa a transação para a rede
     transaction = contract_instance.functions.addInput(DAPP_ADDRESS, response_binario).transact()
     print(transaction)
-    
-    # Escala                  Subsídio a
-    # de Cumprimento(%)       Receber (%)
-    # 100-95                      100
-    # 94-90                       95
-    # 89-85                       85
-    # 84-80                       70
-    # <80                         0
