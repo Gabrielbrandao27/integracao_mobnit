@@ -65,6 +65,12 @@ if __name__ == '__main__':
     empresas = 'Transportes Peixoto Ltda'
 
     response = quantidade_onibus(inicio, fim, empresas)
+    dados_onibus_df = pd.DataFrame.from_dict(response['dados'])
+    print(dados_onibus_df)
+    compliance_frota = dados_onibus_df['frotaDisponivel'].sum() / dados_onibus_df['frotaProgramada'].sum()
+    print(compliance_frota)
+    response['complianceSubsidio'] = "%.2f" % (compliance_frota * 100) 
+
     response_binario = json.dumps(response, indent=2).encode('utf-8')
 
     DAPP_ADDRESS = "0xab7528bb862fB57E8A2BCd567a2e929a0Be56a5e"
@@ -79,17 +85,11 @@ if __name__ == '__main__':
     contract_instance = w3.eth.contract(address=inputBoxAddress, abi=abi)
     transaction = contract_instance.functions.addInput(DAPP_ADDRESS, response_binario).transact()
     print(transaction)
-    # signed_txn = w3.eth.account.sign_transaction(transaction, 'ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')
-    # print(signed_txn)
-    # # Enviar a transação
-    # txn_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-
-    # receipt = w3.eth.wait_for_transaction_receipt(txn_hash)
-    # print(receipt)
     
-
-    # try:
-    #     result = contract_instance.functions.addInput(DAPP_ADDRESS, b"hello world").buildTransaction()
-    #     print(f"Resultado da chamada: {result}")
-    # except Exception as e:
-    #     print(f"Erro na simulação: {e}")
+    # Escala                  Subsídio a
+    # de Cumprimento(%)       Receber (%)
+    # 100-95                      100
+    # 94-90                       95
+    # 89-85                       85
+    # 84-80                       70
+    # <80                         0
