@@ -5,6 +5,7 @@ import os
 from eth_abi import encode_abi
 from web3 import Web3
 from dotenv import load_dotenv
+from get_from_excel import get_company_compliance
 
 
 load_dotenv()
@@ -13,8 +14,34 @@ MOBNIT_API_URL = os.getenv('MOBNIT_API_URL')
 MANAGER_TOKEN = os.getenv('MANAGER_TOKEN')
 
 
+def calcular_subsidio(compliance):
+
+    if 100 <= compliance and compliance >= 95:
+        return 100
+    if 94 <= compliance and compliance >= 90:
+        return 95
+    if 89 <= compliance and compliance >= 85:
+        return 85
+    if 84 <= compliance and compliance >= 80:
+        return 70
+    return 0
+    # Escala                  Subsídio a
+    # de Cumprimento(%)       Receber (%)
+    # 100-95                      100
+    # 94-90                       95
+    # 89-85                       85
+    # 84-80                       70
+    # <80                         0
+
+
+def viagem_programada():
+    # Item 1- Viagem programada x realizada
+
+    return 0
+
+
 def km_programada(linhas, treshold, inicio, fim):
-    # Item 2- Quilometragem programada
+    # Item 2- Quilometragem programada x realizada
 
     # ida
     url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/auditoria/quilometragem/programada-ida?Linhas={linhas}&Threshold={treshold}&from={inicio}&to={fim}"
@@ -52,28 +79,18 @@ def km_programada(linhas, treshold, inicio, fim):
     return struct_km
 
 
-def calcular_subsidio(compliance):
+def climatizacao(empresa):
+    # Item 3- Climatização das frotas
 
-    if 100 <= compliance and compliance >= 95:
-        return 100
-    if 94 <= compliance and compliance >= 90:
-        return 95
-    if 89 <= compliance and compliance >= 85:
-        return 85
-    if 84 <= compliance and compliance >= 80:
-        return 70
-    return 0
-    # Escala                  Subsídio a
-    # de Cumprimento(%)       Receber (%)
-    # 100-95                      100
-    # 94-90                       95
-    # 89-85                       85
-    # 84-80                       70
-    # <80                         0
+    compliance = get_company_compliance(empresa)
+    subsidio = calcular_subsidio(compliance)
+
+    return subsidio
 
 
 def quantidade_onibus(inicio, fim, empresas):
-    # Item 4- Quantidade de ônibus programada
+    # Item 4- Quantidade de ônibus programada x realizada
+
     treshold = f"%270%27"
     inicio = f"1727740800000"
     fim = "1730419199999"
@@ -81,17 +98,6 @@ def quantidade_onibus(inicio, fim, empresas):
 
     response = requests.get(url).json()
 
-    return response
-
-
-if __name__ == '__main__':
-    linhas = f"%2735%27%2C%2734A%27"
-    inicio = "1727740800000"
-    fim = "1730419199999"
-    empresas = 'Transportes Peixoto Ltda'
-
-    # Busca as métricas da API da MobNit
-    response = quantidade_onibus(inicio, fim, empresas)
     dados_onibus_df = pd.DataFrame.from_dict(response['dados'])
     print(dados_onibus_df)
     
@@ -100,10 +106,23 @@ if __name__ == '__main__':
     print(compliance_frota)
     
     # Calcula a porcentagem do Subsídio
-    response['complianceSubsidio'] = "%.2f" % (compliance_frota * 100) 
+    response['complianceSubsidio'] = "%.2f" % (compliance_frota * 100)
     response['subsidioConcedido'] = calcular_subsidio(compliance_frota * 100)
     print(response)
+
     response_binario = json.dumps(response, indent=2).encode('utf-8')
+
+    return response_binario
+
+
+if __name__ == '__main__':
+    linhas = f"%2735%27%2C%2734A%27"
+    inicio = "1727740800000"
+    fim = "1730419199999"
+    empresas = 'Transportes Peixoto Ltda'
+
+    # Item 4- Quantidade de Ônibus
+    response_binario = quantidade_onibus(inicio, fim, empresas)
 
     # Conecta à rede Foundry para interagir com o dApp
     DAPP_ADDRESS = os.getenv('DAPP_ADDRESS')
