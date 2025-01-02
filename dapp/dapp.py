@@ -42,7 +42,7 @@ def handle_inspect(data):
 
     report = {
         "payload": str2hex(
-            f"/nDados dos Ônibus: \n{bus_data}"
+            f"{bus_data}"
         )
     }
 
