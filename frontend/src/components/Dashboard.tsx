@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className='dashboard-title'>
-      <h1>Dashboard Dados</h1>
+      <h2>Dashboard Subsídios</h2>
       <div className='charts-grid'>
         <div className='chart-container'>
           <Line data={chartData} options={chartOptions} width={500} height={400} />
