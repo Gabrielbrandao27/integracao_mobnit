@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import json
 import os
-from eth_abi import encode_abi
+# from eth_abi import encode_abi
 from web3 import Web3
 from dotenv import load_dotenv
 from get_from_excel import get_company_compliance
@@ -108,6 +108,7 @@ def quantidade_onibus(inicio, fim, empresas):
     # Calcula a porcentagem do Subsídio
     response['complianceSubsidio'] = "%.2f" % (compliance_frota * 100)
     response['subsidioConcedido'] = calcular_subsidio(compliance_frota * 100)
+    response['tipoInput'] = 'compliance/frota'
     print(response)
 
     response_binario = json.dumps(response, indent=2).encode('utf-8')
@@ -128,7 +129,7 @@ if __name__ == '__main__':
     DAPP_ADDRESS = os.getenv('DAPP_ADDRESS')
 
     w3 = Web3(Web3.HTTPProvider('http://localhost:8545'))
-    if w3.isConnected:
+    if w3.is_connected:
         print("conectado")
 
     # Busca os dados do Contrato que usaremos para enviar Inputs para o dApp (InputBox)
