@@ -15,7 +15,7 @@ class DBConnector:
 
     def create_connection(self, db_file):
         conn = None
-        db_file = DATABASE_PATH + "/" + db_file
+        db_file = DATABASE_PATH + db_file
         try:
             conn = sqlite3.connect(db_file)
             create_database(conn)
@@ -55,7 +55,8 @@ def seed_database(conn):
     cursor = conn.cursor()
 
     try:
-        cursor.execute(seed_insert)
+        cursor.executescript(seed_insert)
+        conn.commit()
     except Error as e:
         print(e)
 
@@ -110,26 +111,12 @@ def create_database(conn):
                                 FOREIGN KEY(bus_id) REFERENCES bus(id)
                             ); """
 
-    close_at_end = False
-    # create a database connection
-    # if conn is None:
-    #     conn = create_connection(DATABASE)
-    #     close_at_end = True
-
     # create tables
-    # if conn is not None:
-        # create line table
     create_table(conn, sql_company_table)
-
-    # create trip_schedule table
     create_table(conn, sql_bus_line_table)
-
-    # create stop table
     create_table(conn, sql_bus_line_compliance)
-
-    # if close_at_end: conn.close()
-    # else:
-    #     print("Error! cannot create the database connection.")
+    create_table(conn, sql_bus_table)
+    create_table(conn, sql_bus_coordinate_table)
 
 
 ###################################################################
@@ -177,18 +164,20 @@ def insert_bus_line(conn, bus_line_id, route:list):
     return True
 
 def insert_compliance_data(conn, info_linha):
-    line_id_query = f"select id from line l where route_name = {info_linha['linha']};"
-    sql = f""" 
+    line_id_query = "SELECT id FROM line WHERE route_name = ?;"
+    sql = """ 
         INSERT INTO line_compliance(line_id, recorded_bus_amount) VALUES
         (?, ?)          
     """
     cur = conn.cursor()
     try:
-        cur.execute(line_id_query)
+        cur.execute(line_id_query, (info_linha['linha'],))
         line_id = cur.fetchone()[0]
         cur.execute(sql, (line_id, info_linha['frotaDisponivel']))
+        conn.commit()
         return True
     except sqlite3.IntegrityError as e:
+        print(e)
         return False
 
 def insert_trip_schedule(conn, trip_id, bus_line_id, schedule:list):
@@ -319,4 +308,7 @@ def select_stops(conn, bus_line_id):
 
 
 if __name__ == "__main__":
-    create_database("schedules.db", None)
+    db_connector = DBConnector()
+    conn = db_connector.create_connection("integracao_mobnit.db")
+    if conn:
+        create_database(conn)

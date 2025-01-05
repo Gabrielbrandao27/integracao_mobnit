@@ -129,7 +129,7 @@ if __name__ == '__main__':
     DAPP_ADDRESS = os.getenv('DAPP_ADDRESS')
 
     w3 = Web3(Web3.HTTPProvider('http://localhost:8545'))
-    if w3.is_connected:
+    if w3.isConnected:
         print("conectado")
 
     # Busca os dados do Contrato que usaremos para enviar Inputs para o dApp (InputBox)

@@ -30,7 +30,7 @@ bus_data = []
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
 
-    conn = db_getter.create_connection('banco.db')
+    conn = db_getter.create_connection('integracao_mobnit.db')
 
     payload = hex2str(data["payload"])
     logger.info(f"Payload: {payload}")

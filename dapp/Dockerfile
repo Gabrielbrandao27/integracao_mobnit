@@ -15,7 +15,8 @@ set -e
 apt-get update
 apt-get install -y --no-install-recommends \
   busybox-static=1:1.30.1-7ubuntu3 \
-  libsqlite3-dev
+  libsqlite3-dev \
+  sqlite3
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 useradd --create-home --user-group dapp
 EOF
@@ -32,8 +33,8 @@ find /usr/local/lib -type d -name __pycache__ -exec rm -r {} +
 EOF
 
 COPY ./*.py .
-RUN touch banco.db
-RUN chmod +w banco.db
+
+RUN python db_manager.py
 
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
 
