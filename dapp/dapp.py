@@ -54,9 +54,10 @@ def handle_advance(data):
             logger.info("Unknown type of input")
             return "reject"
     
-
-    # for id in lines_query_result:
-    #     compliance_query_result = db.select_compliance_data(conn, )
+    compliance_query_result = db.select_compliance_data(conn)
+    logger.info(f"Compliance Lines query result: {compliance_query_result}")
+    
+    conn.close()
 
     return "accept"
 

@@ -152,7 +152,7 @@ def list_to_str(my_list:list):
 ###################################################################
 def insert_bus_line(conn, info_linha):
     sql = f''' INSERT INTO line(route_name)
-              VALUES({info_linha}) '''
+              VALUES('{info_linha}') '''
     cur = conn.cursor()
     
     try:
@@ -174,7 +174,7 @@ def insert_compliance_data(conn, info_linha):
     try:
         cur.execute(line_id_query, (info_linha['linha'],))
         line_id = cur.fetchone()[0]
-        cur.execute(sql, (line_id, info_linha['frotaDisponivel']))
+        cur.execute(sql, (line_id, info_linha['frotaProgramada'], info_linha['frotaDisponivel']))
         conn.commit()
         return True
     except sqlite3.IntegrityError as e:
@@ -224,12 +224,12 @@ def select_lines(conn):
 
     return cur.fetchall()
 
-# def select_compliance_data(conn, bus_line_id):
-#     sql = ''' SELECT * FROM line_compliance WHERE line_id = ? '''
-#     cur = conn.cursor()
-#     cur.execute(sql, bus_line_id)
+def select_compliance_data(conn):
+    sql = ''' SELECT * FROM line_compliance '''
+    cur = conn.cursor()
+    cur.execute(sql)
 
-#     return cur.fetchall()
+    return cur.fetchall()
 
 def select_lines_id(conn):
     sql = ''' SELECT id FROM line '''
