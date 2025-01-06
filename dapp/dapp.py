@@ -1,12 +1,14 @@
 from os import environ
 import logging
 import requests
-
+import db_manager as db
+import json
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
-
+db_getter = db.DBConnector()
 rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
+
 logger.info(f"HTTP rollup_server url is {rollup_server}")
 
 def hex2str(hex):
@@ -28,11 +30,34 @@ bus_data = []
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
 
+    conn = db_getter.create_connection('integracao_mobnit.db')
+
     payload = hex2str(data["payload"])
+    logger.info(f"Payload: {payload}")
+    payload_json = json.loads(payload)
 
-    logger.info(f"Dados a serem gravados: {payload}")
+    for info_linha in payload_json['dados']:
+        logger.info(f"Info linha: {info_linha}")
+        logger.info(f"Linha: {info_linha['linha']}")
+        if not db.insert_bus_line(conn, info_linha['linha']):
+            return "reject"
+        
+    lines_query_result = db.select_lines(conn)
+    logger.info(f"Lines query result: {lines_query_result}")
 
-    bus_data.append(payload)
+    match payload_json['tipoInput']:
+        case 'compliance/frota':
+            for info_linha in payload_json['dados']:
+                if not db.insert_compliance_data(conn, info_linha):
+                    return "reject"
+        case _:
+            logger.info("Unknown type of input")
+            return "reject"
+    
+    compliance_query_result = db.select_compliance_data(conn)
+    logger.info(f"Compliance Lines query result: {compliance_query_result}")
+    
+    conn.close()
 
     return "accept"
 

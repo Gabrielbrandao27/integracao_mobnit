@@ -14,7 +14,9 @@ RUN <<EOF
 set -e
 apt-get update
 apt-get install -y --no-install-recommends \
-  busybox-static=1:1.30.1-7ubuntu3
+  busybox-static=1:1.30.1-7ubuntu3 \
+  libsqlite3-dev \
+  sqlite3
 rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/*
 useradd --create-home --user-group dapp
 EOF
@@ -30,7 +32,10 @@ pip install -r requirements.txt --no-cache
 find /usr/local/lib -type d -name __pycache__ -exec rm -r {} +
 EOF
 
-COPY ./dapp.py .
+COPY ./*.py .
+
+RUN python db_manager.py
+RUN chown -R dapp:dapp /opt/cartesi/dapp
 
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
 
