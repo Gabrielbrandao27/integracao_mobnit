@@ -36,6 +36,15 @@ def handle_advance(data):
     logger.info(f"Payload: {payload}")
     payload_json = json.loads(payload)
 
+    for info_linha in payload_json['dados']:
+        logger.info(f"Info linha: {info_linha}")
+        logger.info(f"Linha: {info_linha['linha']}")
+        if not db.insert_bus_line(conn, info_linha['linha']):
+            return "reject"
+        
+    lines_query_result = db.select_lines(conn)
+    logger.info(f"Lines query result: {lines_query_result}")
+
     match payload_json['tipoInput']:
         case 'compliance/frota':
             for info_linha in payload_json['dados']:
@@ -44,7 +53,10 @@ def handle_advance(data):
         case _:
             logger.info("Unknown type of input")
             return "reject"
-    # bus_data.append(payload)
+    
+
+    # for id in lines_query_result:
+    #     compliance_query_result = db.select_compliance_data(conn, )
 
     return "accept"
 

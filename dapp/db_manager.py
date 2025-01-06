@@ -76,7 +76,7 @@ def create_database(conn):
 
     sql_bus_line_table = """ CREATE TABLE IF NOT EXISTS line (
                                 id INTEGER PRIMARY KEY,
-                                route_name VARCHAR(50),
+                                route_name VARCHAR(5),
                                 required_bus_amount INT,
                                 required_travel_distance_km NUMERIC,
                                 required_round_trips INT,
@@ -87,6 +87,7 @@ def create_database(conn):
     sql_bus_line_compliance = """ CREATE TABLE IF NOT EXISTS line_compliance (
                                 id INTEGER PRIMARY KEY,
                                 line_id INT,
+                                expected_bus_amount INT,
                                 recorded_bus_amount INT,
                                 recorded_travel_distance_km NUMERIC,
                                 recorded_round_trips INT,
@@ -149,25 +150,25 @@ def list_to_str(my_list:list):
 #                            INSERTS                              #
 #                                                                 #
 ###################################################################
-def insert_bus_line(conn, bus_line_id, route:list):
-    sql = ''' INSERT INTO line(id, route)
-              VALUES(?, ?) '''
+def insert_bus_line(conn, info_linha):
+    sql = ''' INSERT INTO line(route_name)
+              VALUES(?) '''
     cur = conn.cursor()
-    route_str = list_to_str(route)
     
     try:
-        cur.execute(sql, (bus_line_id, route_str))
+        cur.execute(sql, info_linha)
         conn.commit()
     except sqlite3.IntegrityError as e:
+        print(e)
         return False
     
     return True
 
 def insert_compliance_data(conn, info_linha):
-    line_id_query = "SELECT id FROM line WHERE route_name = ?;"
+    line_id_query = "SELECT route_name FROM line WHERE route_name = ?"
     sql = """ 
-        INSERT INTO line_compliance(line_id, recorded_bus_amount) VALUES
-        (?, ?)          
+        INSERT INTO line_compliance(line_id, expected_bus_amount, recorded_bus_amount) VALUES
+        (?, ?, ?)          
     """
     cur = conn.cursor()
     try:
@@ -222,6 +223,13 @@ def select_lines(conn):
     cur.execute(sql)
 
     return cur.fetchall()
+
+# def select_compliance_data(conn, bus_line_id):
+#     sql = ''' SELECT * FROM line_compliance WHERE line_id = ? '''
+#     cur = conn.cursor()
+#     cur.execute(sql, bus_line_id)
+
+#     return cur.fetchall()
 
 def select_lines_id(conn):
     sql = ''' SELECT id FROM line '''
