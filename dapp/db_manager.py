@@ -151,12 +151,12 @@ def list_to_str(my_list:list):
 #                                                                 #
 ###################################################################
 def insert_bus_line(conn, info_linha):
-    sql = ''' INSERT INTO line(route_name)
-              VALUES(?) '''
+    sql = f''' INSERT INTO line(route_name)
+              VALUES({info_linha}) '''
     cur = conn.cursor()
     
     try:
-        cur.execute(sql, info_linha)
+        cur.execute(sql)
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(e)
