@@ -25,7 +25,10 @@ def str2hex(str):
     return "0x" + str.encode("utf-8").hex()
 
 
-bus_data = []
+def dataset_to_json(keys, dataset):
+    # Define the keys based on the dataset structure
+    json_list = [dict(zip(keys, row)) for row in dataset]
+    return json.dumps(json_list)
 
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
@@ -37,8 +40,6 @@ def handle_advance(data):
     payload_json = json.loads(payload)
 
     for info_linha in payload_json['dados']:
-        logger.info(f"Info linha: {info_linha}")
-        logger.info(f"Linha: {info_linha['linha']}")
         if not db.insert_bus_line(conn, info_linha['linha']):
             return "reject"
         
@@ -46,17 +47,22 @@ def handle_advance(data):
     logger.info(f"Lines query result: {lines_query_result}")
 
     match payload_json['tipoInput']:
-        case 'compliance/frota':
+        case 'compliance/frota_disponivel':
             for info_linha in payload_json['dados']:
-                if not db.insert_compliance_data(conn, info_linha):
+                if not db.insert_bus_amount_compliance_data(conn, info_linha):
                     return "reject"
+            bus_amount_compliance_query = db.select_bus_amount_compliance_data(conn)
+            logger.info(f"Bus amount compliance query result: {bus_amount_compliance_query}")
+        case 'compliance/quilometragem_percorrida':
+            for info_linha in payload_json['dados']:
+                if not db.insert_bus_km_compliance_data(conn, info_linha):
+                    return "reject"
+            bus_km_compliance_query = db.select_bus_km_compliance_data(conn)
+            logger.info(f"Bus km compliance query result: {bus_km_compliance_query}")
         case _:
             logger.info("Unknown type of input")
             return "reject"
-    
-    compliance_query_result = db.select_compliance_data(conn)
-    logger.info(f"Compliance Lines query result: {compliance_query_result}")
-    
+
     conn.close()
 
     return "accept"
@@ -64,12 +70,37 @@ def handle_advance(data):
 
 def handle_inspect(data):
     logger.info(f"Received Brandão e Marcelo inspect request data {data}")
+    
+    conn = db_getter.create_connection('integracao_mobnit.db')
+    
+    payload = hex2str(data["payload"])
+    logger.info(f"Payload: {payload}")
 
-    report = {
-        "payload": str2hex(
-            f"{bus_data}"
-        )
-    }
+    match payload:
+        case 'frotas_disponiveis':
+            logger.info("Frotas disponíveis")
+            bus_amount_compliance_query = db.select_bus_amount_compliance_data(conn)
+            logger.info(f"Bus amount compliance query result: {bus_amount_compliance_query}")
+            
+            keys = ["id", "line_id", "expected_bus_amount", "recorded_bus_amount"]
+            json_data = dataset_to_json(keys, bus_amount_compliance_query)
+            report = {
+                "payload": str2hex(
+                    f"{json_data}"
+                )
+            }
+        case 'quilometragem_percorrida':
+            logger.info("Frotas disponíveis")
+            bus_km_compliance_query = db.select_bus_km_compliance_data(conn)
+            logger.info(f"Bus km compliance query result: {bus_km_compliance_query}")
+
+            keys = ["id", "line_id", "expected_travel_distance_km", "recorded_travel_distance_km"]
+            json_data = dataset_to_json(keys, bus_km_compliance_query)
+            report = {
+                "payload": str2hex(
+                    f"{json_data}"
+                )
+            }
 
     response = requests.post(rollup_server + "/report", json=report)
     logger.info(f"Received report status {response.status_code}")

@@ -2,27 +2,27 @@ export interface Report {
   payload: string;
 }
 
-export interface DashboardData {
+export interface dappResponseData {
   status: string;
   exception_payload: null;
   reports: Report[];
   processed_input_count: number;
 }
 
-export interface Criterios {
-  de: string;
-  ate: string;
+export type AvaiableFleetData = AvaiableFleetItem[];
+
+export interface AvaiableFleetItem {
+  id: number;
+  line_id: string;
+  expected_bus_amount: number;
+  recorded_bus_amount: number;
 }
 
-export interface Dados {
-  linha: string;
-  frotaProgramada: number;
-  frotaDisponivel: number;
-}
+export type TraveledKmData = TraveledKmItem[];
 
-export interface Payload {
-  criterios: Criterios;
-  dados: Dados[];
-  complianceSubsidio: string;
-  subsidioConcedido: number;
+export interface TraveledKmItem {
+  id: number;
+  line_id: string;
+  expected_traveled_distance_km: number;
+  recorded_travel_distance_km: number;
 }

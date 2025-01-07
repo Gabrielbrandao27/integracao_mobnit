@@ -45,12 +45,21 @@ def create_table(conn, create_table_sql):
 
 def seed_database(conn):
     seed_insert = """ 
-        INSERT INTO company(name) VALUES
-            ('Peixoto Ltda');
-        INSERT INTO line(route_name, required_bus_amount, required_travel_distance_km, required_round_trips, company_id) VALUES
-            ('15', 4, 0, 0, 1),
-            ('21', 5, 0, 0, 1),
-            ('22', 4, 0, 0, 1);
+        INSERT INTO line(route_name) VALUES
+            ('15'),
+            ('21'),
+            ('22');
+        INSERT INTO bus_amount_compliance(line_id, expected_bus_amount, recorded_bus_amount) VALUES
+            (1, 4, 3),
+            (2, 5, 3),
+            (3, 4, 3);
+        INSERT INTO bus_km_compliance(line_id, expected_travel_distance_km, recorded_travel_distance_km) VALUES
+            (1, 10652.18, 4636.62),
+            (2, 13244.84, 8727.32),
+            (3, 11418.06, 8339.99);
+        INSERT INTO bus_subsidy(compliance_name, compliance_value, subsidy_amount) VALUES
+            ('bus_amount', 64.67, 0),
+            ('bus_km', 67.79, 0);
     """
     cursor = conn.cursor()
 
@@ -69,55 +78,85 @@ def seed_database(conn):
 #######################################################
 def create_database(conn):
 
-    sql_company_table = """ CREATE TABLE IF NOT EXISTS company (
-                                id INTEGER PRIMARY KEY,
-                                name VARCHAR(50)
-                            ); """
+    # sql_company_table = """ CREATE TABLE IF NOT EXISTS company (
+    #                             id INTEGER PRIMARY KEY,
+    #                             name VARCHAR(50)
+    #                         ); """
+
+    # sql_bus_line_table = """ CREATE TABLE IF NOT EXISTS line (
+    #                             id INTEGER PRIMARY KEY,
+    #                             route_name VARCHAR(5),
+    #                             required_bus_amount INT,
+    #                             required_travel_distance_km NUMERIC,
+    #                             required_round_trips INT,
+    #                             company_id INT,
+    #                             FOREIGN KEY(company_id) REFERENCES company(id)
+    #                         ); """
 
     sql_bus_line_table = """ CREATE TABLE IF NOT EXISTS line (
                                 id INTEGER PRIMARY KEY,
-                                route_name VARCHAR(5),
-                                required_bus_amount INT,
-                                required_travel_distance_km NUMERIC,
-                                required_round_trips INT,
-                                company_id INT,
-                                FOREIGN KEY(company_id) REFERENCES company(id)
+                                route_name VARCHAR(5) NOT NULL UNIQUE,
                             ); """
 
-    sql_bus_line_compliance = """ CREATE TABLE IF NOT EXISTS line_compliance (
+    # sql_bus_line_compliance = """ CREATE TABLE IF NOT EXISTS line_compliance (
+    #                             id INTEGER PRIMARY KEY,
+    #                             line_id INT,
+    #                             expected_bus_amount INT,
+    #                             recorded_bus_amount INT,
+    #                             recorded_travel_distance_km NUMERIC,
+    #                             recorded_round_trips INT,
+    #                             date_recorded DATETIME DEFAULT CURRENT_TIMESTAMP,
+    #                             FOREIGN KEY(line_id) REFERENCES line(id)
+    #                         ); """
+
+    sql_bus_amount_compliance = """ CREATE TABLE IF NOT EXISTS bus_amount_compliance (
+                                        id INTEGER PRIMARY KEY,
+                                        line_id VARCHAR(5),
+                                        expected_bus_amount INT,
+                                        recorded_bus_amount INT,
+                                        FOREIGN KEY(line_id) REFERENCES line(route_name)
+                                    ); """
+
+    # sql_bus_table = """ CREATE TABLE IF NOT EXISTS bus (
+    #                             id INTEGER PRIMARY KEY,
+    #                             bus_code VARCHAR(50),
+    #                             line_id INT,
+    #                             has_air_conditioning INT,
+    #                             FOREIGN KEY(line_id) REFERENCES line(id)
+    #                 ); """ # no caso, has_air_conditioning pode ser 0 ou 1
+
+    sql_bus_km_compliance = """ CREATE TABLE IF NOT EXISTS bus_km_compliance (
+                                    id INTEGER PRIMARY KEY,
+                                    line_id VARCHAR(5),
+                                    expected_travel_distance_km NUMERIC,
+                                    recorded_travel_distance_km NUMERIC,
+                                    FOREIGN KEY(line_id) REFERENCES line(id)
+                                ); """
+
+    # sql_bus_coordinate_table = """ CREATE TABLE IF NOT EXISTS bus_coordinates (
+    #                             id INTEGER PRIMARY KEY,
+    #                             bus_id INT,
+    #                             latitude REAL,
+    #                             longitude REAL,
+    #                             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    #                             FOREIGN KEY(bus_id) REFERENCES bus(id)
+    #                         ); """
+
+    sql_bus_subsidy = """ CREATE TABLE IF NOT EXISTS bus_subsidy (
                                 id INTEGER PRIMARY KEY,
-                                line_id INT,
-                                expected_bus_amount INT,
-                                recorded_bus_amount INT,
-                                recorded_travel_distance_km NUMERIC,
-                                recorded_round_trips INT,
-                                date_recorded DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                FOREIGN KEY(line_id) REFERENCES line(id)
+                                compliance_name VARCHAR(50),
+                                compliance_value NUMERIC,
+                                subsidy_amount NUMERIC
                             ); """
 
-    sql_bus_table = """ CREATE TABLE IF NOT EXISTS bus (
-                                id INTEGER PRIMARY KEY,
-                                bus_code VARCHAR(50),
-                                line_id INT,
-                                has_air_conditioning INT,
-                                FOREIGN KEY(line_id) REFERENCES line(id)
-                    ); """ # no caso, has_air_conditioning pode ser 0 ou 1
-
-    sql_bus_coordinate_table = """ CREATE TABLE IF NOT EXISTS bus_coordinates (
-                                id INTEGER PRIMARY KEY,
-                                bus_id INT,
-                                latitude REAL,
-                                longitude REAL,
-                                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                                FOREIGN KEY(bus_id) REFERENCES bus(id)
-                            ); """
 
     # create tables
-    create_table(conn, sql_company_table)
+    # create_table(conn, sql_company_table)
     create_table(conn, sql_bus_line_table)
-    create_table(conn, sql_bus_line_compliance)
-    create_table(conn, sql_bus_table)
-    create_table(conn, sql_bus_coordinate_table)
+    create_table(conn, sql_bus_amount_compliance)
+    create_table(conn, sql_bus_km_compliance)
+    create_table(conn, sql_bus_subsidy)
+    # create_table(conn, sql_bus_coordinate_table)
 
 
 ###################################################################
@@ -154,7 +193,6 @@ def insert_bus_line(conn, info_linha):
     sql = f''' INSERT INTO line(route_name)
               VALUES('{info_linha}') '''
     cur = conn.cursor()
-    
     try:
         cur.execute(sql)
         conn.commit()
@@ -164,53 +202,78 @@ def insert_bus_line(conn, info_linha):
     
     return True
 
-def insert_compliance_data(conn, info_linha):
-    line_id_query = "SELECT route_name FROM line WHERE route_name = ?"
+def insert_bus_amount_compliance_data(conn, payload):
     sql = """ 
-        INSERT INTO line_compliance(line_id, expected_bus_amount, recorded_bus_amount) VALUES
+        INSERT INTO bus_amount_compliance(line_id, expected_bus_amount, recorded_bus_amount) VALUES
         (?, ?, ?)          
     """
     cur = conn.cursor()
     try:
-        cur.execute(line_id_query, (info_linha['linha'],))
-        line_id = cur.fetchone()[0]
-        cur.execute(sql, (line_id, info_linha['frotaProgramada'], info_linha['frotaDisponivel']))
+        cur.execute(sql, (payload['linha'], payload['frotaProgramada'], payload['frotaDisponivel']))
         conn.commit()
         return True
     except sqlite3.IntegrityError as e:
         print(e)
         return False
 
-def insert_trip_schedule(conn, trip_id, bus_line_id, schedule:list):
-    sql = ''' INSERT INTO trip_schedule(id, bus_line_id, schedule)
-              VALUES(?, ?, ?) '''
+def insert_bus_km_compliance_data(conn, payload):
+    sql = """ 
+        INSERT INTO bus_km_compliance(line_id, expected_travel_distance_km, recorded_travel_distance_km) VALUES
+        (?, ?, ?)          
+    """
     cur = conn.cursor()
-
-    schedule_str = list_to_str(schedule)
-
     try:
-        cur.execute(sql, (trip_id, bus_line_id, schedule_str))    
+        cur.execute(sql, (payload['linha'], payload['total_programada'], payload['total_realizada']))
         conn.commit()
+        return True
     except sqlite3.IntegrityError as e:
+        print(e)
         return False
-    
-    return True
 
-
-def insert_stop(conn, stop_order, bus_line_id, coord:list):
-    sql = ''' INSERT INTO stop(stop_order, bus_line_id, lat, lon)
-              VALUES(?, ?, ?, ?) '''
+def insert_bus_subsidy_data(conn, payload):
+    sql = """ 
+        INSERT INTO bus_subsidy(compliance_name, compliance_value, subsidy_amount) VALUES
+        (?, ?, ?)          
+    """
     cur = conn.cursor()
-
-    lat, lon = coord
-
     try:
-        cur.execute(sql, (stop_order, bus_line_id, lat, lon))
+        cur.execute(sql, (payload['nome_compliance'], payload['valor_compliance'], payload['total_subsidio']))
         conn.commit()
+        return True
     except sqlite3.IntegrityError as e:
+        print(e)
         return False
+
+# def insert_trip_schedule(conn, trip_id, bus_line_id, schedule:list):
+#     sql = ''' INSERT INTO trip_schedule(id, bus_line_id, schedule)
+#               VALUES(?, ?, ?) '''
+#     cur = conn.cursor()
+
+#     schedule_str = list_to_str(schedule)
+
+#     try:
+#         cur.execute(sql, (trip_id, bus_line_id, schedule_str))    
+#         conn.commit()
+#     except sqlite3.IntegrityError as e:
+#         return False
     
-    return True
+#     return True
+
+
+# def insert_stop(conn, stop_order, bus_line_id, coord:list):
+#     sql = ''' INSERT INTO stop(stop_order, bus_line_id, lat, lon)
+#               VALUES(?, ?, ?, ?) '''
+#     cur = conn.cursor()
+
+#     lat, lon = coord
+
+#     try:
+#         cur.execute(sql, (stop_order, bus_line_id, lat, lon))
+#         conn.commit()
+#     except sqlite3.IntegrityError as e:
+#         return False
+    
+#     return True
 
 ###################################################################
 #                                                                 #
@@ -224,95 +287,109 @@ def select_lines(conn):
 
     return cur.fetchall()
 
-def select_compliance_data(conn):
-    sql = ''' SELECT * FROM line_compliance '''
+def select_bus_amount_compliance_data(conn):
+    sql = ''' SELECT * FROM bus_amount_compliance '''
     cur = conn.cursor()
     cur.execute(sql)
 
     return cur.fetchall()
 
-def select_lines_id(conn):
-    sql = ''' SELECT id FROM line '''
+def select_bus_km_compliance_data(conn):
+    sql = ''' SELECT * FROM bus_amount_compliance '''
     cur = conn.cursor()
     cur.execute(sql)
 
-    result = []
-    for item in cur.fetchall(): # fetchall = [(id0,), (id1,), (id2,), ...]
-        result.append(item[0])
-    
-    return result
+    return cur.fetchall()
 
-
-def select_line(conn, id):
-    sql = ''' SELECT * FROM line WHERE id = ? '''
+def select_bus_subsidy_data(conn):
+    sql = ''' SELECT * FROM bus_subsidy '''
     cur = conn.cursor()
-    cur.execute(sql, (id,))
-
-    result = list(cur.fetchone()) # [id. route_str]
-    
-    coords_str = result[1]
-
-    result[1] = str_to_coords(coords_str)
-
-    return result
-
-
-def select_route_of_line(conn, id):
-    sql = ''' SELECT route FROM line WHERE id = ? '''
-    cur = conn.cursor()
-    cur.execute(sql, (id,))
-
-    try:
-        coords_str = cur.fetchone()[0]
-        route = str_to_coords(coords_str)
-    except TypeError as e:
-        return None
-    
-    return route
-
-
-def select_trip_schedule(conn, trip_id):
-    sql = ''' SELECT schedule FROM trip_schedule WHERE id = ? '''
-    cur = conn.cursor()
-    cur.execute(sql, (trip_id,))
-
-    return cur.fetchone()[0].split(";")
-
-
-def count_trips(conn, bus_line):
-    sql = ''' SELECT COUNT(*) FROM trip_schedule WHERE bus_line_id = ? '''
-    cur = conn.cursor()
-    cur.execute(sql, (bus_line,))
-
-    return cur.fetchone()[0]
-
-def select_stop_schedule(conn, next_stop, bus_line_id, trip_id):
-    result = [None, None]
-    
-    sql = ''' SELECT lat,lon FROM stop WHERE stop_order = ? AND bus_line_id = ? '''
-    cur = conn.cursor()
-    cur.execute(sql, (next_stop, bus_line_id))
-
-    result[0] = cur.fetchone()
-
-    sql = ''' SELECT schedule FROM trip_schedule WHERE id = ? '''
-    cur = conn.cursor()
-
-    try:
-        cur.execute(sql, (trip_id,))
-        result[1] = cur.fetchone()[0].split(";")[next_stop-1]
-    except TypeError as e:
-        return None
-
-    return result
-    
-    
-def select_stops(conn, bus_line_id):    
-    sql = ''' SELECT lat,lon,stop_order FROM stop WHERE bus_line_id = ? '''
-    cur = conn.cursor()
-    cur.execute(sql, (bus_line_id,))
+    cur.execute(sql)
 
     return cur.fetchall()
+
+# def select_lines_id(conn):
+#     sql = ''' SELECT id FROM line '''
+#     cur = conn.cursor()
+#     cur.execute(sql)
+
+#     result = []
+#     for item in cur.fetchall(): # fetchall = [(id0,), (id1,), (id2,), ...]
+#         result.append(item[0])
+    
+#     return result
+
+
+# def select_line(conn, id):
+#     sql = ''' SELECT * FROM line WHERE id = ? '''
+#     cur = conn.cursor()
+#     cur.execute(sql, (id,))
+
+#     result = list(cur.fetchone()) # [id. route_str]
+    
+#     coords_str = result[1]
+
+#     result[1] = str_to_coords(coords_str)
+
+#     return result
+
+
+# def select_route_of_line(conn, id):
+#     sql = ''' SELECT route FROM line WHERE id = ? '''
+#     cur = conn.cursor()
+#     cur.execute(sql, (id,))
+
+#     try:
+#         coords_str = cur.fetchone()[0]
+#         route = str_to_coords(coords_str)
+#     except TypeError as e:
+#         return None
+    
+#     return route
+
+
+# def select_trip_schedule(conn, trip_id):
+#     sql = ''' SELECT schedule FROM trip_schedule WHERE id = ? '''
+#     cur = conn.cursor()
+#     cur.execute(sql, (trip_id,))
+
+#     return cur.fetchone()[0].split(";")
+
+
+# def count_trips(conn, bus_line):
+#     sql = ''' SELECT COUNT(*) FROM trip_schedule WHERE bus_line_id = ? '''
+#     cur = conn.cursor()
+#     cur.execute(sql, (bus_line,))
+
+#     return cur.fetchone()[0]
+
+# def select_stop_schedule(conn, next_stop, bus_line_id, trip_id):
+#     result = [None, None]
+    
+#     sql = ''' SELECT lat,lon FROM stop WHERE stop_order = ? AND bus_line_id = ? '''
+#     cur = conn.cursor()
+#     cur.execute(sql, (next_stop, bus_line_id))
+
+#     result[0] = cur.fetchone()
+
+#     sql = ''' SELECT schedule FROM trip_schedule WHERE id = ? '''
+#     cur = conn.cursor()
+
+#     try:
+#         cur.execute(sql, (trip_id,))
+#         result[1] = cur.fetchone()[0].split(";")[next_stop-1]
+#     except TypeError as e:
+#         return None
+
+#     return result
+    
+    
+# def select_stops(conn, bus_line_id):    
+#     sql = ''' SELECT lat,lon,stop_order FROM stop WHERE bus_line_id = ? '''
+#     cur = conn.cursor()
+#     cur.execute(sql, (bus_line_id,))
+
+#     return cur.fetchall()
 
 
 if __name__ == "__main__":
