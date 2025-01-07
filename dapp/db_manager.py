@@ -45,7 +45,7 @@ def create_table(conn, create_table_sql):
 
 def seed_database(conn):
     seed_insert = """ 
-        INSERT INTO line(route_name) VALUES
+        INSERT INTO bus_lines(route_name) VALUES
             ('15'),
             ('21'),
             ('22');
@@ -93,7 +93,7 @@ def create_database(conn):
     #                             FOREIGN KEY(company_id) REFERENCES company(id)
     #                         ); """
 
-    sql_bus_line_table = """ CREATE TABLE IF NOT EXISTS line (
+    sql_bus_line_table = """ CREATE TABLE IF NOT EXISTS bus_lines (
                                 id INTEGER PRIMARY KEY,
                                 route_name VARCHAR(5) NOT NULL UNIQUE,
                             ); """
@@ -114,7 +114,7 @@ def create_database(conn):
                                         line_id VARCHAR(5),
                                         expected_bus_amount INT,
                                         recorded_bus_amount INT,
-                                        FOREIGN KEY(line_id) REFERENCES line(route_name)
+                                        FOREIGN KEY(line_id) REFERENCES bus_lines(route_name)
                                     ); """
 
     # sql_bus_table = """ CREATE TABLE IF NOT EXISTS bus (
@@ -122,7 +122,7 @@ def create_database(conn):
     #                             bus_code VARCHAR(50),
     #                             line_id INT,
     #                             has_air_conditioning INT,
-    #                             FOREIGN KEY(line_id) REFERENCES line(id)
+    #                             FOREIGN KEY(line_id) REFERENCES bus_lines(id)
     #                 ); """ # no caso, has_air_conditioning pode ser 0 ou 1
 
     sql_bus_km_compliance = """ CREATE TABLE IF NOT EXISTS bus_km_compliance (
@@ -130,7 +130,7 @@ def create_database(conn):
                                     line_id VARCHAR(5),
                                     expected_travel_distance_km NUMERIC,
                                     recorded_travel_distance_km NUMERIC,
-                                    FOREIGN KEY(line_id) REFERENCES line(id)
+                                    FOREIGN KEY(line_id) REFERENCES bus_lines(id)
                                 ); """
 
     # sql_bus_coordinate_table = """ CREATE TABLE IF NOT EXISTS bus_coordinates (
@@ -191,7 +191,7 @@ def list_to_str(my_list:list):
 ###################################################################
 def insert_bus_line(conn, payload):
     sql = f"""
-        INSERT INTO line(route_name) VALUES
+        INSERT INTO bus_lines(route_name) VALUES
         (?)
     """
     cur = conn.cursor()
@@ -283,7 +283,7 @@ def insert_bus_subsidy_data(conn, payload):
 #                                                                 #
 ###################################################################
 def select_lines(conn):
-    sql = ''' SELECT * FROM line '''
+    sql = ''' SELECT * FROM bus_lines '''
     cur = conn.cursor()
     cur.execute(sql)
 
