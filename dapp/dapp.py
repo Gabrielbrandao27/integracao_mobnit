@@ -25,7 +25,11 @@ def str2hex(str):
     return "0x" + str.encode("utf-8").hex()
 
 
-bus_data = []
+def dataset_to_json(dataset):
+    # Define the keys based on the dataset structure
+    keys = ["id", "line_id", "expected_bus_amount", "recorded_bus_amount"]
+    json_list = [dict(zip(keys, row)) for row in dataset]
+    return json.dumps(json_list)
 
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
@@ -64,12 +68,24 @@ def handle_advance(data):
 
 def handle_inspect(data):
     logger.info(f"Received Brandão e Marcelo inspect request data {data}")
+    
+    conn = db_getter.create_connection('integracao_mobnit.db')
+    
+    payload = hex2str(data["payload"])
+    logger.info(f"Payload: {payload}")
 
-    report = {
-        "payload": str2hex(
-            f"{bus_data}"
-        )
-    }
+    match payload:
+        case 'frotas_disponiveis':
+            logger.info("Frotas disponíveis")
+            compliance_query_result = db.select_compliance_data(conn)
+            logger.info(f"Compliance Lines query result: {compliance_query_result}")
+            
+            json_data = dataset_to_json(compliance_query_result)
+            report = {
+                "payload": str2hex(
+                    f"{json_data}"
+                )
+            }
 
     response = requests.post(rollup_server + "/report", json=report)
     logger.info(f"Received report status {response.status_code}")

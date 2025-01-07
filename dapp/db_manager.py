@@ -84,14 +84,22 @@ def create_database(conn):
                                 FOREIGN KEY(company_id) REFERENCES company(id)
                             ); """
 
+    # sql_bus_line_compliance = """ CREATE TABLE IF NOT EXISTS line_compliance (
+    #                             id INTEGER PRIMARY KEY,
+    #                             line_id INT,
+    #                             expected_bus_amount INT,
+    #                             recorded_bus_amount INT,
+    #                             recorded_travel_distance_km NUMERIC,
+    #                             recorded_round_trips INT,
+    #                             date_recorded DATETIME DEFAULT CURRENT_TIMESTAMP,
+    #                             FOREIGN KEY(line_id) REFERENCES line(id)
+    #                         ); """
+
     sql_bus_line_compliance = """ CREATE TABLE IF NOT EXISTS line_compliance (
                                 id INTEGER PRIMARY KEY,
-                                line_id INT,
+                                line_id VARCHAR(5),
                                 expected_bus_amount INT,
                                 recorded_bus_amount INT,
-                                recorded_travel_distance_km NUMERIC,
-                                recorded_round_trips INT,
-                                date_recorded DATETIME DEFAULT CURRENT_TIMESTAMP,
                                 FOREIGN KEY(line_id) REFERENCES line(id)
                             ); """
 

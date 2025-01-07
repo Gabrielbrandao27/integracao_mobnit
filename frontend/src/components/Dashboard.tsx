@@ -1,27 +1,27 @@
 import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
-import { fetchDashboardData } from '../api/dashboardService';
-import { DashboardData, Payload } from '../types/DashboardData';
+import { fetchAvaiableFleetData } from '../api/dashboardService';
+import { AvaiableFleetData, dappResponseData } from '../types/DashboardData';
 import { hex2str } from '../utils/ether';
 import './styles.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const Dashboard: React.FC = () => {
-  const [dados, setDados] = useState<Payload['dados'] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const [avaiableFleet, setAvaibleFleet] = useState<AvaiableFleetData | null>(null);
+  
   useEffect(() => {
-    const getData = async () => {
+    const getFleetData = async () => {
       try {
-        const result: DashboardData = await fetchDashboardData();
+        const result: dappResponseData = await fetchAvaiableFleetData();
         if (result.reports && result.reports.length > 0) {
           const hexPayload = result.reports[0].payload;
           const stringPayload = hex2str(hexPayload);
-          const cleanedPayload = stringPayload.replace(/^\['|'\]$/g, '').replace(/\\n/g, '').replace(/\\'/g, "'");
-          const jsonPayload: Payload = JSON.parse(cleanedPayload);
-          setDados(jsonPayload.dados);
+          const jsonPayload: AvaiableFleetData = JSON.parse(stringPayload);
+          
+          setAvaibleFleet(jsonPayload);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
       }
     };
 
-    getData();
+    getFleetData();
   }, []);
 
   if (loading) {
@@ -38,18 +38,18 @@ const Dashboard: React.FC = () => {
   }
 
   const chartData = {
-    labels: dados?.map((dado) => dado.linha) || [],
+    labels: avaiableFleet?.map((dado) => dado.line_id) || [],
     datasets: [
       {
         label: 'Frota Programada',
-        data: dados?.map((dado) => dado.frotaProgramada) || [],
+        data: avaiableFleet?.map((dado) => dado.expected_bus_amount) || [],
         backgroundColor: 'rgba(0, 0, 255, 0.2)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
         label: 'Frota Disponível',
-        data: dados?.map((dado) => dado.frotaDisponivel) || [],
+        data: avaiableFleet?.map((dado) => dado.recorded_bus_amount) || [],
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
