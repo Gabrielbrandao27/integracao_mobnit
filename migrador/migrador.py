@@ -7,7 +7,6 @@ from web3 import Web3
 from dotenv import load_dotenv
 from get_from_excel import get_company_compliance
 
-
 load_dotenv()
 
 MOBNIT_API_URL = os.getenv('MOBNIT_API_URL')
@@ -18,15 +17,174 @@ subsidio_struct = {
     "tipoInput": "compliance/subsidios"
 }
 
+
+def get_standard_trip_number():
+    standard_trips = [ # viagens no consorcio transnit
+        {
+            "totalViagens": 115685,
+            "data": 1730419200000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 38928,
+            "data": 1730505600000,
+            "tipoDia": "Feriado"
+        },
+        {
+            "totalViagens": 26077,
+            "data": 1730592000000,
+            "tipoDia": "Domingo"
+        },
+        {
+            "totalViagens": 126530,
+            "data": 1730678400000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 135085,
+            "data": 1730764800000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 132477,
+            "data": 1730851200000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 133825,
+            "data": 1730937600000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 123410,
+            "data": 1731024000000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 50698,
+            "data": 1731110400000,
+            "tipoDia": "Sábado"
+        },
+        {
+            "totalViagens": 24268,
+            "data": 1731196800000,
+            "tipoDia": "Domingo"
+        },
+        {
+            "totalViagens": 129262,
+            "data": 1731283200000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 132589,
+            "data": 1731369600000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 108967,
+            "data": 1731456000000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 131161,
+            "data": 1731542400000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 31538,
+            "data": 1731628800000,
+            "tipoDia": "Feriado"
+        },
+        {
+            "totalViagens": 39668,
+            "data": 1731715200000,
+            "tipoDia": "Sábado"
+        },
+        {
+            "totalViagens": 23422,
+            "data": 1731801600000,
+            "tipoDia": "Domingo"
+        },
+        {
+            "totalViagens": 114290,
+            "data": 1731888000000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 116456,
+            "data": 1731974400000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 32612,
+            "data": 1732060800000,
+            "tipoDia": "Feriado"
+        },
+        {
+            "totalViagens": 124006,
+            "data": 1732147200000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 114882,
+            "data": 1732233600000,
+            "tipoDia": "Feriado"
+        },
+        {
+            "totalViagens": 43931,
+            "data": 1732320000000,
+            "tipoDia": "Sábado"
+        },
+        {
+            "totalViagens": 20363,
+            "data": 1732406400000,
+            "tipoDia": "Domingo"
+        },
+        {
+            "totalViagens": 121339,
+            "data": 1732492800000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 124180,
+            "data": 1732579200000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 125001,
+            "data": 1732665600000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 122591,
+            "data": 1732752000000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 115971,
+            "data": 1732838400000,
+            "tipoDia": "Útil"
+        },
+        {
+            "totalViagens": 49725,
+            "data": 1732924800000,
+            "tipoDia": "Sábado"
+        }
+    ]
+    
+    df_viagens = pd.DataFrame.from_dict(standard_trips)
+    soma_viagens = df_viagens['totalViagens'].sum().item()
+    return soma_viagens
+
 def calcular_subsidio(compliance):
 
-    if 100 <= compliance and compliance >= 95:
+    if compliance > 100 or (100 >= compliance and compliance >= 95):
         return 100
-    if 94 <= compliance and compliance >= 90:
+    if 94 >= compliance and compliance >= 90:
         return 95
-    if 89 <= compliance and compliance >= 85:
+    if 89 >= compliance and compliance >= 85:
         return 85
-    if 84 <= compliance and compliance >= 80:
+    if 84 >= compliance and compliance >= 80:
         return 70
     return 0
     # Escala                  Subsídio a
@@ -38,10 +196,22 @@ def calcular_subsidio(compliance):
     # <80                         0
 
 
-def viagem_programada():
+def viagem_programada(inicio, fim, empresa, linha):
     # Item 1- Viagem programada x realizada
+    url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/dados-operacionais/viagens/qtd-viagens-dia?Linhas={linha}&from={inicio}&to={fim}&Empresas={empresa}"
+    response = requests.get(url).json()
+    df_viagens = pd.DataFrame.from_dict(response['dados'])
+    soma_viagens = df_viagens['totalViagens'].sum().item()
+    meta_viagens = get_standard_trip_number() # no futuro, substituir pela meta real de viagens
+    compliance_viagens = (soma_viagens/meta_viagens)*100
 
-    return 0
+    return {
+        "empresa": empresa,
+        "linha": linha,
+        "viagensRealizadas": soma_viagens,
+        "compliance": compliance_viagens,
+        "subsidioConcedido": calcular_subsidio(compliance_viagens)
+    }   
 
 
 def bus_km_compliance(linhas, treshold, inicio, fim):
@@ -95,7 +265,11 @@ def climatizacao(empresa):
     compliance = get_company_compliance(empresa)
     subsidio = calcular_subsidio(compliance)
 
-    return subsidio
+    return {
+        "empresa": empresa,
+        "complianceArCondicionado": compliance,
+        "subsidioConcedido": subsidio
+    }
 
 
 def bus_amount_compliance(inicio, fim, empresas):
@@ -167,7 +341,7 @@ if __name__ == '__main__':
     treshold = f"%270%27"
     inicio = f"1727740800000"
     fim = "1730419199999"
-    empresas = 'Transportes Peixoto Ltda'
+    empresas = 'INGÁ'
 
     # Item 2- Quilometragem Programada
     response_km_programada = bus_km_compliance(linhas, treshold, inicio, fim)
