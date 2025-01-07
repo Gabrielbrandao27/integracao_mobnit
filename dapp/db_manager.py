@@ -95,7 +95,7 @@ def create_database(conn):
 
     sql_bus_line_table = """ CREATE TABLE IF NOT EXISTS line (
                                 id INTEGER PRIMARY KEY,
-                                route_name VARCHAR(5),
+                                route_name VARCHAR(5) NOT NULL UNIQUE,
                             ); """
 
     # sql_bus_line_compliance = """ CREATE TABLE IF NOT EXISTS line_compliance (
@@ -114,7 +114,7 @@ def create_database(conn):
                                         line_id VARCHAR(5),
                                         expected_bus_amount INT,
                                         recorded_bus_amount INT,
-                                        FOREIGN KEY(line_id) REFERENCES line(id)
+                                        FOREIGN KEY(line_id) REFERENCES line(route_name)
                                     ); """
 
     # sql_bus_table = """ CREATE TABLE IF NOT EXISTS bus (
