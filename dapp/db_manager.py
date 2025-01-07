@@ -11,7 +11,7 @@ DATABASE_PATH = "./"
 #######################################################
 
 class DBConnector:
-    seed_executed = False
+    # seed_executed = False
 
     def create_connection(self, db_file):
         conn = None
@@ -19,9 +19,9 @@ class DBConnector:
         try:
             conn = sqlite3.connect(db_file)
             create_database(conn)
-            if not self.seed_executed:
-                seed_database(conn)
-                self.seed_executed = True
+            # if not self.seed_executed:
+            #     seed_database(conn)
+            #     self.seed_executed = True
             return conn
         except Error as e:
             print(e)
@@ -189,12 +189,14 @@ def list_to_str(my_list:list):
 #                            INSERTS                              #
 #                                                                 #
 ###################################################################
-def insert_bus_line(conn, info_linha):
-    sql = f''' INSERT INTO line(route_name)
-              VALUES('{info_linha}') '''
+def insert_bus_line(conn, payload):
+    sql = f"""
+        INSERT INTO line(route_name) VALUES
+        (?)
+    """
     cur = conn.cursor()
     try:
-        cur.execute(sql)
+        cur.execute(sql, (payload['linha']))
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(e)

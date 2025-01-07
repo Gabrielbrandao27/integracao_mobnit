@@ -39,26 +39,32 @@ def handle_advance(data):
     logger.info(f"Payload: {payload}")
     payload_json = json.loads(payload)
 
-    for info_linha in payload_json['dados']:
-        if not db.insert_bus_line(conn, info_linha['linha']):
-            return "reject"
-        
-    lines_query_result = db.select_lines(conn)
-    logger.info(f"Lines query result: {lines_query_result}")
-
     match payload_json['tipoInput']:
         case 'compliance/frota_disponivel':
             for info_linha in payload_json['dados']:
+                if not db.insert_bus_line(conn, info_linha['linha']):
+                    return "reject"
                 if not db.insert_bus_amount_compliance_data(conn, info_linha):
                     return "reject"
             bus_amount_compliance_query = db.select_bus_amount_compliance_data(conn)
             logger.info(f"Bus amount compliance query result: {bus_amount_compliance_query}")
+
         case 'compliance/quilometragem_percorrida':
             for info_linha in payload_json['dados']:
+                if not db.insert_bus_line(conn, info_linha['linha']):
+                    return "reject"
                 if not db.insert_bus_km_compliance_data(conn, info_linha):
                     return "reject"
             bus_km_compliance_query = db.select_bus_km_compliance_data(conn)
             logger.info(f"Bus km compliance query result: {bus_km_compliance_query}")
+        
+        case 'compliance/subsidios':
+            for info_subsidio in payload_json['dados']:
+                if not db.insert_bus_subsidy_data(conn, info_subsidio):
+                    return "reject"
+            subsidies_query = db.select_bus_subsidy_data(conn)
+            logger.info(f"Subsidies query result: {subsidies_query}")
+
         case _:
             logger.info("Unknown type of input")
             return "reject"
