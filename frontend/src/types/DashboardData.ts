@@ -17,3 +17,12 @@ export interface AvaiableFleetItem {
   expected_bus_amount: number;
   recorded_bus_amount: number;
 }
+
+export type TraveledKmData = TraveledKmItem[];
+
+export interface TraveledKmItem {
+  id: number;
+  line_id: string;
+  expected_traveled_distance_km: number;
+  recorded_travel_distance_km: number;
+}
