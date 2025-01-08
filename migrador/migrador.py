@@ -204,14 +204,20 @@ def viagem_programada(inicio, fim, empresa, linha):
     soma_viagens = df_viagens['totalViagens'].sum().item()
     meta_viagens = get_standard_trip_number() # no futuro, substituir pela meta real de viagens
     compliance_viagens = (soma_viagens/meta_viagens)*100
+    subsidio_concedido = calcular_subsidio(compliance_viagens)
+    subsidios_totais(subsidio_struct['dados'], 'bus_trips', compliance_viagens, subsidio_concedido)
+    payload = {
+        "tipoInput": "compliance/numero_viagens",
+        "dados": {
+            "empresa": empresa,
+            "linha": linha,
+            "viagensRealizadas": soma_viagens,
+            "compliance": compliance_viagens
+        }
+    }
 
-    return {
-        "empresa": empresa,
-        "linha": linha,
-        "viagensRealizadas": soma_viagens,
-        "compliance": compliance_viagens,
-        "subsidioConcedido": calcular_subsidio(compliance_viagens)
-    }   
+    response_binario = json.dumps(payload, indent=2).encode('utf-8')
+    return response_binario
 
 
 def bus_km_compliance(linhas, treshold, inicio, fim):
@@ -262,15 +268,19 @@ def bus_km_compliance(linhas, treshold, inicio, fim):
 def climatizacao(empresa):
     # Item 3- Climatização das frotas
 
-    compliance = get_company_compliance(empresa)
-    subsidio = calcular_subsidio(compliance)
-
-    return {
-        "empresa": empresa,
-        "complianceArCondicionado": compliance,
-        "subsidioConcedido": subsidio
+    compliance_climatizacao = get_company_compliance(empresa)
+    subsidio_concedido = calcular_subsidio(compliance_climatizacao)
+    subsidios_totais(subsidio_struct['dados'], 'bus_ac', compliance_climatizacao, subsidio_concedido)
+    payload = {
+        "tipoInput": "compliance/climatizacao",
+        "dados": {
+            "empresa": empresa,
+            "complianceArCondicionado": compliance_climatizacao
+        }
     }
 
+    response_binario = json.dumps(payload, indent=2).encode('utf-8')
+    return response_binario
 
 def bus_amount_compliance(inicio, fim, empresas):
     # Item 4- Quantidade de ônibus programada x realizada
@@ -343,9 +353,17 @@ if __name__ == '__main__':
     fim = "1730419199999"
     empresas = 'INGÁ'
 
+    # Item 1- Quilometragem Programada
+    response_viagens_programadas = viagem_programada(inicio, fim, empresas, linhas)
+    envia_input_dapp(response_viagens_programadas)
+
     # Item 2- Quilometragem Programada
     response_km_programada = bus_km_compliance(linhas, treshold, inicio, fim)
     envia_input_dapp(response_km_programada)
+
+    # Item 3 - Climatização da Frota
+    response_climatizacao = climatizacao(empresas)
+    envia_input_dapp(response_climatizacao)
 
     # Item 4- Quantidade de Ônibus
     response_frota_disponivel = bus_amount_compliance(inicio, fim, empresas)
