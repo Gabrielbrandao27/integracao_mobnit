@@ -40,7 +40,9 @@ def handle_advance(data):
     payload_json = json.loads(payload)
 
     if payload_json['tipoInput'] == 'compliance/subsidios':
-        if not db.insert_consorcium(conn, payload_json['consorcio'], payload_json['subsidio_total']):
+        if not db.insert_consorcium(conn, payload_json['consorcio']):
+            return "reject"
+        if not db.insert_total_subsidy_data(conn, payload_json['consorcio'], payload_json['subsidio_total']):
             return "reject"
         for item in payload_json['dados']:
             match item["tipoInput"]:
