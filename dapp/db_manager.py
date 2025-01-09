@@ -11,7 +11,7 @@ DATABASE_PATH = "./"
 #######################################################
 
 class DBConnector:
-    seed_executed = False
+    # seed_executed = False
 
     def create_connection(self, db_file):
         conn = None
@@ -19,9 +19,9 @@ class DBConnector:
         try:
             conn = sqlite3.connect(db_file)
             create_database(conn)
-            if not self.seed_executed:
-                seed_database(conn)
-                self.seed_executed = True
+            # if not self.seed_executed:
+            #     seed_database(conn)
+            #     self.seed_executed = True
             return conn
         except Error as e:
             print(e)
@@ -45,21 +45,8 @@ def create_table(conn, create_table_sql):
 
 def seed_database(conn):
     seed_insert = """ 
-        INSERT INTO line(route_name) VALUES
-            ('15'),
-            ('21'),
-            ('22');
-        INSERT INTO bus_amount_compliance(line_id, expected_bus_amount, recorded_bus_amount) VALUES
-            (1, 4, 3),
-            (2, 5, 3),
-            (3, 4, 3);
-        INSERT INTO bus_km_compliance(line_id, expected_travel_distance_km, recorded_travel_distance_km) VALUES
-            (1, 10652.18, 4636.62),
-            (2, 13244.84, 8727.32),
-            (3, 11418.06, 8339.99);
-        INSERT INTO bus_subsidy(compliance_name, compliance_value, subsidy_amount) VALUES
-            ('bus_amount', 64.67, 0),
-            ('bus_km', 67.79, 0);
+        INSERT INTO consorcium(name, total_subsidy) VALUES
+        ('TransNit', 50.0),
     """
     cursor = conn.cursor()
 
@@ -78,85 +65,70 @@ def seed_database(conn):
 #######################################################
 def create_database(conn):
 
-    # sql_company_table = """ CREATE TABLE IF NOT EXISTS company (
-    #                             id INTEGER PRIMARY KEY,
-    #                             name VARCHAR(50)
-    #                         ); """
-
-    # sql_bus_line_table = """ CREATE TABLE IF NOT EXISTS line (
-    #                             id INTEGER PRIMARY KEY,
-    #                             route_name VARCHAR(5),
-    #                             required_bus_amount INT,
-    #                             required_travel_distance_km NUMERIC,
-    #                             required_round_trips INT,
-    #                             company_id INT,
-    #                             FOREIGN KEY(company_id) REFERENCES company(id)
-    #                         ); """
-
-    sql_bus_line_table = """ CREATE TABLE IF NOT EXISTS line (
+    sql_consorcium_table = """ CREATE TABLE IF NOT EXISTS consorcium (
                                 id INTEGER PRIMARY KEY,
-                                route_name VARCHAR(5) NOT NULL UNIQUE,
+                                name VARCHAR(20) NOT NULL UNIQUE
                             ); """
 
-    # sql_bus_line_compliance = """ CREATE TABLE IF NOT EXISTS line_compliance (
-    #                             id INTEGER PRIMARY KEY,
-    #                             line_id INT,
-    #                             expected_bus_amount INT,
-    #                             recorded_bus_amount INT,
-    #                             recorded_travel_distance_km NUMERIC,
-    #                             recorded_round_trips INT,
-    #                             date_recorded DATETIME DEFAULT CURRENT_TIMESTAMP,
-    #                             FOREIGN KEY(line_id) REFERENCES line(id)
-    #                         ); """
+    sql_bus_trip_compliance = """ CREATE TABLE IF NOT EXISTS bus_trip_compliance (
+                                        id INTEGER PRIMARY KEY,
+                                        consorcium VARCHAR(20),
+                                        trips_scheduled FLOAT,
+                                        trips_completed FLOAT,
+                                        conclusion_percentage FLOAT,
+                                        subsidy FLOAT,
+                                        date DATE,
+                                        FOREIGN KEY(consorcium) REFERENCES consorcium(name)
+                                    ); """
+    
+    sql_bus_km_compliance = """ CREATE TABLE IF NOT EXISTS bus_km_compliance (
+                                    id INTEGER PRIMARY KEY,
+                                    consorcium VARCHAR(20),
+                                    km_scheduled FLOAT,
+                                    km_completed FLOAT,
+                                    conclusion_percentage FLOAT,
+                                    subsidy FLOAT,
+                                    date DATE,
+                                    FOREIGN KEY(consorcium) REFERENCES consorcium(name)
+                                ); """
+
+    sql_bus_climatization_compliance = """ CREATE TABLE IF NOT EXISTS bus_climatization_compliance (
+                                            id INTEGER PRIMARY KEY,
+                                            consorcium VARCHAR(20),
+                                            total_busses FLOAT,
+                                            busses_without_climatization FLOAT,
+                                            conclusion_percentage FLOAT,
+                                            subsidy FLOAT,
+                                            date DATE,
+                                            FOREIGN KEY(consorcium) REFERENCES consorcium(name)
+                                        ); """
 
     sql_bus_amount_compliance = """ CREATE TABLE IF NOT EXISTS bus_amount_compliance (
                                         id INTEGER PRIMARY KEY,
-                                        line_id VARCHAR(5),
-                                        expected_bus_amount INT,
-                                        recorded_bus_amount INT,
-                                        FOREIGN KEY(line_id) REFERENCES line(route_name)
+                                        consorcium VARCHAR(20),
+                                        scheduled_fleets FLOAT,
+                                        recorded_fleets FLOAT,
+                                        conclusion_percentage FLOAT,
+                                        subsidy FLOAT,
+                                        date DATE,
+                                        FOREIGN KEY(consorcium) REFERENCES consorcium(name)
                                     ); """
 
-    # sql_bus_table = """ CREATE TABLE IF NOT EXISTS bus (
-    #                             id INTEGER PRIMARY KEY,
-    #                             bus_code VARCHAR(50),
-    #                             line_id INT,
-    #                             has_air_conditioning INT,
-    #                             FOREIGN KEY(line_id) REFERENCES line(id)
-    #                 ); """ # no caso, has_air_conditioning pode ser 0 ou 1
-
-    sql_bus_km_compliance = """ CREATE TABLE IF NOT EXISTS bus_km_compliance (
-                                    id INTEGER PRIMARY KEY,
-                                    line_id VARCHAR(5),
-                                    expected_travel_distance_km NUMERIC,
-                                    recorded_travel_distance_km NUMERIC,
-                                    FOREIGN KEY(line_id) REFERENCES line(id)
-                                ); """
-
-    # sql_bus_coordinate_table = """ CREATE TABLE IF NOT EXISTS bus_coordinates (
-    #                             id INTEGER PRIMARY KEY,
-    #                             bus_id INT,
-    #                             latitude REAL,
-    #                             longitude REAL,
-    #                             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    #                             FOREIGN KEY(bus_id) REFERENCES bus(id)
-    #                         ); """
-
-    sql_bus_subsidy = """ CREATE TABLE IF NOT EXISTS bus_subsidy (
+    sql_total_subsidy = """ CREATE TABLE IF NOT EXISTS total_subsidy (
                                 id INTEGER PRIMARY KEY,
-                                compliance_name VARCHAR(50),
-                                compliance_value NUMERIC,
-                                subsidy_amount NUMERIC
+                                consorcium VARCHAR(20),
+                                total_subsidy FLOAT,
+                                date DATE,
+                                FOREIGN KEY(consorcium) REFERENCES consorcium(name)
                             ); """
 
-
     # create tables
-    # create_table(conn, sql_company_table)
-    create_table(conn, sql_bus_line_table)
-    create_table(conn, sql_bus_amount_compliance)
+    create_table(conn, sql_consorcium_table)
+    create_table(conn, sql_bus_trip_compliance)
     create_table(conn, sql_bus_km_compliance)
-    create_table(conn, sql_bus_subsidy)
-    # create_table(conn, sql_bus_coordinate_table)
+    create_table(conn, sql_bus_climatization_compliance)
+    create_table(conn, sql_bus_amount_compliance)
+    create_table(conn, sql_total_subsidy)
 
 
 ###################################################################
@@ -189,12 +161,14 @@ def list_to_str(my_list:list):
 #                            INSERTS                              #
 #                                                                 #
 ###################################################################
-def insert_bus_line(conn, info_linha):
-    sql = f''' INSERT INTO line(route_name)
-              VALUES('{info_linha}') '''
+def insert_consorcium(conn, name):
+    sql = f"""
+        INSERT INTO consorcium(name) VALUES
+        (?)
+    """
     cur = conn.cursor()
     try:
-        cur.execute(sql)
+        cur.execute(sql, (name))
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(e)
@@ -202,14 +176,14 @@ def insert_bus_line(conn, info_linha):
     
     return True
 
-def insert_bus_amount_compliance_data(conn, payload):
+def insert_bus_trip_compliance_data(conn, payload):
     sql = """ 
-        INSERT INTO bus_amount_compliance(line_id, expected_bus_amount, recorded_bus_amount) VALUES
-        (?, ?, ?)          
+        INSERT INTO bus_trip_compliance(consorcium, trips_scheduled, trips_completed, conclusion_percentage, subsidy, date) VALUES
+        (?, ?, ?, ?, ?, ?)          
     """
     cur = conn.cursor()
     try:
-        cur.execute(sql, (payload['linha'], payload['frotaProgramada'], payload['frotaDisponivel']))
+        cur.execute(sql, (payload['consorcio'], payload['compliance']['meta_viagens_realizadas'], payload['compliance']['total_viagens_realizadas'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
         conn.commit()
         return True
     except sqlite3.IntegrityError as e:
@@ -218,70 +192,89 @@ def insert_bus_amount_compliance_data(conn, payload):
 
 def insert_bus_km_compliance_data(conn, payload):
     sql = """ 
-        INSERT INTO bus_km_compliance(line_id, expected_travel_distance_km, recorded_travel_distance_km) VALUES
-        (?, ?, ?)          
+        INSERT INTO bus_km_compliance(consorcium, km_scheduled, km_completed, conclusion_percentage, subsidy, date) VALUES
+        (?, ?, ?, ?, ?, ?)          
     """
     cur = conn.cursor()
     try:
-        cur.execute(sql, (payload['linha'], payload['total_programada'], payload['total_realizada']))
+        cur.execute(sql, (payload['consorcio'], payload['compliance']['total_programada'], payload['compliance']['total_realizada'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
         conn.commit()
         return True
     except sqlite3.IntegrityError as e:
         print(e)
         return False
 
-def insert_bus_subsidy_data(conn, payload):
+def insert_bus_climatization_compliance_data(conn, payload):
     sql = """ 
-        INSERT INTO bus_subsidy(compliance_name, compliance_value, subsidy_amount) VALUES
-        (?, ?, ?)          
+        INSERT INTO bus_climatization_compliance(consorcium, total_busses, busses_without_climatization, conclusion_percentage, subsidy, date) VALUES
+        (?, ?, ?, ?, ?, ?)          
     """
     cur = conn.cursor()
     try:
-        cur.execute(sql, (payload['nome_compliance'], payload['valor_compliance'], payload['total_subsidio']))
+        cur.execute(sql, (payload['consorcio'], payload['compliance']['total_onibus'], payload['compliance']['nao_climatizados'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
         conn.commit()
         return True
     except sqlite3.IntegrityError as e:
         print(e)
         return False
 
-# def insert_trip_schedule(conn, trip_id, bus_line_id, schedule:list):
-#     sql = ''' INSERT INTO trip_schedule(id, bus_line_id, schedule)
-#               VALUES(?, ?, ?) '''
-#     cur = conn.cursor()
+def insert_bus_amount_compliance_data(conn, payload):
+    sql = """ 
+        INSERT INTO bus_amount_compliance(consorcium, scheduled_fleets, recorded_fleets, conclusion_percentage, subsidy, date) VALUES
+        (?, ?, ?, ?, ?, ?)          
+    """
+    cur = conn.cursor()
+    try:
+        cur.execute(sql, (payload['consorcio'], payload['compliance']['total_frotas_programadas'], payload['compliance']['total_frotas_disponiveis'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError as e:
+        print(e)
+        return False
 
-#     schedule_str = list_to_str(schedule)
+def insert_total_subsidy_data(conn, consorcio, total_subsidy, date):
+    sql = """ 
+        INSERT INTO total_subsidy(consorcium, total_subsidy, date) VALUES
+        (?, ?, ?)          
+    """
+    cur = conn.cursor()
+    try:
+        cur.execute(sql, (consorcio, total_subsidy, date))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError as e:
+        print(e)
+        return False
 
-#     try:
-#         cur.execute(sql, (trip_id, bus_line_id, schedule_str))    
-#         conn.commit()
-#     except sqlite3.IntegrityError as e:
-#         return False
-    
-#     return True
-
-
-# def insert_stop(conn, stop_order, bus_line_id, coord:list):
-#     sql = ''' INSERT INTO stop(stop_order, bus_line_id, lat, lon)
-#               VALUES(?, ?, ?, ?) '''
-#     cur = conn.cursor()
-
-#     lat, lon = coord
-
-#     try:
-#         cur.execute(sql, (stop_order, bus_line_id, lat, lon))
-#         conn.commit()
-#     except sqlite3.IntegrityError as e:
-#         return False
-    
-#     return True
 
 ###################################################################
 #                                                                 #
 #                            QUERIES                              #
 #                                                                 #
 ###################################################################
-def select_lines(conn):
-    sql = ''' SELECT * FROM line '''
+def select_consorcium(conn):
+    sql = ''' SELECT * FROM consorcium '''
+    cur = conn.cursor()
+    cur.execute(sql)
+
+    return cur.fetchall()
+
+def select_bus_trip_compliance_data(conn):
+    sql = ''' SELECT * FROM bus_trip_compliance '''
+    cur = conn.cursor()
+    cur.execute(sql)
+
+    return cur.fetchall()
+
+def select_bus_climatization_compliance_data(conn):
+    sql = ''' SELECT * FROM bus_climatization_compliance '''
+    cur = conn.cursor()
+    cur.execute(sql)
+
+    return cur.fetchall()
+
+def select_bus_km_compliance_data(conn):
+    sql = ''' SELECT * FROM bus_km_compliance '''
     cur = conn.cursor()
     cur.execute(sql)
 
@@ -293,103 +286,6 @@ def select_bus_amount_compliance_data(conn):
     cur.execute(sql)
 
     return cur.fetchall()
-
-def select_bus_km_compliance_data(conn):
-    sql = ''' SELECT * FROM bus_amount_compliance '''
-    cur = conn.cursor()
-    cur.execute(sql)
-
-    return cur.fetchall()
-
-def select_bus_subsidy_data(conn):
-    sql = ''' SELECT * FROM bus_subsidy '''
-    cur = conn.cursor()
-    cur.execute(sql)
-
-    return cur.fetchall()
-
-# def select_lines_id(conn):
-#     sql = ''' SELECT id FROM line '''
-#     cur = conn.cursor()
-#     cur.execute(sql)
-
-#     result = []
-#     for item in cur.fetchall(): # fetchall = [(id0,), (id1,), (id2,), ...]
-#         result.append(item[0])
-    
-#     return result
-
-
-# def select_line(conn, id):
-#     sql = ''' SELECT * FROM line WHERE id = ? '''
-#     cur = conn.cursor()
-#     cur.execute(sql, (id,))
-
-#     result = list(cur.fetchone()) # [id. route_str]
-    
-#     coords_str = result[1]
-
-#     result[1] = str_to_coords(coords_str)
-
-#     return result
-
-
-# def select_route_of_line(conn, id):
-#     sql = ''' SELECT route FROM line WHERE id = ? '''
-#     cur = conn.cursor()
-#     cur.execute(sql, (id,))
-
-#     try:
-#         coords_str = cur.fetchone()[0]
-#         route = str_to_coords(coords_str)
-#     except TypeError as e:
-#         return None
-    
-#     return route
-
-
-# def select_trip_schedule(conn, trip_id):
-#     sql = ''' SELECT schedule FROM trip_schedule WHERE id = ? '''
-#     cur = conn.cursor()
-#     cur.execute(sql, (trip_id,))
-
-#     return cur.fetchone()[0].split(";")
-
-
-# def count_trips(conn, bus_line):
-#     sql = ''' SELECT COUNT(*) FROM trip_schedule WHERE bus_line_id = ? '''
-#     cur = conn.cursor()
-#     cur.execute(sql, (bus_line,))
-
-#     return cur.fetchone()[0]
-
-# def select_stop_schedule(conn, next_stop, bus_line_id, trip_id):
-#     result = [None, None]
-    
-#     sql = ''' SELECT lat,lon FROM stop WHERE stop_order = ? AND bus_line_id = ? '''
-#     cur = conn.cursor()
-#     cur.execute(sql, (next_stop, bus_line_id))
-
-#     result[0] = cur.fetchone()
-
-#     sql = ''' SELECT schedule FROM trip_schedule WHERE id = ? '''
-#     cur = conn.cursor()
-
-#     try:
-#         cur.execute(sql, (trip_id,))
-#         result[1] = cur.fetchone()[0].split(";")[next_stop-1]
-#     except TypeError as e:
-#         return None
-
-#     return result
-    
-    
-# def select_stops(conn, bus_line_id):    
-#     sql = ''' SELECT lat,lon,stop_order FROM stop WHERE bus_line_id = ? '''
-#     cur = conn.cursor()
-#     cur.execute(sql, (bus_line_id,))
-
-#     return cur.fetchall()
 
 
 if __name__ == "__main__":
