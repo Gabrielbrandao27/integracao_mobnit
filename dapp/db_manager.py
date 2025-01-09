@@ -68,52 +68,67 @@ def create_database(conn):
     sql_consorcium_table = """ CREATE TABLE IF NOT EXISTS consorcium (
                                 id INTEGER PRIMARY KEY,
                                 name VARCHAR(20) NOT NULL UNIQUE
-                                total_subsidy FLOAT
                             ); """
 
     sql_bus_trip_compliance = """ CREATE TABLE IF NOT EXISTS bus_trip_compliance (
                                         id INTEGER PRIMARY KEY,
                                         consorcium VARCHAR(20),
-                                        compliance FLOAT,
+                                        trips_scheduled FLOAT,
+                                        trips_completed FLOAT,
                                         conclusion_percentage FLOAT,
                                         subsidy FLOAT,
+                                        date DATE,
                                         FOREIGN KEY(consorcium) REFERENCES consorcium(name)
                                     ); """
+    
+    sql_bus_km_compliance = """ CREATE TABLE IF NOT EXISTS bus_km_compliance (
+                                    id INTEGER PRIMARY KEY,
+                                    consorcium VARCHAR(20),
+                                    km_scheduled FLOAT,
+                                    km_completed FLOAT,
+                                    conclusion_percentage FLOAT,
+                                    subsidy FLOAT,
+                                    date DATE,
+                                    FOREIGN KEY(consorcium) REFERENCES consorcium(name)
+                                ); """
 
     sql_bus_climatization_compliance = """ CREATE TABLE IF NOT EXISTS bus_climatization_compliance (
                                             id INTEGER PRIMARY KEY,
                                             consorcium VARCHAR(20),
-                                            compliance FLOAT,
+                                            total_busses FLOAT,
+                                            busses_without_climatization FLOAT,
                                             conclusion_percentage FLOAT,
                                             subsidy FLOAT,
+                                            date DATE,
                                             FOREIGN KEY(consorcium) REFERENCES consorcium(name)
                                         ); """
-
-    sql_bus_km_compliance = """ CREATE TABLE IF NOT EXISTS bus_km_compliance (
-                                    id INTEGER PRIMARY KEY,
-                                    consorcium VARCHAR(20),
-                                    compliance FLOAT,
-                                    conclusion_percentage FLOAT,
-                                    subsidy FLOAT,
-                                    FOREIGN KEY(consorcium) REFERENCES consorcium(name)
-                                ); """
 
     sql_bus_amount_compliance = """ CREATE TABLE IF NOT EXISTS bus_amount_compliance (
                                         id INTEGER PRIMARY KEY,
                                         consorcium VARCHAR(20),
-                                        compliance FLOAT,
+                                        scheduled_fleets FLOAT,
+                                        recorded_fleets FLOAT,
                                         conclusion_percentage FLOAT,
                                         subsidy FLOAT,
+                                        date DATE,
                                         FOREIGN KEY(consorcium) REFERENCES consorcium(name)
                                     ); """
 
+    sql_total_subsidy = """ CREATE TABLE IF NOT EXISTS total_subsidy (
+                                id INTEGER PRIMARY KEY,
+                                consorcium VARCHAR(20),
+                                total_subsidy FLOAT,
+                                date DATE,
+                                FOREIGN KEY(consorcium) REFERENCES consorcium(name)
+                            ); """
 
     # create tables
     create_table(conn, sql_consorcium_table)
     create_table(conn, sql_bus_trip_compliance)
-    create_table(conn, sql_bus_climatization_compliance)
     create_table(conn, sql_bus_km_compliance)
+    create_table(conn, sql_bus_climatization_compliance)
     create_table(conn, sql_bus_amount_compliance)
+    create_table(conn, sql_total_subsidy)
 
 
 ###################################################################
@@ -146,14 +161,14 @@ def list_to_str(my_list:list):
 #                            INSERTS                              #
 #                                                                 #
 ###################################################################
-def insert_consorcium(conn, name, total_subsidy):
+def insert_consorcium(conn, name):
     sql = f"""
-        INSERT INTO consorcium(name, total_subsidy) VALUES
-        (?, ?)
+        INSERT INTO consorcium(name) VALUES
+        (?)
     """
     cur = conn.cursor()
     try:
-        cur.execute(sql, (name, total_subsidy))
+        cur.execute(sql, (name))
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(e)
@@ -163,26 +178,12 @@ def insert_consorcium(conn, name, total_subsidy):
 
 def insert_bus_trip_compliance_data(conn, payload):
     sql = """ 
-        INSERT INTO bus_trip_compliance(consorcium, compliance, conclusion_percentage, subsidy) VALUES
-        (?, ?, ?, ?)          
+        INSERT INTO bus_trip_compliance(consorcium, trips_scheduled, trips_completed, conclusion_percentage, subsidy, date) VALUES
+        (?, ?, ?, ?, ?, ?)          
     """
     cur = conn.cursor()
     try:
-        cur.execute(sql, (payload['consorcio'], payload['compliance'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
-        conn.commit()
-        return True
-    except sqlite3.IntegrityError as e:
-        print(e)
-        return False
-
-def insert_bus_climatization_compliance_data(conn, payload):
-    sql = """ 
-        INSERT INTO bus_climatization_compliance(consorcium, compliance, conclusion_percentage, subsidy) VALUES
-        (?, ?, ?, ?)          
-    """
-    cur = conn.cursor()
-    try:
-        cur.execute(sql, (payload['consorcio'], payload['compliance'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
+        cur.execute(sql, (payload['consorcio'], payload['compliance']['meta_viagens_realizadas'], payload['compliance']['total_viagens_realizadas'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
         conn.commit()
         return True
     except sqlite3.IntegrityError as e:
@@ -191,12 +192,26 @@ def insert_bus_climatization_compliance_data(conn, payload):
 
 def insert_bus_km_compliance_data(conn, payload):
     sql = """ 
-        INSERT INTO bus_km_compliance(consorcium, compliance, conclusion_percentage, subsidy) VALUES
-        (?, ?, ?, ?)          
+        INSERT INTO bus_km_compliance(consorcium, km_scheduled, km_completed, conclusion_percentage, subsidy, date) VALUES
+        (?, ?, ?, ?, ?, ?)          
     """
     cur = conn.cursor()
     try:
-        cur.execute(sql, (payload['consorcio'], payload['compliance'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
+        cur.execute(sql, (payload['consorcio'], payload['compliance']['total_programada'], payload['compliance']['total_realizada'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError as e:
+        print(e)
+        return False
+
+def insert_bus_climatization_compliance_data(conn, payload):
+    sql = """ 
+        INSERT INTO bus_climatization_compliance(consorcium, total_busses, busses_without_climatization, conclusion_percentage, subsidy, date) VALUES
+        (?, ?, ?, ?, ?, ?)          
+    """
+    cur = conn.cursor()
+    try:
+        cur.execute(sql, (payload['consorcio'], payload['compliance']['total_onibus'], payload['compliance']['nao_climatizados'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
         conn.commit()
         return True
     except sqlite3.IntegrityError as e:
@@ -205,12 +220,26 @@ def insert_bus_km_compliance_data(conn, payload):
 
 def insert_bus_amount_compliance_data(conn, payload):
     sql = """ 
-        INSERT INTO bus_amount_compliance(consorcium, compliance, conclusion_percentage, subsidy) VALUES
-        (?, ?, ?, ?)          
+        INSERT INTO bus_amount_compliance(consorcium, scheduled_fleets, recorded_fleets, conclusion_percentage, subsidy, date) VALUES
+        (?, ?, ?, ?, ?, ?)          
     """
     cur = conn.cursor()
     try:
-        cur.execute(sql, (payload['consorcio'], payload['compliance'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
+        cur.execute(sql, (payload['consorcio'], payload['compliance']['total_frotas_programadas'], payload['compliance']['total_frotas_disponiveis'], payload['porcentagem_conclusao'], payload['subsidio_concedido']))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError as e:
+        print(e)
+        return False
+
+def insert_total_subsidy_data(conn, consorcio, total_subsidy, date):
+    sql = """ 
+        INSERT INTO total_subsidy(consorcium, total_subsidy, date) VALUES
+        (?, ?, ?)          
+    """
+    cur = conn.cursor()
+    try:
+        cur.execute(sql, (consorcio, total_subsidy, date))
         conn.commit()
         return True
     except sqlite3.IntegrityError as e:

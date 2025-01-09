@@ -207,8 +207,8 @@ def viagem_programada(inicio, fim, empresa, linha):
             "consorcio": "TransNit",
             "viagensRealizadas": soma_viagens,
             "compliance": {
-                "total_viagens_realizadas": soma_viagens,
-                "meta_viagens_realizadas": meta_viagens
+                "meta_viagens_realizadas": meta_viagens,
+                "total_viagens_realizadas": soma_viagens
             },
             "porcentagem_conclusao": compliance_viagens,
             "subsidio_concedido": subsidio_concedido
