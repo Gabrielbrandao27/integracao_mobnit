@@ -29,6 +29,49 @@ def calcular_subsidio(compliance):
     return 0
 
 
+# Item 4- Quantidade de ônibus programada x realizada
+
+url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/indicadores/frota/disponivel-programada?Threshold={treshold}&from={inicio}&to={fim}&Empresas={empresas}"
+
+response = requests.get(url).json()
+
+dados_onibus_df = pd.DataFrame.from_dict(response['dados'])
+
+# Calcula total de frotas programadas e disponíveis
+frota_programada = dados_onibus_df['frotaProgramada'].sum()
+frota_disponivel = dados_onibus_df['frotaDisponivel'].sum()
+
+# Cria novo DataFrame com os totais por Consórcio
+dados_onibus_df = pd.DataFrame({'total_frotas_programadas': [frota_programada], 'total_frotas_disponiveis': [frota_disponivel]})
+print(dados_onibus_df)
+
+# Calcula a porcentagem da Escala de Cumprimento
+compliance_frota = round((frota_disponivel / frota_programada), 2)
+print(compliance_frota)
+
+json_totais = dados_onibus_df.to_json(orient='records')
+
+# Calcula a porcentagem do Subsídio
+subsidio_concedido = calcular_subsidio(compliance_frota * 100)
+
+# subsidios_totais(subsidio_struct['dados'], 'bus_amount', valor_compliance, subsidio_concedido)
+
+payload = {
+    "tipoInput": "compliance/frota_disponivel",
+    "dados": {
+        "consorcio": "TransNit",
+        "compliance": json_totais,
+        "porcentagem_conclusao": compliance_frota,
+        "subsidio_concedido": subsidio_concedido,
+    }
+}
+
+# Transforma response em Binário para enviar ao dApp
+# response_binario = json.dumps(response, indent=2).encode('utf-8')
+
+print(payload)
+
+
 # Item 2- Quilometragem programada x realizada
 
 # Ida
@@ -43,31 +86,33 @@ url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/dados-operacionais/quilometragem/
 response_volta = requests.get(url).json()
 df_volta = pd.DataFrame.from_dict(response_volta["dados"])
 
-# Merge Ida and Volta on 'numeroLinha'
+# Merge Ida e Volta em 'numeroLinha'
 df_totais = pd.merge(df_ida, df_volta, on='numeroLinha', suffixes=('_ida', '_volta'))
 
-# Calculate total_programada and total_realizada
-df_totais['total_programada'] = round(df_totais['kmProgramadaIda'] + df_totais['kmProgramadaVolta'], 2)
-df_totais['total_realizada'] = round(df_totais['kmRealizadaIda'] + df_totais['kmRealizadaVolta'], 2)
+# Calcula total_programada e total_realizada
+total_programada = round(df_totais['kmProgramadaIda'] + df_totais['kmProgramadaVolta'], 2).sum()
+total_realizada = round(df_totais['kmRealizadaIda'] + df_totais['kmRealizadaVolta'], 2).sum()
 
-# Select relevant columns
-df_totais = df_totais[['numeroLinha', 'total_programada', 'total_realizada']]
-df_totais.rename(columns={'numeroLinha': 'linha'}, inplace=True)
+# Cria novo DataFrame com os totais por Consórcio
+df_totais = pd.DataFrame({'total_programada': [total_programada], 'total_realizada': [total_realizada]})
 
 # Calcula a porcentagem da Escala de Cumprimento
-compliance_km = df_totais['total_realizada'].sum() / df_totais['total_programada'].sum()
+compliance_km = round((total_realizada / total_programada), 2)
 print(compliance_km)
-porcentagem_conclusao = round((compliance_km * 100), 2)
-print(porcentagem_conclusao)
 subsidio_concedido = calcular_subsidio(compliance_km * 100)
 print(subsidio_concedido)
 
 json_totais = df_totais.to_json(orient='records')
 
 payload = {
-    "dados": json_totais,
-    "tipoInput": "compliance/quilometragem_percorrida"
+    "tipoInput": "compliance/quilometragem_percorrida",
+    
+    "dados": {
+        "consorcio": "TransNit",
+        "compliance": json_totais,
+        "porcentagem_conclusao": compliance_km,
+        "subsidio_concedido": subsidio_concedido
+    }
 }
-# print(payload)
-response_binario = json.dumps(payload, indent=2).encode('utf-8')
-print(response_binario)
+
+print(payload)

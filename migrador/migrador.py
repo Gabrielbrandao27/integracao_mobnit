@@ -5,7 +5,7 @@ import os
 # from eth_abi import encode_abi
 from web3 import Web3
 from dotenv import load_dotenv
-from get_from_excel import get_company_compliance
+from get_from_excel import get_consortium_compliance
 
 load_dotenv()
 
@@ -13,8 +13,8 @@ MOBNIT_API_URL = os.getenv('MOBNIT_API_URL')
 MANAGER_TOKEN = os.getenv('MANAGER_TOKEN')
 
 subsidio_struct = {
+    "tipoInput": "compliance/subsidios",
     "dados": [],
-    "tipoInput": "compliance/subsidios"
 }
 
 
@@ -205,16 +205,18 @@ def viagem_programada(inicio, fim, empresa, linha):
     meta_viagens = get_standard_trip_number() # no futuro, substituir pela meta real de viagens
     compliance_viagens = (soma_viagens/meta_viagens)*100
     subsidio_concedido = calcular_subsidio(compliance_viagens)
-    subsidios_totais(subsidio_struct['dados'], 'bus_trips', compliance_viagens, subsidio_concedido)
+    # subsidios_totais(subsidio_struct['dados'], 'bus_trips', compliance_viagens, subsidio_concedido)
     payload = {
         "tipoInput": "compliance/numero_viagens",
         "dados": {
-            "empresa": empresa,
-            "linha": linha,
+            "consorcio": "TransNit",
             "viagensRealizadas": soma_viagens,
-            "compliance": compliance_viagens
+            "compliance": compliance_viagens,
+            "porcentagem_conclusao": compliance_viagens,
+            "subsidio_concedido": subsidio_concedido
         }
     }
+    return payload
 
     response_binario = json.dumps(payload, indent=2).encode('utf-8')
     return response_binario
@@ -234,50 +236,56 @@ def bus_km_compliance(linhas, treshold, inicio, fim):
 
     response_volta = requests.get(url).json()
     df_volta = pd.DataFrame.from_dict(response_volta["dados"])
-    
-    # Merge Ida and Volta on 'numeroLinha'
+
+    # Merge Ida e Volta em 'numeroLinha'
     df_totais = pd.merge(df_ida, df_volta, on='numeroLinha', suffixes=('_ida', '_volta'))
 
-    # Calculate total_programada and total_realizada
-    df_totais['total_programada'] = round(df_totais['kmProgramadaIda'] + df_totais['kmProgramadaVolta'], 2)
-    df_totais['total_realizada'] = round(df_totais['kmRealizadaIda'] + df_totais['kmRealizadaVolta'], 2)
-    
-    # Select relevant columns
-    df_totais = df_totais[['numeroLinha', 'total_programada', 'total_realizada']]
-    df_totais.rename(columns={'numeroLinha': 'linha'}, inplace=True)
+    # Calcula total_programada e total_realizada
+    total_programada = round(df_totais['kmProgramadaIda'] + df_totais['kmProgramadaVolta'], 2).sum()
+    total_realizada = round(df_totais['kmRealizadaIda'] + df_totais['kmRealizadaVolta'], 2).sum()
 
-    # Calcula a porcentagem do Subsídio e salva na estrutura que montará a tabela de subsídios
-    compliance_km = df_totais['total_realizada'].sum() / df_totais['total_programada'].sum()
-    porcentagem_conclusao = round((compliance_km * 100), 2)
+    # Cria novo DataFrame com os totais por Consórcio
+    df_totais = pd.DataFrame({'total_programada': [total_programada], 'total_realizada': [total_realizada]})
+
+    # Calcula a porcentagem da Escala de Cumprimento
+    compliance_km = round((total_realizada / total_programada), 2)
     subsidio_concedido = calcular_subsidio(compliance_km * 100)
-    subsidios_totais(subsidio_struct['dados'], 'bus_km', porcentagem_conclusao, subsidio_concedido)
 
-    # Transforma dataframe em Json no formato padrão utilizado
     json_totais = df_totais.to_json(orient='records')
+
     payload = {
-        "dados": json_totais,
-        "tipoInput": "compliance/quilometragem_percorrida"
+        "tipoInput": "compliance/quilometragem_percorrida",
+        
+        "dados": {
+            "consorcio": "TransNit",
+            "compliance": json_totais,
+            "porcentagem_conclusao": compliance_km,
+            "subsidio_concedido": subsidio_concedido
+        }
     }
+    return payload
 
     # Transforma response em Binário para enviar ao dApp
     response_binario = json.dumps(payload, indent=2).encode('utf-8')
-
     return response_binario
 
 
 def climatizacao(empresa):
     # Item 3- Climatização das frotas
 
-    compliance_climatizacao = get_company_compliance(empresa)
+    compliance_climatizacao = get_consortium_compliance(empresa)
     subsidio_concedido = calcular_subsidio(compliance_climatizacao)
-    subsidios_totais(subsidio_struct['dados'], 'bus_ac', compliance_climatizacao, subsidio_concedido)
+    # subsidios_totais(subsidio_struct['dados'], 'bus_ac', compliance_climatizacao, subsidio_concedido)
     payload = {
         "tipoInput": "compliance/climatizacao",
         "dados": {
-            "empresa": empresa,
-            "complianceArCondicionado": compliance_climatizacao
+            "consorcio": 'TransNit',
+            "compliance": compliance_climatizacao,
+            "porcentagem_conclusao": compliance_climatizacao,
+            "subsidio_concedido": subsidio_concedido
         }
     }
+    return payload
 
     response_binario = json.dumps(payload, indent=2).encode('utf-8')
     return response_binario
@@ -290,38 +298,51 @@ def bus_amount_compliance(inicio, fim, empresas):
     response = requests.get(url).json()
 
     dados_onibus_df = pd.DataFrame.from_dict(response['dados'])
-    
+
+    # Calcula total de frotas programadas e disponíveis
+    frota_programada = dados_onibus_df['frotaProgramada'].sum()
+    frota_disponivel = dados_onibus_df['frotaDisponivel'].sum()
+
+    # Cria novo DataFrame com os totais por Consórcio
+    dados_onibus_df = pd.DataFrame({'total_frotas_programadas': [frota_programada], 'total_frotas_disponiveis': [frota_disponivel]})
+
     # Calcula a porcentagem da Escala de Cumprimento
-    compliance_frota = dados_onibus_df['frotaDisponivel'].sum() / dados_onibus_df['frotaProgramada'].sum()
-    print(compliance_frota)
+    compliance_frota = round((frota_disponivel / frota_programada), 2)
+
+    json_totais = dados_onibus_df.to_json(orient='records')
 
     # Calcula a porcentagem do Subsídio
-    response['complianceSubsidio'] = "%.2f" % (compliance_frota * 100)
-    response['subsidioConcedido'] = calcular_subsidio(compliance_frota * 100)
-    response['tipoInput'] = 'compliance/frota'
-    
-    # Calcula a porcentagem do Subsídio e salva na estrutura que montará a tabela de subsídios
-    valor_compliance = "%.2f" % (compliance_frota * 100)
     subsidio_concedido = calcular_subsidio(compliance_frota * 100)
-    subsidios_totais(subsidio_struct['dados'], 'bus_amount', valor_compliance, subsidio_concedido)
+
+    # subsidios_totais(subsidio_struct['dados'], 'bus_amount', valor_compliance, subsidio_concedido)
+
+    payload = {
+        "tipoInput": "compliance/frota_disponivel",
+        "dados": {
+            "consorcio": "TransNit",
+            "compliance": json_totais,
+            "porcentagem_conclusao": compliance_frota,
+            "subsidio_concedido": subsidio_concedido,
+        }
+    }
+    return payload
 
     # Transforma response em Binário para enviar ao dApp
-    response_binario = json.dumps(response, indent=2).encode('utf-8')
-
+    response_binario = json.dumps(payload, indent=2).encode('utf-8')
     return response_binario
 
 
-def subsidios_totais(dados, nome_compliance, valor_compliance, subsidio_concedido):
+# def subsidios_totais(dados, nome_compliance, valor_compliance, subsidio_concedido):
 
-    dados.append(
-        {
-            "nome_compliance": nome_compliance,
-            "valor_compliance": valor_compliance,
-            "total_subsidio": subsidio_concedido
-        }
-    )
+#     dados.append(
+#         {
+#             "nome_compliance": nome_compliance,
+#             "valor_compliance": valor_compliance,
+#             "total_subsidio": subsidio_concedido
+#         }
+#     )
 
-    return 0
+#     return 0
 
 
 def envia_input_dapp(payload):
@@ -355,20 +376,20 @@ if __name__ == '__main__':
 
     # Item 1- Quilometragem Programada
     response_viagens_programadas = viagem_programada(inicio, fim, empresas, linhas)
-    envia_input_dapp(response_viagens_programadas)
-
+    # envia_input_dapp(response_viagens_programadas)
+    print('\n', response_viagens_programadas)
     # Item 2- Quilometragem Programada
     response_km_programada = bus_km_compliance(linhas, treshold, inicio, fim)
-    envia_input_dapp(response_km_programada)
-
+    # envia_input_dapp(response_km_programada)
+    print('\n', response_km_programada)
     # Item 3 - Climatização da Frota
     response_climatizacao = climatizacao(empresas)
-    envia_input_dapp(response_climatizacao)
-
+    # envia_input_dapp(response_climatizacao)
+    print('\n', response_climatizacao)
     # Item 4- Quantidade de Ônibus
     response_frota_disponivel = bus_amount_compliance(inicio, fim, empresas)
-    envia_input_dapp(response_frota_disponivel)
-
+    # envia_input_dapp(response_frota_disponivel)
+    print('\n', response_frota_disponivel)
     # Subsídios Totais
-    struct_json = json.dumps(subsidio_struct, indent=2).encode('utf-8')
-    envia_input_dapp(struct_json)
+    # struct_json = json.dumps(subsidio_struct, indent=2).encode('utf-8')
+    # envia_input_dapp(struct_json)

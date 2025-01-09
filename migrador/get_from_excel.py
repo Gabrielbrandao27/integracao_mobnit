@@ -34,7 +34,7 @@ def get_company_compliance(company_name):
   non_compliant_amount = len(non_compliant_buses)
   return ((bus_amount - non_compliant_amount)/bus_amount) * 100
 
-def get_company_compliance(consortium):
+def get_consortium_compliance(consortium):
   consortium_buses = get_by_consortium(consortium)
   print("Ônibus do consórcio")
   print(consortium_buses)
