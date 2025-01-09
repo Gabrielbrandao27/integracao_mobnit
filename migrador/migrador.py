@@ -198,7 +198,7 @@ def viagem_programada(inicio, fim, empresa, linha):
     df_viagens = pd.DataFrame.from_dict(response['dados'])
     soma_viagens = df_viagens['totalViagens'].sum().item()
     meta_viagens = get_standard_trip_number() # no futuro, substituir pela meta real de viagens
-    compliance_viagens = (soma_viagens/meta_viagens)*100
+    compliance_viagens = round(((soma_viagens/meta_viagens)*100), 2)
     subsidio_concedido = calcular_subsidio(compliance_viagens)
 
     payload = {
@@ -239,8 +239,8 @@ def bus_km_compliance(linhas, treshold, inicio, fim):
     df_totais = pd.merge(df_ida, df_volta, on='numeroLinha', suffixes=('_ida', '_volta'))
 
     # Calcula total_programada e total_realizada
-    total_programada = round(df_totais['kmProgramadaIda'] + df_totais['kmProgramadaVolta'], 2).sum()
-    total_realizada = round(df_totais['kmRealizadaIda'] + df_totais['kmRealizadaVolta'], 2).sum()
+    total_programada = round((df_totais['kmProgramadaIda'] + df_totais['kmProgramadaVolta']).sum(), 2)
+    total_realizada = round((df_totais['kmRealizadaIda'] + df_totais['kmRealizadaVolta']).sum(), 2)
 
     # Cria novo DataFrame com os totais por Consórcio
     dados_km_json = {'total_programada': total_programada, 'total_realizada': total_realizada}
@@ -270,6 +270,7 @@ def climatizacao(empresa):
     # Item 3- Climatização das frotas
 
     compliance_climatizacao, total_onibus, nao_climatizados = get_consortium_compliance(empresa)
+    compliance_climatizacao = round(compliance_climatizacao, 2)
     subsidio_concedido = calcular_subsidio(compliance_climatizacao)
 
     payload = {

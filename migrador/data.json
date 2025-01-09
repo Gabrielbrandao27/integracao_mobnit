@@ -5,21 +5,28 @@
   "dados": [
     {
       "tipoInput": "compliance/numero_viagens",
-      "dados": {
+      "dados": 
+      {
         "consorcio": "TransNit",
         "viagensRealizadas": 5804762,
-        "compliance": 212.71146970413756,
-        "porcentagem_conclusao": 212.71146970413756,
+        "compliance": 
+        {
+          "total_viagens_realizadas": 5804762,
+          "meta_viagens_realizadas": 2728937
+        },
+        "porcentagem_conclusao": 212.71,
         "subsidio_concedido": 100
       }
     },
     {
       "tipoInput": "compliance/quilometragem_percorrida",
-      "dados": {
+      "dados": 
+      {
         "consorcio": "TransNit",
-        "compliance": {
-          "total_programada": 1934222.71,
-          "total_realizada": 1311274.6699999997
+        "compliance": 
+        {
+          "total_programada": 1934222.67,
+          "total_realizada": 1311274.67
         },
         "porcentagem_conclusao": 68.0,
         "subsidio_concedido": 0
@@ -27,18 +34,25 @@
     },
     {
       "tipoInput": "compliance/climatizacao",
-      "dados": {
+      "dados": 
+      {
         "consorcio": "TransNit",
-        "compliance": 98.62385321100918,
-        "porcentagem_conclusao": 98.62385321100918,
+        "compliance":
+        {
+          "total_onibus": 218,
+          "nao_climatizados": 3
+        },
+        "porcentagem_conclusao": 98.62,
         "subsidio_concedido": 100
       }
     },
     {
       "tipoInput": "compliance/frota_disponivel",
-      "dados": {
+      "dados": 
+      {
         "consorcio": "TransNit",
-        "compliance": {
+        "compliance":
+        {
           "total_frotas_programadas": 727.0,
           "total_frotas_disponiveis": 457.0
         },
