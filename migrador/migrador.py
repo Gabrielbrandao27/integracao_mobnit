@@ -206,7 +206,10 @@ def viagem_programada(inicio, fim, empresa, linha):
         "dados": {
             "consorcio": "TransNit",
             "viagensRealizadas": soma_viagens,
-            "compliance": compliance_viagens,
+            "compliance": {
+                "total_viagens_realizadas": soma_viagens,
+                "meta_viagens_realizadas": meta_viagens
+            },
             "porcentagem_conclusao": compliance_viagens,
             "subsidio_concedido": subsidio_concedido
         }
@@ -266,14 +269,17 @@ def bus_km_compliance(linhas, treshold, inicio, fim):
 def climatizacao(empresa):
     # Item 3- Climatização das frotas
 
-    compliance_climatizacao = get_consortium_compliance(empresa)
+    compliance_climatizacao, total_onibus, nao_climatizados = get_consortium_compliance(empresa)
     subsidio_concedido = calcular_subsidio(compliance_climatizacao)
 
     payload = {
         "tipoInput": "compliance/climatizacao",
         "dados": {
             "consorcio": 'TransNit',
-            "compliance": compliance_climatizacao,
+            "compliance": {
+                "total_onibus": total_onibus,
+                "nao_climatizados": nao_climatizados 
+            },
             "porcentagem_conclusao": compliance_climatizacao,
             "subsidio_concedido": subsidio_concedido
         }

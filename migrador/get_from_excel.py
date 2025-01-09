@@ -45,7 +45,7 @@ def get_consortium_compliance(consortium):
   # print(non_compliant_buses)
   # print("\n")
   non_compliant_amount = len(non_compliant_buses)
-  return ((bus_amount - non_compliant_amount)/bus_amount) * 100
+  return ((bus_amount - non_compliant_amount)/bus_amount) * 100, bus_amount, non_compliant_amount
 
 if __name__ == '__main__':
   merge_databases()
