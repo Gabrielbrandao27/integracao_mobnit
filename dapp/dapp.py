@@ -39,35 +39,38 @@ def handle_advance(data):
     logger.info(f"Payload: {payload}")
     payload_json = json.loads(payload)
 
-    match payload_json['tipoInput']:
-        case 'compliance/frota_disponivel':
-            for info_linha in payload_json['dados']:
-                if not db.insert_bus_line(conn, info_linha['linha']):
-                    return "reject"
-                if not db.insert_bus_amount_compliance_data(conn, info_linha):
-                    return "reject"
-            bus_amount_compliance_query = db.select_bus_amount_compliance_data(conn)
-            logger.info(f"Bus amount compliance query result: {bus_amount_compliance_query}")
-
-        case 'compliance/quilometragem_percorrida':
-            for info_linha in payload_json['dados']:
-                if not db.insert_bus_line(conn, info_linha['linha']):
-                    return "reject"
-                if not db.insert_bus_km_compliance_data(conn, info_linha):
-                    return "reject"
-            bus_km_compliance_query = db.select_bus_km_compliance_data(conn)
-            logger.info(f"Bus km compliance query result: {bus_km_compliance_query}")
-        
-        case 'compliance/subsidios':
-            for info_subsidio in payload_json['dados']:
-                if not db.insert_bus_subsidy_data(conn, info_subsidio):
-                    return "reject"
-            subsidies_query = db.select_bus_subsidy_data(conn)
-            logger.info(f"Subsidies query result: {subsidies_query}")
-
-        case _:
-            logger.info("Unknown type of input")
+    if payload_json['tipoInput'] == 'compliance/subsidios':
+        if not db.insert_consorcium(conn, payload_json['consorcio'], payload_json['subsidio_total']):
             return "reject"
+        for item in payload_json['dados']:
+            match item["tipoInput"]:
+                case 'compliance/numero_viagens':
+                    if not db.insert_bus_trip_compliance_data(conn, item):
+                        return "reject"
+                    bus_trip_compliance_query = db.select_bus_trip_compliance_data(conn)
+                    logger.info(f"Bus trip compliance query result: {bus_trip_compliance_query}")
+
+                case 'compliance/quilometragem_percorrida':
+                    if not db.insert_bus_km_compliance_data(conn, item):
+                        return "reject"
+                    bus_km_compliance_query = db.select_bus_km_compliance_data(conn)
+                    logger.info(f"Bus km compliance query result: {bus_km_compliance_query}")
+                
+                case 'compliance/climatizacao':
+                    if not db.insert_bus_climatization_compliance_data(conn, item):
+                        return "reject"
+                    bus_climatization_compliance_query = db.select_bus_climatization_compliance_data(conn)
+                    logger.info(f"Bus climatization compliance query result: {bus_climatization_compliance_query}")
+
+                case 'compliance/frota_disponivel':
+                    if not db.insert_bus_amount_compliance_data(conn, item):
+                        return "reject"
+                    bus_amount_compliance_query = db.select_bus_amount_compliance_data(conn)
+                    logger.info(f"Bus amount compliance query result: {bus_amount_compliance_query}")
+
+                case _:
+                    logger.info("Unknown type of input")
+                    return "reject"
 
     conn.close()
 
@@ -75,7 +78,7 @@ def handle_advance(data):
 
 
 def handle_inspect(data):
-    logger.info(f"Received Brandão e Marcelo inspect request data {data}")
+    logger.info(f"Received inspect request data {data}")
     
     conn = db_getter.create_connection('integracao_mobnit.db')
     
