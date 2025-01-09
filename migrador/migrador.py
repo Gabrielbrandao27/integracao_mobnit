@@ -373,6 +373,7 @@ if __name__ == '__main__':
     inicio = f"1727740800000"
     fim = "1730419199999"
     empresas = 'INGÁ'
+    consorcio = "TRANSNIT"
 
     # Item 1- Quilometragem Programada
     response_viagens_programadas = viagem_programada(inicio, fim, empresas, linhas)
@@ -383,7 +384,7 @@ if __name__ == '__main__':
     # envia_input_dapp(response_km_programada)
     print('\n', response_km_programada)
     # Item 3 - Climatização da Frota
-    response_climatizacao = climatizacao(empresas)
+    response_climatizacao = climatizacao(consorcio)
     # envia_input_dapp(response_climatizacao)
     print('\n', response_climatizacao)
     # Item 4- Quantidade de Ônibus
