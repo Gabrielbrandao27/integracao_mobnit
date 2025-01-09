@@ -12,11 +12,6 @@ load_dotenv()
 MOBNIT_API_URL = os.getenv('MOBNIT_API_URL')
 MANAGER_TOKEN = os.getenv('MANAGER_TOKEN')
 
-subsidio_struct = {
-    "tipoInput": "compliance/subsidios",
-    "dados": [],
-}
-
 
 def get_standard_trip_number():
     standard_trips = [ # viagens no consorcio transnit
@@ -205,7 +200,7 @@ def viagem_programada(inicio, fim, empresa, linha):
     meta_viagens = get_standard_trip_number() # no futuro, substituir pela meta real de viagens
     compliance_viagens = (soma_viagens/meta_viagens)*100
     subsidio_concedido = calcular_subsidio(compliance_viagens)
-    # subsidios_totais(subsidio_struct['dados'], 'bus_trips', compliance_viagens, subsidio_concedido)
+
     payload = {
         "tipoInput": "compliance/numero_viagens",
         "dados": {
@@ -273,7 +268,7 @@ def climatizacao(empresa):
 
     compliance_climatizacao = get_consortium_compliance(empresa)
     subsidio_concedido = calcular_subsidio(compliance_climatizacao)
-    # subsidios_totais(subsidio_struct['dados'], 'bus_ac', compliance_climatizacao, subsidio_concedido)
+
     payload = {
         "tipoInput": "compliance/climatizacao",
         "dados": {
@@ -310,8 +305,6 @@ def bus_amount_compliance(inicio, fim, empresas):
     # Calcula a porcentagem do Subsídio
     subsidio_concedido = calcular_subsidio(compliance_frota)
 
-    # subsidios_totais(subsidio_struct['dados'], 'bus_amount', valor_compliance, subsidio_concedido)
-
     payload = {
         "tipoInput": "compliance/frota_disponivel",
         "dados": {
@@ -326,19 +319,6 @@ def bus_amount_compliance(inicio, fim, empresas):
     # Transforma response em Binário para enviar ao dApp
     response_binario = json.dumps(payload, indent=2).encode('utf-8')
     return response_binario
-
-
-# def subsidios_totais(dados, nome_compliance, valor_compliance, subsidio_concedido):
-
-#     dados.append(
-#         {
-#             "nome_compliance": nome_compliance,
-#             "valor_compliance": valor_compliance,
-#             "total_subsidio": subsidio_concedido
-#         }
-#     )
-
-#     return 0
 
 
 def envia_input_dapp(payload):
@@ -373,19 +353,18 @@ if __name__ == '__main__':
 
     # Item 1- Quilometragem Programada
     response_viagens_programadas = viagem_programada(inicio, fim, empresas, linhas)
-    # envia_input_dapp(response_viagens_programadas)
     print('\n', response_viagens_programadas)
+
     # Item 2- Quilometragem Programada
     response_km_programada = bus_km_compliance(linhas, treshold, inicio, fim)
-    # envia_input_dapp(response_km_programada)
     print('\n', response_km_programada)
+
     # Item 3 - Climatização da Frota
     response_climatizacao = climatizacao(consorcio)
-    # envia_input_dapp(response_climatizacao)
     print('\n', response_climatizacao)
+
     # Item 4- Quantidade de Ônibus
     response_frota_disponivel = bus_amount_compliance(inicio, fim, empresas)
-    # envia_input_dapp(response_frota_disponivel)
     print('\n', response_frota_disponivel)
 
     subsidio_total = (response_viagens_programadas['dados']['subsidio_concedido'] + response_km_programada['dados']['subsidio_concedido'] + response_climatizacao['dados']['subsidio_concedido'] + response_frota_disponivel['dados']['subsidio_concedido'])/4
@@ -403,8 +382,3 @@ if __name__ == '__main__':
     }
     print('\n', payload)
     # envia_input_dapp(payload)
-
-
-    # Subsídios Totais
-    # struct_json = json.dumps(subsidio_struct, indent=2).encode('utf-8')
-    # envia_input_dapp(struct_json)
