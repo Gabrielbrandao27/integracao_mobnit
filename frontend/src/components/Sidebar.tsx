@@ -1,4 +1,4 @@
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
+import { LineChartOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import React from 'react';
@@ -13,26 +13,54 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedChart }) => {
   const items: MenuItem[] = [
     {
       key: '1',
-      icon: <MailOutlined />,
-      label: 'Viagens Completas',
+      icon: <LineChartOutlined style={{color: 'orange'}}/>,
+      label: (
+        <span style={{
+          color: 'orange',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '20px',
+          fontWeight: 'bold'
+        }}>Viagens Completas</span>
+      ),
       onClick: () => setSelectedChart('TripsCompletedChartData'),
     },
     {
       key: '2',
-      icon: <AppstoreOutlined />,
-      label: 'Distância Percorrida',
+      icon: <LineChartOutlined style={{color: 'orange'}}/>,
+      label: (
+        <span style={{
+          color: 'orange',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '20px',
+          fontWeight: 'bold'
+        }}>Distância Percorrida</span>
+      ),
       onClick: () => setSelectedChart('TraveledKmChartData'),
     },
     {
       key: '3',
-      icon: <SettingOutlined />,
-      label: 'Climatização',
+      icon: <LineChartOutlined style={{color: 'orange'}}/>,
+      label: (
+        <span style={{
+          color: 'orange',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '20px',
+          fontWeight: 'bold'
+        }}>Climatização</span>
+      ),
       onClick: () => setSelectedChart('ClimatizationChartData'),
     },
     {
       key: '4',
-      icon: <AppstoreOutlined />,
-      label: 'Frotas Disponíveis',
+      icon: <LineChartOutlined style={{color: 'orange'}}/>,
+      label: (
+        <span style={{
+          color: 'orange',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '20px',
+          fontWeight: 'bold'
+        }}>Frotas Disponíveis</span>
+      ),
       onClick: () => setSelectedChart('AvaiableFleetchartData'),
     },
   ];

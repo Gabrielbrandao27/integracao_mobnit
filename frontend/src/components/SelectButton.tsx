@@ -8,6 +8,7 @@ interface SelectButtonProps {
 
 const SelectButton: React.FC<SelectButtonProps> = ({ options, onChange }) => (
   <Select
+    className='select-button'
     showSearch
     style={{ width: 200 }}
     placeholder="Search to Select"

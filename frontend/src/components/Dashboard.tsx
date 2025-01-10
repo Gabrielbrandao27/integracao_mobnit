@@ -4,6 +4,7 @@ import { Line } from 'react-chartjs-2';
 import { fetchAvaiableFleetData, fetchClimatizationData, fetchCompletedTripsData, fetchTraveledKmData, } from '../api/dashboardService';
 import { AvaiableFleetData, ClimatizationData, dappResponseData, TraveledKmData, TripsCompletedData } from '../types/DashboardData';
 import { hex2str } from '../utils/ether';
+import HeaderBar from './Header';
 import SelectButton from './SelectButton';
 import Sidebar from './Sidebar';
 import './styles.css';
@@ -237,15 +238,13 @@ const Dashboard: React.FC = () => {
 
   return (
     <div>
-      <h1 className='title'>Dashboard Subsídios</h1>
+      <HeaderBar/>
       <div className='dashboard'>
         <Sidebar setSelectedChart={setSelectedChart}/>
-        <div className='select-button'>
-          <SelectButton options={UniqueDates.map(date => ({ value: date, label: date}))} onChange={handleDateChange}/>
-          <div className='chart-container'>
-            {renderChart()}
-          </div>
+        <div className='chart-container'>
+          {renderChart()}
         </div>
+        <SelectButton options={UniqueDates.map(date => ({ value: date, label: date}))} onChange={handleDateChange}/>
       </div>
     </div>
   );

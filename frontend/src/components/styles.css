@@ -1,9 +1,13 @@
 .title {
-    color: rgb(0, 0, 0);
+    color: #ff5e00;
     width: 100%;
     top: -20px;
     left: 0;
     text-align: center; /* Center the title text */
+    font-family: 'Arial, sans-serif';
+    font-weight: 700;
+    font-size: 5rem;
+    border-radius: 10px;
 }
 
 .dashboard {
@@ -15,17 +19,17 @@
 }
 
 .sidebar {
-    width: 250px;
+    width: 350px;
     height: 100vh;
     position: fixed; /* Fix the sidebar to the left side */
-    top: 0;
     left: 0;
+    top: 50px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    background-color: #f9f9f9;
-    padding: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: hsl(0, 0%, 43%);
+    padding: 20px;
+    font-size: larger;
 }
 
 .chart-container {
@@ -38,4 +42,8 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 600px; /* Increase the height to make the charts taller */
     width: 700px /* Increase the width to make the charts wider */
+}
+
+.select-button {
+    margin-left: 30px;
 }
