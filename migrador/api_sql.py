@@ -10,10 +10,6 @@ load_dotenv()
 
 SQL_API_URL = os.getenv('SQL_API_URL')
 
-# METAS DE NUMERO DE VIAGENS - AMBAS OBTIDAS DO MÊS DE SETEMBRO DE 2024
-META_VIAGENS_TRANSNIT = 2823858
-META_VIAGENS_TRANSOCEANICO = 3847979
-
 def get_query(consortium, queryType, data_inicio, data_fim):
     match queryType:
         case 'viagens':
@@ -45,24 +41,19 @@ def get_first_and_last_day_previous_month(month=None, year=None):
     now = now.replace(day=1, month=month if month else now.month, year=year if year else now.year) # forçando a ser dia 1 do mês que a automação rodar
     data_fim = now - datetime.timedelta(days=1)
     data_inicio = data_fim.replace(day=1) - datetime.timedelta(days=1)
-    print(data_inicio)
-    print(data_fim)
     return int(data_inicio.timestamp() * 1000), int(data_fim.timestamp() * 1000)
 
 def get_from_api(consortium, queryType):
     data_inicio, data_fim = get_first_and_last_day_previous_month()
     query = get_query(consortium, queryType, data_inicio, data_fim)
-    print("query: " + query)
     query_brotli = brotli.compress(query.encode('utf-8'))
-    print("query em utf-8 e comprimida brotli: " + str(query_brotli))
     query_safe = urlsafe_b64encode(query_brotli).decode()
     url_query = SQL_API_URL + query_safe
-    print("query em urlsafe b64: " + query_safe)
     result = requests.get(url_query)
     return result.json()
 
 if __name__ == "__main__":
-    result = get_from_api("transnit", 'frota')
+    result = get_from_api("transoceânico", 'frota')
     print(result)
     # df_viagens = pd.DataFrame.from_dict(result)
     # soma_viagens = df_viagens['totalViagens'].sum().item()
