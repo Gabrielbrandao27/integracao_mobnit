@@ -4,16 +4,20 @@ import { Line } from 'react-chartjs-2';
 import { fetchAvaiableFleetData, fetchClimatizationData, fetchCompletedTripsData, fetchTraveledKmData, } from '../api/dashboardService';
 import { AvaiableFleetData, ClimatizationData, dappResponseData, TraveledKmData, TripsCompletedData } from '../types/DashboardData';
 import { hex2str } from '../utils/ether';
+import SelectButton from './SelectButton';
+import Sidebar from './Sidebar';
 import './styles.css';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const Dashboard: React.FC = () => {
+  const [selectedChart, setSelectedChart] = useState('TripsCompletedChartData');
   const [loading, setLoading] = useState<boolean>(true);
   const [completedTrips, setCompletedTrips] = useState<TripsCompletedData | null>(null);
   const [traveledKm, setTraveledKm] = useState<TraveledKmData | null>(null);
   const [climatization, setClimatization] = useState<ClimatizationData | null>(null);
   const [avaiableFleet, setAvaibleFleet] = useState<AvaiableFleetData | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   
   useEffect(() => {
     const getCompletedTripsData = async () => {
@@ -93,11 +97,14 @@ const Dashboard: React.FC = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
+
+  const filterDataByDate = (data) => {
+    if (!selectedDate) return data;
+    return data.filter((dado) => dado.date === selectedDate);
+  };
   
   const TripsCompletedChartData = {
-    labels: completedTrips?.filter(
-      (obj, index) =>
-        completedTrips.findIndex((item) => item.date === obj.date) === index).map((dado) => dado.date) || [],
+    labels: filterDataByDate(completedTrips)?.map((dado) => dado.date) || [],
     datasets: [
       {
         label: 'TransNit',
@@ -117,9 +124,7 @@ const Dashboard: React.FC = () => {
   };
 
   const TraveledKmChartData = {
-    labels: traveledKm?.filter(
-      (obj, index) =>
-        traveledKm.findIndex((item) => item.date === obj.date) === index).map((dado) => dado.date) || [],
+    labels: filterDataByDate(traveledKm)?.map((dado) => dado.date) || [],
     datasets: [
       {
         label: 'TransNit',
@@ -139,9 +144,7 @@ const Dashboard: React.FC = () => {
   };
 
   const ClimatizationChartData = {
-    labels: climatization?.filter(
-      (obj, index) =>
-        climatization.findIndex((item) => item.date === obj.date) === index).map((dado) => dado.date) || [],
+    labels: filterDataByDate(climatization)?.map((dado) => dado.date) || [],
     datasets: [
       {
         label: 'TransNit',
@@ -161,9 +164,7 @@ const Dashboard: React.FC = () => {
   };
 
   const AvaiableFleetchartData = {
-    labels: avaiableFleet?.filter(
-      (obj, index) =>
-        avaiableFleet.findIndex((item) => item.date === obj.date) === index).map((dado) => dado.date) || [],
+    labels: filterDataByDate(climatization)?.map((dado) => dado.date) || [],
     datasets: [
       {
         label: 'TransNit',
@@ -206,25 +207,44 @@ const Dashboard: React.FC = () => {
     },
   };
 
+  const UniqueDates = [
+    ...new Set([
+      ...completedTrips?.map((dado) => dado.date) || [],
+      ...traveledKm?.map((dado) => dado.date) || [],
+      ...climatization?.map((dado) => dado.date) || [],
+      ...avaiableFleet?.map((dado) => dado.date) || [],
+    ]),
+  ];
+
+  const renderChart = () => {
+    switch (selectedChart) {
+      case 'TripsCompletedChartData':
+        return <Line data={TripsCompletedChartData} options={chartOptions} width={500} height={400} />;
+      case 'TraveledKmChartData':
+        return <Line data={TraveledKmChartData} options={chartOptions} width={500} height={400} />;
+      case 'ClimatizationChartData':
+        return <Line data={ClimatizationChartData} options={chartOptions} width={500} height={400} />;
+      case 'AvaiableFleetchartData':
+        return <Line data={AvaiableFleetchartData} options={chartOptions} width={500} height={400} />;
+      default:
+        return <Line data={TripsCompletedChartData} options={chartOptions} width={500} height={400} />;
+    }
+  };
+
+  const handleDateChange = (value) => {
+    setSelectedDate(value);
+  };
+
   return (
-    <div className='dashboard-title'>
-      <h2>Dashboard Subsídios</h2>
-      <div className='charts-grid'>
-        <div className='chart-container'>
-          Viagens Completas
-          <Line data={TripsCompletedChartData} options={chartOptions} width={500} height={400} />
-        </div>
-        <div className='chart-container'>
-          Distância Percorrida
-          <Line data={TraveledKmChartData} options={chartOptions} width={500} height={400} />
-        </div>
-        <div className='chart-container'>
-          Climatização
-          <Line data={ClimatizationChartData} options={chartOptions} width={500} height={400} />
-        </div>
-        <div className='chart-container'>
-          Frotas Disponíveis
-          <Line data={AvaiableFleetchartData} options={chartOptions} width={500} height={400} />
+    <div>
+      <h1 className='title'>Dashboard Subsídios</h1>
+      <div className='dashboard'>
+        <Sidebar setSelectedChart={setSelectedChart}/>
+        <div className='select-button'>
+          <SelectButton options={UniqueDates.map(date => ({ value: date, label: date}))} onChange={handleDateChange}/>
+          <div className='chart-container'>
+            {renderChart()}
+          </div>
         </div>
       </div>
     </div>

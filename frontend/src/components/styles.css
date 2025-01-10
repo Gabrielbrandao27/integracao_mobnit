@@ -1,21 +1,41 @@
-.dashboard-title {
+.title {
     color: rgb(0, 0, 0);
+    width: 100%;
+    top: -20px;
+    left: 0;
+    text-align: center; /* Center the title text */
 }
 
-.charts-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px 200px;
-    justify-items: center;
-    align-items: center;
+.dashboard {
+    display: flex;
+    flex-direction: row; /* Ensure the sidebar and chart are side by side */
+    align-items: flex-start; /* Align items to the start of the container */
+    height: 100vh; /* Ensure the dashboard takes the full height of the viewport */
+    margin-top: 60px; /* Add margin to account for the fixed title */
+}
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    position: fixed; /* Fix the sidebar to the left side */
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .chart-container {
-    width: 100%;
-    max-width: 500px; /* Increase the max-width to make the charts wider */
-    padding: 20px; /* Add padding inside the box */
-    margin: 10px; /* Add margin outside the box */
-    border: 1px solid #ccc; /* Add a border around the box */
-    background-color: #f9f9f9; /* Set a background color for the box */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for better visual separation */
+    margin-left: 0; /* Add margin to the left to make space for the fixed sidebar */
+    margin-top: 0; /* Add margin to the top to make space for the fixed title */
+    flex-grow: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 600px; /* Increase the height to make the charts taller */
+    width: 700px /* Increase the width to make the charts wider */
 }
