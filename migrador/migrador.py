@@ -7,12 +7,16 @@ import os
 from web3 import Web3
 from dotenv import load_dotenv
 from get_from_excel import get_consortium_compliance
+from api_sql import *
 
 load_dotenv()
 
 MOBNIT_API_URL = os.getenv("MOBNIT_API_URL")
 MANAGER_TOKEN = os.getenv("MANAGER_TOKEN")
 
+# METAS DE NUMERO DE VIAGENS - AMBAS OBTIDAS DO MÊS DE SETEMBRO DE 2024
+META_VIAGENS_TRANSNIT = 2823858
+META_VIAGENS_TRANSOCEANICO = 3847979
 
 def get_standard_trip_number():
     standard_trips = [  # viagens no consorcio transnit
@@ -56,11 +60,11 @@ def get_standard_trip_number():
 def calcular_subsidio(compliance):
     if compliance > 100 or (100 >= compliance and compliance >= 95):
         return 100
-    if 94 >= compliance and compliance >= 90:
+    if 94 >= compliance and compliance > 90:
         return 95
-    if 89 >= compliance and compliance >= 85:
+    if 90 >= compliance and compliance > 85:
         return 85
-    if 84 >= compliance and compliance >= 80:
+    if 85 >= compliance and compliance >= 80:
         return 70
     return 0
     # Escala                  Subsídio a
@@ -72,16 +76,13 @@ def calcular_subsidio(compliance):
     # <80                         0
 
 
-def viagem_programada(inicio, fim, empresa, linha):
-    # Item 1- Viagem programada x realizada
-    url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/dados-operacionais/viagens/qtd-viagens-dia?Linhas={linha}&from={inicio}&to={fim}&Empresas={empresa}"
-    response = requests.get(url).json()
-    df_viagens = pd.DataFrame.from_dict(response["dados"])
-    soma_viagens = df_viagens["totalViagens"].sum().item()
-    meta_viagens = (
-        get_standard_trip_number()
-    )  # no futuro, substituir pela meta real de viagens
-    compliance_viagens = round(((soma_viagens / meta_viagens) * 100), 2)
+def viagem_programada(consorcio):
+    response = get_from_api(consorcio, 'viagens')
+    df_viagens = pd.DataFrame.from_dict(response)
+    soma_viagens = df_viagens['totalViagens'].sum().item()
+    meta_viagens = META_VIAGENS_TRANSNIT if consorcio == 'transnit' else META_VIAGENS_TRANSOCEANICO
+    compliance_viagens = round(((soma_viagens/meta_viagens)*100), 2)
+
     subsidio_concedido = calcular_subsidio(compliance_viagens)
 
     payload = {
@@ -103,20 +104,16 @@ def viagem_programada(inicio, fim, empresa, linha):
     return response_binario
 
 
-def bus_km_compliance(linhas, treshold, inicio, fim):
+def bus_km_compliance(consorcio):
     # Item 2- Quilometragem programada x realizada
 
     # Ida
-    url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/dados-operacionais/quilometragem/programada-ida?Linhas={linhas}&Threshold={treshold}&from={inicio}&to={fim}"
-
-    response_ida = requests.get(url).json()
-    df_ida = pd.DataFrame.from_dict(response_ida["dados"])
+    response_ida = get_from_api(consorcio, 'quilometragem-ida')
+    df_ida = pd.DataFrame.from_dict(response_ida)
 
     # Volta
-    url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/dados-operacionais/quilometragem/programada-volta?Linhas={linhas}&Threshold={treshold}&from={inicio}&to={fim}"
-
-    response_volta = requests.get(url).json()
-    df_volta = pd.DataFrame.from_dict(response_volta["dados"])
+    response_volta = get_from_api(consorcio, 'quilometragem-volta')
+    df_volta = pd.DataFrame.from_dict(response_volta)
 
     # Merge Ida e Volta em 'numeroLinha'
     df_totais = pd.merge(
@@ -124,12 +121,8 @@ def bus_km_compliance(linhas, treshold, inicio, fim):
     )
 
     # Calcula total_programada e total_realizada
-    total_programada = round(
-        (df_totais["kmProgramadaIda"] + df_totais["kmProgramadaVolta"]).sum(), 2
-    )
-    total_realizada = round(
-        (df_totais["kmRealizadaIda"] + df_totais["kmRealizadaVolta"]).sum(), 2
-    )
+    total_programada = round((df_totais['kmProgramadaIda'] + df_totais['kmProgramadaVolta']).sum().item(), 2)
+    total_realizada = round((df_totais['kmRealizadaIda'] + df_totais['kmRealizadaVolta']).sum().item(), 2)
 
     # Cria novo DataFrame com os totais por Consórcio
     dados_km_json = {
@@ -157,12 +150,11 @@ def bus_km_compliance(linhas, treshold, inicio, fim):
     return response_binario
 
 
-def climatizacao(empresa):
+def climatizacao(empresa : str):
     # Item 3- Climatização das frotas
 
-    compliance_climatizacao, total_onibus, nao_climatizados = get_consortium_compliance(
-        empresa
-    )
+    compliance_climatizacao, total_onibus, nao_climatizados = get_consortium_compliance(empresa.upper())
+
     compliance_climatizacao = round(compliance_climatizacao, 2)
     subsidio_concedido = calcular_subsidio(compliance_climatizacao)
 
@@ -183,15 +175,13 @@ def climatizacao(empresa):
     response_binario = json.dumps(payload, indent=2).encode("utf-8")
     return response_binario
 
-
-def bus_amount_compliance(inicio, fim, empresas):
+  
+def bus_amount_compliance(consorcio):
     # Item 4- Quantidade de ônibus programada x realizada
 
-    url = f"{MOBNIT_API_URL}/dados/{MANAGER_TOKEN}/indicadores/frota/disponivel-programada?Threshold={treshold}&from={inicio}&to={fim}&Empresas={empresas}"
+    response = get_from_api(consorcio, 'frota')
 
-    response = requests.get(url).json()
-
-    dados_onibus_df = pd.DataFrame.from_dict(response["dados"])
+    dados_onibus_df = pd.DataFrame.from_dict(response)
 
     # Calcula total de frotas programadas e disponíveis
     frota_programada = dados_onibus_df["frotaProgramada"].sum()
@@ -248,40 +238,36 @@ def envia_input_dapp(payload):
 
 if __name__ == "__main__":
     # Parâmetros para as requisições
-    linhas = f"%2735%27%2C%2734A%27"
     treshold = f"%270%27"
     inicio = f"1727740800000"
     fim = "1730419199999"
-    empresas = "INGÁ"
-    consorcio = "TRANSNIT"
+    empresas = 'INGÁ'
+    consorcio = "transnit"
 
     # Item 1- Quilometragem Programada
-    response_viagens_programadas = viagem_programada(inicio, fim, empresas, linhas)
-    print("\n", response_viagens_programadas)
+    response_viagens_programadas = viagem_programada(consorcio)
+    print('\n', response_viagens_programadas)
 
     # Item 2- Quilometragem Programada
-    response_km_programada = bus_km_compliance(linhas, treshold, inicio, fim)
-    print("\n", response_km_programada)
+    response_km_programada = bus_km_compliance(consorcio)
+    print('\n', response_km_programada)
 
     # Item 3 - Climatização da Frota
     response_climatizacao = climatizacao(consorcio)
     print("\n", response_climatizacao)
 
     # Item 4- Quantidade de Ônibus
-    response_frota_disponivel = bus_amount_compliance(inicio, fim, empresas)
-    print("\n", response_frota_disponivel)
+    response_frota_disponivel = bus_amount_compliance(consorcio)
+    print('\n', response_frota_disponivel)
 
-    subsidio_total = (
-        response_viagens_programadas["dados"]["subsidio_concedido"]
-        + response_km_programada["dados"]["subsidio_concedido"]
-        + response_climatizacao["dados"]["subsidio_concedido"]
-        + response_frota_disponivel["dados"]["subsidio_concedido"]
-    ) / 4
+    subsidio_total = (response_viagens_programadas['dados']['subsidio_concedido'] + response_km_programada['dados']['subsidio_concedido'] + response_climatizacao['dados']['subsidio_concedido'] + response_frota_disponivel['dados']['subsidio_concedido'])/4
+    today = datetime.date.today().replace(day=1)
 
     payload = {
         "tipoInput": "compliance/subsidios",
         "consorcio": "TransNit",
         "subsidio_total": subsidio_total,
+        "data_aferida": today - datetime.timedelta(days=1),
         "dados": [
             response_viagens_programadas,
             response_km_programada,
