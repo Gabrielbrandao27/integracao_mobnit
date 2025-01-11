@@ -38,20 +38,24 @@ def handle_advance(data):
     conn = db_getter.create_seedless_connection("integracao_mobnit.db")
 
     payload = hex2str(data["payload"])
-    logger.info(f"Payload: {payload}")
+    # logger.info(f"Payload: {payload}")
     payload_json = json.loads(payload)
+    logger.info(f"Payload_json: {payload_json}")
 
     if payload_json["tipoInput"] == "compliance/subsidios":
         if not db.insert_consorcium(conn, payload_json["consorcio"]):
             return "reject"
         if not db.insert_total_subsidy_data(
-            conn, payload_json["consorcio"], payload_json["subsidio_total"]
+            conn,
+            payload_json["consorcio"],
+            payload_json["subsidio_total"],
+            payload_json["data_aferida"],
         ):
             return "reject"
         for item in payload_json["dados"]:
             match item["tipoInput"]:
                 case "compliance/numero_viagens":
-                    if not db.insert_bus_trip_compliance_data(conn, item):
+                    if not db.insert_bus_trip_compliance_data(conn, payload_json["data_aferida"], item):
                         return "reject"
                     bus_trip_compliance_query = db.select_bus_trip_compliance_data(conn)
                     logger.info(
@@ -59,7 +63,7 @@ def handle_advance(data):
                     )
 
                 case "compliance/quilometragem_percorrida":
-                    if not db.insert_bus_km_compliance_data(conn, item):
+                    if not db.insert_bus_km_compliance_data(conn, payload_json["data_aferida"], item):
                         return "reject"
                     bus_km_compliance_query = db.select_bus_km_compliance_data(conn)
                     logger.info(
@@ -67,7 +71,7 @@ def handle_advance(data):
                     )
 
                 case "compliance/climatizacao":
-                    if not db.insert_bus_climatization_compliance_data(conn, item):
+                    if not db.insert_bus_climatization_compliance_data(conn, payload_json["data_aferida"], item):
                         return "reject"
                     bus_climatization_compliance_query = (
                         db.select_bus_climatization_compliance_data(conn)
@@ -77,7 +81,7 @@ def handle_advance(data):
                     )
 
                 case "compliance/frota_disponivel":
-                    if not db.insert_bus_amount_compliance_data(conn, item):
+                    if not db.insert_bus_amount_compliance_data(conn, payload_json["data_aferida"], item):
                         return "reject"
                     bus_amount_compliance_query = db.select_bus_amount_compliance_data(
                         conn
@@ -104,11 +108,12 @@ def handle_inspect(data):
     logger.info(f"Payload: {payload}")
 
     match payload:
-
         case "numero_viagens":
             logger.info("Número de viagens")
             bus_trip_compliance_query = db.select_bus_trip_compliance_data(conn)
-            logger.info(f"Bus trip compliance query result: {bus_trip_compliance_query}")
+            logger.info(
+                f"Bus trip compliance query result: {bus_trip_compliance_query}"
+            )
 
             keys = [
                 "id",
@@ -117,11 +122,11 @@ def handle_inspect(data):
                 "trips_completed",
                 "conclusion_percentage",
                 "subsidy",
-                "date"
+                "date",
             ]
             json_data = dataset_to_json(keys, bus_trip_compliance_query)
             report = {"payload": str2hex(f"{json_data}")}
-        
+
         case "quilometragem_percorrida":
             logger.info("Quilometragem percorrida")
             bus_km_compliance_query = db.select_bus_km_compliance_data(conn)
@@ -134,14 +139,16 @@ def handle_inspect(data):
                 "km_completed",
                 "conclusion_percentage",
                 "subsidy",
-                "date"
+                "date",
             ]
             json_data = dataset_to_json(keys, bus_km_compliance_query)
             report = {"payload": str2hex(f"{json_data}")}
-        
+
         case "climatizacao":
             logger.info("Climatização")
-            bus_climatization_compliance_query = db.select_bus_climatization_compliance_data(conn)
+            bus_climatization_compliance_query = (
+                db.select_bus_climatization_compliance_data(conn)
+            )
             logger.info(
                 f"Bus climatization compliance query result: {bus_climatization_compliance_query}"
             )
@@ -153,7 +160,7 @@ def handle_inspect(data):
                 "busses_without_climatization",
                 "conclusion_percentage",
                 "subsidy",
-                "date"
+                "date",
             ]
             json_data = dataset_to_json(keys, bus_climatization_compliance_query)
             report = {"payload": str2hex(f"{json_data}")}
@@ -172,7 +179,7 @@ def handle_inspect(data):
                 "recorded_fleets",
                 "conclusion_percentage",
                 "subsidy",
-                "date"
+                "date",
             ]
             json_data = dataset_to_json(keys, bus_amount_compliance_query)
             report = {"payload": str2hex(f"{json_data}")}

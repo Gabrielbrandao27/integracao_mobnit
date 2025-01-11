@@ -41,6 +41,7 @@ class DBConnector:
 
         return conn
 
+
 #######################################################
 ### :desc: create a table from the create_table_sql
 ###        statement.
@@ -207,7 +208,7 @@ def insert_consorcium(conn, name):
     """
     cur = conn.cursor()
     try:
-        cur.execute(sql, (name))
+        cur.execute(sql, name)
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(e)
@@ -216,7 +217,7 @@ def insert_consorcium(conn, name):
     return True
 
 
-def insert_bus_trip_compliance_data(conn, payload):
+def insert_bus_trip_compliance_data(conn, date, payload):
     sql = """ 
         INSERT INTO bus_trip_compliance(consorcium, trips_scheduled, trips_completed, conclusion_percentage, subsidy, date) VALUES
         (?, ?, ?, ?, ?, ?)          
@@ -226,11 +227,12 @@ def insert_bus_trip_compliance_data(conn, payload):
         cur.execute(
             sql,
             (
-                payload["consorcio"],
-                payload["compliance"]["meta_viagens_realizadas"],
-                payload["compliance"]["total_viagens_realizadas"],
-                payload["porcentagem_conclusao"],
-                payload["subsidio_concedido"],
+                payload["dados"]["consorcio"],
+                payload["dados"]["compliance"]["meta_viagens_realizadas"],
+                payload["dados"]["compliance"]["total_viagens_realizadas"],
+                payload["dados"]["porcentagem_conclusao"],
+                payload["dados"]["subsidio_concedido"],
+                date
             ),
         )
         conn.commit()
@@ -240,7 +242,7 @@ def insert_bus_trip_compliance_data(conn, payload):
         return False
 
 
-def insert_bus_km_compliance_data(conn, payload):
+def insert_bus_km_compliance_data(conn, date, payload):
     sql = """ 
         INSERT INTO bus_km_compliance(consorcium, km_scheduled, km_completed, conclusion_percentage, subsidy, date) VALUES
         (?, ?, ?, ?, ?, ?)          
@@ -250,11 +252,12 @@ def insert_bus_km_compliance_data(conn, payload):
         cur.execute(
             sql,
             (
-                payload["consorcio"],
-                payload["compliance"]["total_programada"],
-                payload["compliance"]["total_realizada"],
-                payload["porcentagem_conclusao"],
-                payload["subsidio_concedido"],
+                payload["dados"]["consorcio"],
+                payload["dados"]["compliance"]["total_programada"],
+                payload["dados"]["compliance"]["total_realizada"],
+                payload["dados"]["porcentagem_conclusao"],
+                payload["dados"]["subsidio_concedido"],
+                date
             ),
         )
         conn.commit()
@@ -264,7 +267,7 @@ def insert_bus_km_compliance_data(conn, payload):
         return False
 
 
-def insert_bus_climatization_compliance_data(conn, payload):
+def insert_bus_climatization_compliance_data(conn, date, payload):
     sql = """ 
         INSERT INTO bus_climatization_compliance(consorcium, total_busses, busses_without_climatization, conclusion_percentage, subsidy, date) VALUES
         (?, ?, ?, ?, ?, ?)          
@@ -274,11 +277,12 @@ def insert_bus_climatization_compliance_data(conn, payload):
         cur.execute(
             sql,
             (
-                payload["consorcio"],
-                payload["compliance"]["total_onibus"],
-                payload["compliance"]["nao_climatizados"],
-                payload["porcentagem_conclusao"],
-                payload["subsidio_concedido"],
+                payload["dados"]["consorcio"],
+                payload["dados"]["compliance"]["total_onibus"],
+                payload["dados"]["compliance"]["nao_climatizados"],
+                payload["dados"]["porcentagem_conclusao"],
+                payload["dados"]["subsidio_concedido"],
+                date
             ),
         )
         conn.commit()
@@ -288,7 +292,7 @@ def insert_bus_climatization_compliance_data(conn, payload):
         return False
 
 
-def insert_bus_amount_compliance_data(conn, payload):
+def insert_bus_amount_compliance_data(conn, date, payload):
     sql = """ 
         INSERT INTO bus_amount_compliance(consorcium, scheduled_fleets, recorded_fleets, conclusion_percentage, subsidy, date) VALUES
         (?, ?, ?, ?, ?, ?)          
@@ -298,11 +302,12 @@ def insert_bus_amount_compliance_data(conn, payload):
         cur.execute(
             sql,
             (
-                payload["consorcio"],
-                payload["compliance"]["total_frotas_programadas"],
-                payload["compliance"]["total_frotas_disponiveis"],
-                payload["porcentagem_conclusao"],
-                payload["subsidio_concedido"],
+                payload["dados"]["consorcio"],
+                payload["dados"]["compliance"]["total_frotas_programadas"],
+                payload["dados"]["compliance"]["total_frotas_disponiveis"],
+                payload["dados"]["porcentagem_conclusao"],
+                payload["dados"]["subsidio_concedido"],
+                date
             ),
         )
         conn.commit()
@@ -374,6 +379,6 @@ def select_bus_amount_compliance_data(conn):
 
 if __name__ == "__main__":
     db_connector = DBConnector()
-    conn = db_connector.create_connection("integracao_mobnit.db")
+    conn = db_connector.create_seedless_connection("integracao_mobnit.db")
     if conn:
         create_database(conn)

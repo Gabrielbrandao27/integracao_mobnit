@@ -1,9 +1,7 @@
-import requests
 import pandas as pd
 import json
 import os
-
-# from eth_abi import encode_abi
+from datetime import datetime
 from web3 import Web3
 from dotenv import load_dotenv
 from get_from_excel import get_consortium_compliance
@@ -88,7 +86,7 @@ def viagem_programada(consorcio):
     payload = {
         "tipoInput": "compliance/numero_viagens",
         "dados": {
-            "consorcio": "TransNit",
+            "consorcio": consorcio,
             "viagensRealizadas": soma_viagens,
             "compliance": {
                 "meta_viagens_realizadas": meta_viagens,
@@ -99,9 +97,6 @@ def viagem_programada(consorcio):
         },
     }
     return payload
-
-    response_binario = json.dumps(payload, indent=2).encode("utf-8")
-    return response_binario
 
 
 def bus_km_compliance(consorcio):
@@ -137,7 +132,7 @@ def bus_km_compliance(consorcio):
     payload = {
         "tipoInput": "compliance/quilometragem_percorrida",
         "dados": {
-            "consorcio": "TransNit",
+            "consorcio": consorcio,
             "compliance": dados_km_json,
             "porcentagem_conclusao": compliance_km,
             "subsidio_concedido": subsidio_concedido,
@@ -145,15 +140,11 @@ def bus_km_compliance(consorcio):
     }
     return payload
 
-    # Transforma response em Binário para enviar ao dApp
-    response_binario = json.dumps(payload, indent=2).encode("utf-8")
-    return response_binario
 
-
-def climatizacao(empresa : str):
+def climatizacao(consorcio : str):
     # Item 3- Climatização das frotas
 
-    compliance_climatizacao, total_onibus, nao_climatizados = get_consortium_compliance(empresa.upper())
+    compliance_climatizacao, total_onibus, nao_climatizados = get_consortium_compliance(consorcio.upper())
 
     compliance_climatizacao = round(compliance_climatizacao, 2)
     subsidio_concedido = calcular_subsidio(compliance_climatizacao)
@@ -161,7 +152,7 @@ def climatizacao(empresa : str):
     payload = {
         "tipoInput": "compliance/climatizacao",
         "dados": {
-            "consorcio": "TransNit",
+            "consorcio": consorcio,
             "compliance": {
                 "total_onibus": total_onibus,
                 "nao_climatizados": nao_climatizados,
@@ -171,9 +162,6 @@ def climatizacao(empresa : str):
         },
     }
     return payload
-
-    response_binario = json.dumps(payload, indent=2).encode("utf-8")
-    return response_binario
 
   
 def bus_amount_compliance(consorcio):
@@ -202,17 +190,13 @@ def bus_amount_compliance(consorcio):
     payload = {
         "tipoInput": "compliance/frota_disponivel",
         "dados": {
-            "consorcio": "TransNit",
+            "consorcio": consorcio,
             "compliance": dados_onibus_json,
             "porcentagem_conclusao": compliance_frota,
             "subsidio_concedido": subsidio_concedido,
         },
     }
     return payload
-
-    # Transforma response em Binário para enviar ao dApp
-    response_binario = json.dumps(payload, indent=2).encode("utf-8")
-    return response_binario
 
 
 def envia_input_dapp(payload):
@@ -230,7 +214,9 @@ def envia_input_dapp(payload):
     contract_instance = w3.eth.contract(address=INPUT_BOX_ADDRESS, abi=abi)
 
     # Cria e executa a transação para a rede
-    transaction = contract_instance.functions.addInput(DAPP_ADDRESS, payload).transact()
+    payload_binario = json.dumps(payload, indent=2).encode("utf-8")
+    print(payload_binario)
+    transaction = contract_instance.functions.addInput(DAPP_ADDRESS, payload_binario).transact()
     print(transaction)
 
     return transaction
@@ -262,12 +248,13 @@ if __name__ == "__main__":
 
     subsidio_total = (response_viagens_programadas['dados']['subsidio_concedido'] + response_km_programada['dados']['subsidio_concedido'] + response_climatizacao['dados']['subsidio_concedido'] + response_frota_disponivel['dados']['subsidio_concedido'])/4
     today = datetime.date.today().replace(day=1)
+    data_aferida = datetime.datetime.strftime((today - datetime.timedelta(days=1)), "%Y-%m-%d")
 
     payload = {
         "tipoInput": "compliance/subsidios",
-        "consorcio": "TransNit",
+        "consorcio": consorcio,
         "subsidio_total": subsidio_total,
-        "data_aferida": today - datetime.timedelta(days=1),
+        "data_aferida": data_aferida,
         "dados": [
             response_viagens_programadas,
             response_km_programada,
@@ -276,4 +263,5 @@ if __name__ == "__main__":
         ],
     }
     print("\n", payload)
-    # envia_input_dapp(payload)
+
+    envia_input_dapp(payload)
