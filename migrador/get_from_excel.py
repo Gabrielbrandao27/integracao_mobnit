@@ -5,7 +5,7 @@ def merge_databases():
   df_transnit = pd.read_excel("./excel/transnit.xlsx", header=5)
   df_transoceanico = pd.read_excel("./excel/transoceanico.xlsx", header=5)
   df_transnit['CONSORCIO'] = 'TRANSNIT'
-  df_transoceanico['CONSORCIO'] = 'TRANSOCEANICO'
+  df_transoceanico['CONSORCIO'] = 'TRANSOCEÂNICO'
   infos_finais = pd.concat([df_transnit, df_transoceanico], ignore_index=True).fillna('')
 
   # print(infos_finais.columns)

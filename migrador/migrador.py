@@ -182,7 +182,7 @@ def bus_amount_compliance(consorcio):
     }
 
     # Calcula a porcentagem da Escala de Cumprimento
-    compliance_frota = round((frota_disponivel / frota_programada), 2) * 100
+    compliance_frota = round((frota_disponivel / frota_programada) * 100, 2)
 
     # Calcula a porcentagem do Subsídio
     subsidio_concedido = calcular_subsidio(compliance_frota)
@@ -228,7 +228,7 @@ if __name__ == "__main__":
     inicio = f"1727740800000"
     fim = "1730419199999"
     empresas = 'INGÁ'
-    consorcio = "transnit"
+    consorcio = "transoceânico"
 
     # Item 1- Quilometragem Programada
     response_viagens_programadas = viagem_programada(consorcio)
@@ -264,4 +264,17 @@ if __name__ == "__main__":
     }
     print("\n", payload)
 
+
+    payload = {
+        "tipoInput": "compliance/subsidios",
+        "consorcio": consorcio,
+        "subsidio_total": subsidio_total,
+        "data_aferida": "2024-11-31",
+        "dados": [
+            response_viagens_programadas,
+            response_km_programada,
+            response_climatizacao,
+            response_frota_disponivel,
+        ],
+    }
     envia_input_dapp(payload)

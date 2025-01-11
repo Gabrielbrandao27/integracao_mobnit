@@ -204,11 +204,11 @@ def list_to_str(my_list: list):
 def insert_consorcium(conn, name):
     sql = f"""
         INSERT INTO consorcium(name) VALUES
-        (?)
+        ('{name}')
     """
     cur = conn.cursor()
     try:
-        cur.execute(sql, name)
+        cur.execute(sql)
         conn.commit()
     except sqlite3.IntegrityError as e:
         print(e)
