@@ -2,7 +2,7 @@ import axiosInstance from "./axiosConfig";
 
 export const fetchCompletedTripsData = async () => {
   try {
-    const response = await axiosInstance.get("/viagens_cumpridas");
+    const response = await axiosInstance.get("/numero_viagens");
     return response.data;
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
@@ -32,7 +32,7 @@ export const fetchClimatizationData = async () => {
 
 export const fetchAvaiableFleetData = async () => {
   try {
-    const response = await axiosInstance.get("/frotas_disponiveis");
+    const response = await axiosInstance.get("/frota_disponivel");
     return response.data;
   } catch (error) {
     console.error("Error fetching dashboard data:", error);

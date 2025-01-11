@@ -9,20 +9,50 @@ export interface dappResponseData {
   processed_input_count: number;
 }
 
-export type AvaiableFleetData = AvaiableFleetItem[];
+export type TripsCompletedData = TripsCompletedItem[];
 
-export interface AvaiableFleetItem {
+export interface TripsCompletedItem {
   id: number;
-  line_id: string;
-  expected_bus_amount: number;
-  recorded_bus_amount: number;
+  consorcium: string;
+  expected_trips: number;
+  recorded_trips: number;
+  conclusion_percentage: number;
+  subsidy: number;
+  date: string;
 }
 
 export type TraveledKmData = TraveledKmItem[];
 
 export interface TraveledKmItem {
   id: number;
-  line_id: string;
+  consorcium: string;
   expected_traveled_distance_km: number;
   recorded_travel_distance_km: number;
+  conclusion_percentage: number;
+  subsidy: number;
+  date: string;
+}
+
+export type ClimatizationData = ClimatizationItem[];
+
+export interface ClimatizationItem {
+  id: number;
+  consorcium: string;
+  total_busses: number;
+  busses_without_climatization: number;
+  conclusion_percentage: number;
+  subsidy: number;
+  date: string;
+}
+
+export type AvaiableFleetData = AvaiableFleetItem[];
+
+export interface AvaiableFleetItem {
+  id: number;
+  consorcium: string;
+  expected_bus_amount: number;
+  recorded_bus_amount: number;
+  conclusion_percentage: number;
+  subsidy: number;
+  date: string;
 }
