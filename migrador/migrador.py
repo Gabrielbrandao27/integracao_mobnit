@@ -370,11 +370,12 @@ if __name__ == '__main__':
     print('\n', response_frota_disponivel)
 
     subsidio_total = (response_viagens_programadas['dados']['subsidio_concedido'] + response_km_programada['dados']['subsidio_concedido'] + response_climatizacao['dados']['subsidio_concedido'] + response_frota_disponivel['dados']['subsidio_concedido'])/4
-
+    today = datetime.date.today().replace(day=1)
     payload = {
         "tipoInput": "compliance/subsidios",
         "consorcio": "TransNit",
         "subsidio_total": subsidio_total,
+        "data_aferida": today - datetime.timedelta(days=1),
         "dados": [
             response_viagens_programadas,
             response_km_programada,
