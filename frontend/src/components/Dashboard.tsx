@@ -98,11 +98,6 @@ const Dashboard: React.FC = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  const filterDataByDate = (data) => {
-    if (!selectedDate) return data;
-    return data.filter((dado) => dado.date === selectedDate);
-  };
   
   const TripsCompletedChartData = {
     labels: selectedDate
@@ -119,7 +114,7 @@ const Dashboard: React.FC = () => {
           )
           .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(54, 96, 235, 0.45)',
-        borderColor: 'rgb(54, 97, 235)',
+        borderColor: 'rgb(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
@@ -132,7 +127,7 @@ const Dashboard: React.FC = () => {
           )
           .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(245, 121, 43, 0.45)',
-        borderColor: 'rgb(245, 121, 43)',
+        borderColor: 'rgb(255, 0, 0, 1)',
         borderWidth: 1,
       },
     ],
@@ -152,7 +147,7 @@ const Dashboard: React.FC = () => {
               (selectedDate ? dado.date === selectedDate : true)
           )
           .map((dado) => dado.subsidy) || [],
-        backgroundColor: 'rgba(0, 0, 255, 0.2)',
+        backgroundColor: 'rgba(54, 96, 235, 0.45)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
@@ -165,7 +160,7 @@ const Dashboard: React.FC = () => {
               (selectedDate ? dado.date === selectedDate : true)
           )
           .map((dado) => dado.subsidy) || [],
-        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+        backgroundColor: 'rgba(245, 121, 43, 0.45)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
       },
@@ -186,7 +181,7 @@ const Dashboard: React.FC = () => {
               (selectedDate ? dado.date === selectedDate : true)
           )
           .map((dado) => dado.subsidy) || [],
-        backgroundColor: 'rgba(0, 0, 255, 0.2)',
+        backgroundColor: 'rgba(54, 96, 235, 0.45)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
@@ -199,7 +194,7 @@ const Dashboard: React.FC = () => {
               (selectedDate ? dado.date === selectedDate : true)
           )
           .map((dado) => dado.subsidy) || [],
-        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+        backgroundColor: 'rgba(245, 121, 43, 0.45)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
       },
@@ -220,7 +215,7 @@ const Dashboard: React.FC = () => {
               (selectedDate ? dado.date === selectedDate : true)
           )
           .map((dado) => dado.subsidy) || [],
-        backgroundColor: 'rgba(0, 0, 255, 0.2)',
+        backgroundColor: 'rgba(54, 96, 235, 0.45)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
@@ -233,7 +228,7 @@ const Dashboard: React.FC = () => {
               (selectedDate ? dado.date === selectedDate : true)
           )
           .map((dado) => dado.subsidy) || [],
-        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+        backgroundColor: 'rgba(245, 121, 43, 0.45)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
       },
@@ -292,7 +287,7 @@ const Dashboard: React.FC = () => {
 
   console.log(selectedChart)
 
-  const handleDateChange = (value) => {
+  const handleDateChange = (value: string | null) => {
     setSelectedDate(value);
   };
 
