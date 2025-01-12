@@ -16,6 +16,7 @@ MANAGER_TOKEN = os.getenv("MANAGER_TOKEN")
 META_VIAGENS_TRANSNIT = 2823858
 META_VIAGENS_TRANSOCEANICO = 3847979
 
+
 def get_standard_trip_number():
     standard_trips = [  # viagens no consorcio transnit
         {"totalViagens": 115685, "data": 1730419200000, "tipoDia": "Útil"},
@@ -75,11 +76,13 @@ def calcular_subsidio(compliance):
 
 
 def viagem_programada(consorcio):
-    response = get_from_api(consorcio, 'viagens')
+    response = get_from_api(consorcio, "viagens")
     df_viagens = pd.DataFrame.from_dict(response)
-    soma_viagens = df_viagens['totalViagens'].sum().item()
-    meta_viagens = META_VIAGENS_TRANSNIT if consorcio == 'transnit' else META_VIAGENS_TRANSOCEANICO
-    compliance_viagens = round(((soma_viagens/meta_viagens)*100), 2)
+    soma_viagens = df_viagens["totalViagens"].sum().item()
+    meta_viagens = (
+        META_VIAGENS_TRANSNIT if consorcio == "transnit" else META_VIAGENS_TRANSOCEANICO
+    )
+    compliance_viagens = round(((soma_viagens / meta_viagens) * 100), 2)
 
     subsidio_concedido = calcular_subsidio(compliance_viagens)
 
@@ -103,11 +106,11 @@ def bus_km_compliance(consorcio):
     # Item 2- Quilometragem programada x realizada
 
     # Ida
-    response_ida = get_from_api(consorcio, 'quilometragem-ida')
+    response_ida = get_from_api(consorcio, "quilometragem-ida")
     df_ida = pd.DataFrame.from_dict(response_ida)
 
     # Volta
-    response_volta = get_from_api(consorcio, 'quilometragem-volta')
+    response_volta = get_from_api(consorcio, "quilometragem-volta")
     df_volta = pd.DataFrame.from_dict(response_volta)
 
     # Merge Ida e Volta em 'numeroLinha'
@@ -116,8 +119,12 @@ def bus_km_compliance(consorcio):
     )
 
     # Calcula total_programada e total_realizada
-    total_programada = round((df_totais['kmProgramadaIda'] + df_totais['kmProgramadaVolta']).sum().item(), 2)
-    total_realizada = round((df_totais['kmRealizadaIda'] + df_totais['kmRealizadaVolta']).sum().item(), 2)
+    total_programada = round(
+        (df_totais["kmProgramadaIda"] + df_totais["kmProgramadaVolta"]).sum().item(), 2
+    )
+    total_realizada = round(
+        (df_totais["kmRealizadaIda"] + df_totais["kmRealizadaVolta"]).sum().item(), 2
+    )
 
     # Cria novo DataFrame com os totais por Consórcio
     dados_km_json = {
@@ -141,10 +148,12 @@ def bus_km_compliance(consorcio):
     return payload
 
 
-def climatizacao(consorcio : str):
+def climatizacao(consorcio: str):
     # Item 3- Climatização das frotas
 
-    compliance_climatizacao, total_onibus, nao_climatizados = get_consortium_compliance(consorcio.upper())
+    compliance_climatizacao, total_onibus, nao_climatizados = get_consortium_compliance(
+        consorcio.upper()
+    )
 
     compliance_climatizacao = round(compliance_climatizacao, 2)
     subsidio_concedido = calcular_subsidio(compliance_climatizacao)
@@ -163,11 +172,11 @@ def climatizacao(consorcio : str):
     }
     return payload
 
-  
+
 def bus_amount_compliance(consorcio):
     # Item 4- Quantidade de ônibus programada x realizada
 
-    response = get_from_api(consorcio, 'frota')
+    response = get_from_api(consorcio, "frota")
 
     dados_onibus_df = pd.DataFrame.from_dict(response)
 
@@ -216,28 +225,26 @@ def envia_input_dapp(payload):
     # Cria e executa a transação para a rede
     payload_binario = json.dumps(payload, indent=2).encode("utf-8")
     print(payload_binario)
-    transaction = contract_instance.functions.addInput(DAPP_ADDRESS, payload_binario).transact()
+    transaction = contract_instance.functions.addInput(
+        DAPP_ADDRESS, payload_binario
+    ).transact()
     print(transaction)
 
     return transaction
 
 
 if __name__ == "__main__":
-    # Parâmetros para as requisições
-    treshold = f"%270%27"
-    inicio = f"1727740800000"
-    fim = "1730419199999"
-    empresas = 'INGÁ'
+    # Parâmetro para as requisições
     consorcio = "transoceânico"
     # consorcio = "transnit"
 
     # Item 1- Quilometragem Programada
     response_viagens_programadas = viagem_programada(consorcio)
-    print('\n', response_viagens_programadas)
+    print("\n", response_viagens_programadas)
 
     # Item 2- Quilometragem Programada
     response_km_programada = bus_km_compliance(consorcio)
-    print('\n', response_km_programada)
+    print("\n", response_km_programada)
 
     # Item 3 - Climatização da Frota
     response_climatizacao = climatizacao(consorcio)
@@ -245,11 +252,18 @@ if __name__ == "__main__":
 
     # Item 4- Quantidade de Ônibus
     response_frota_disponivel = bus_amount_compliance(consorcio)
-    print('\n', response_frota_disponivel)
+    print("\n", response_frota_disponivel)
 
-    subsidio_total = (response_viagens_programadas['dados']['subsidio_concedido'] + response_km_programada['dados']['subsidio_concedido'] + response_climatizacao['dados']['subsidio_concedido'] + response_frota_disponivel['dados']['subsidio_concedido'])/4
+    subsidio_total = (
+        response_viagens_programadas["dados"]["subsidio_concedido"]
+        + response_km_programada["dados"]["subsidio_concedido"]
+        + response_climatizacao["dados"]["subsidio_concedido"]
+        + response_frota_disponivel["dados"]["subsidio_concedido"]
+    ) / 4
     today = datetime.date.today().replace(day=1)
-    data_aferida = datetime.datetime.strftime((today - datetime.timedelta(days=1)), "%Y-%m-%d")
+    data_aferida = datetime.datetime.strftime(
+        (today - datetime.timedelta(days=1)), "%Y-%m-%d"
+    )
 
     payload = {
         "tipoInput": "compliance/subsidios",
@@ -265,63 +279,59 @@ if __name__ == "__main__":
     }
     # print("\n", payload)
 
+    # payload = {
+    #     "tipoInput": "compliance/subsidios",
+    #     "consorcio": consorcio,
+    #     "subsidio_total": 46.25,
+    #     "data_aferida": "2024-11-31",
+    #     "dados": [
+    #         {
+    #             "tipoInput": "compliance/numero_viagens",
+    #             "dados": {
+    #                 "consorcio": consorcio,
+    #                 "viagensRealizadas": 2441756,
+    #                 "compliance": {
+    #                     "meta_viagens_realizadas": 2823858,
+    #                     "total_viagens_realizadas": 2441756,
+    #                 },
+    #                 "porcentagem_conclusao": 86.47,
+    #                 "subsidio_concedido": 100,
+    #             },
+    #         },
+    #         {
+    #             "tipoInput": "compliance/quilometragem_percorrida",
+    #             "dados": {
+    #                 "consorcio": consorcio,
+    #                 "compliance": {
+    #                     "total_programada": 658999.78,
+    #                     "total_realizada": 407235.46,
+    #                 },
+    #                 "porcentagem_conclusao": 62.0,
+    #                 "subsidio_concedido": 70,
+    #             },
+    #         },
+    #         {
+    #             "tipoInput": "compliance/climatizacao",
+    #             "dados": {
+    #                 "consorcio": consorcio,
+    #                 "compliance": {"total_onibus": 218, "nao_climatizados": 3},
+    #                 "porcentagem_conclusao": 98.62,
+    #                 "subsidio_concedido": 85,
+    #             },
+    #         },
+    #         {
+    #             "tipoInput": "compliance/frota_disponivel",
+    #             "dados": {
+    #                 "consorcio": consorcio,
+    #                 "compliance": {
+    #                     "total_frotas_programadas": 321.0,
+    #                     "total_frotas_disponiveis": 179.0,
+    #                 },
+    #                 "porcentagem_conclusao": 56.0,
+    #                 "subsidio_concedido": 95,
+    #             },
+    #         },
+    #     ],
+    # }
 
-    payload = {
-        "tipoInput": "compliance/subsidios",
-        "consorcio": consorcio,
-        "subsidio_total": 46.25,
-        "data_aferida": "2024-11-31",
-        "dados": [
-            {
-                "tipoInput": "compliance/numero_viagens",
-                "dados": {
-                    "consorcio": consorcio,
-                    "viagensRealizadas": 2441756,
-                    "compliance": {
-                        "meta_viagens_realizadas": 2823858,
-                        "total_viagens_realizadas": 2441756
-                    },
-                    "porcentagem_conclusao": 86.47,
-                    "subsidio_concedido": 95
-                }
-            },
-            {
-                "tipoInput": "compliance/quilometragem_percorrida",
-                "dados": {
-                    "consorcio": consorcio,
-                    "compliance": {
-                        "total_programada": 658999.78,
-                        "total_realizada": 407235.46
-                    },
-                    "porcentagem_conclusao": 62.0,
-                    "subsidio_concedido": 100
-                }
-            },
-            {
-                "tipoInput": "compliance/climatizacao",
-                "dados": {
-                    "consorcio": consorcio,
-                    "compliance": {
-                        "total_onibus": 218,
-                        "nao_climatizados": 3
-                    },
-                    "porcentagem_conclusao": 98.62,
-                    "subsidio_concedido": 70
-                }
-            },
-            {
-                "tipoInput": "compliance/frota_disponivel",
-                "dados": {
-                    "consorcio": consorcio,
-                    "compliance": {
-                        "total_frotas_programadas": 321.0,
-                        "total_frotas_disponiveis": 179.0
-                    },
-                    "porcentagem_conclusao": 56.0,
-                    "subsidio_concedido": 85
-                }
-            }
-        ]
-    }
-  
     envia_input_dapp(payload)

@@ -39,3 +39,13 @@ export const fetchAvaiableFleetData = async () => {
     throw error;
   }
 };
+
+export const fetchTotalSubsidy = async () => {
+  try {
+    const response = await axiosInstance.get("/subsidio_total");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching dashboard data:", error);
+    throw error;
+  }
+};

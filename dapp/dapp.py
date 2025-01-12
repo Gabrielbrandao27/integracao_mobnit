@@ -3,6 +3,7 @@ import logging
 import requests
 import db_manager as db
 import json
+from utils import hex2str, str2hex, dataset_to_json
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
@@ -12,38 +13,20 @@ rollup_server = environ["ROLLUP_HTTP_SERVER_URL"]
 logger.info(f"HTTP rollup_server url is {rollup_server}")
 
 
-def hex2str(hex):
-    """
-    Decodes a hex string into a regular string
-    """
-    return bytes.fromhex(hex[2:]).decode("utf-8")
-
-
-def str2hex(str):
-    """
-    Encodes a string as a hex string
-    """
-    return "0x" + str.encode("utf-8").hex()
-
-
-def dataset_to_json(keys, dataset):
-    # Define the keys based on the dataset structure
-    json_list = [dict(zip(keys, row)) for row in dataset]
-    return json.dumps(json_list)
-
-
 def handle_advance(data):
     logger.info(f"Received advance request data {data}")
 
     conn = db_getter.create_seedless_connection("integracao_mobnit.db")
 
     payload = hex2str(data["payload"])
-    # logger.info(f"Payload: {payload}")
     payload_json = json.loads(payload)
     logger.info(f"Payload_json: {payload_json}")
 
     if payload_json["tipoInput"] == "compliance/subsidios":
-        if not any(value == payload_json["consorcio"] for _, value in db.select_consorcium(conn)):
+        if not any(
+            value == payload_json["consorcio"]
+            for _, value in db.select_consorcium(conn)
+        ):
             if not db.insert_consorcium(conn, payload_json["consorcio"]):
                 return "reject"
         if not db.insert_total_subsidy_data(
@@ -56,7 +39,9 @@ def handle_advance(data):
         for item in payload_json["dados"]:
             match item["tipoInput"]:
                 case "compliance/numero_viagens":
-                    if not db.insert_bus_trip_compliance_data(conn, payload_json["data_aferida"], item):
+                    if not db.insert_bus_trip_compliance_data(
+                        conn, payload_json["data_aferida"], item
+                    ):
                         return "reject"
                     bus_trip_compliance_query = db.select_bus_trip_compliance_data(conn)
                     logger.info(
@@ -64,7 +49,9 @@ def handle_advance(data):
                     )
 
                 case "compliance/quilometragem_percorrida":
-                    if not db.insert_bus_km_compliance_data(conn, payload_json["data_aferida"], item):
+                    if not db.insert_bus_km_compliance_data(
+                        conn, payload_json["data_aferida"], item
+                    ):
                         return "reject"
                     bus_km_compliance_query = db.select_bus_km_compliance_data(conn)
                     logger.info(
@@ -72,7 +59,9 @@ def handle_advance(data):
                     )
 
                 case "compliance/climatizacao":
-                    if not db.insert_bus_climatization_compliance_data(conn, payload_json["data_aferida"], item):
+                    if not db.insert_bus_climatization_compliance_data(
+                        conn, payload_json["data_aferida"], item
+                    ):
                         return "reject"
                     bus_climatization_compliance_query = (
                         db.select_bus_climatization_compliance_data(conn)
@@ -82,7 +71,9 @@ def handle_advance(data):
                     )
 
                 case "compliance/frota_disponivel":
-                    if not db.insert_bus_amount_compliance_data(conn, payload_json["data_aferida"], item):
+                    if not db.insert_bus_amount_compliance_data(
+                        conn, payload_json["data_aferida"], item
+                    ):
                         return "reject"
                     bus_amount_compliance_query = db.select_bus_amount_compliance_data(
                         conn
@@ -184,6 +175,24 @@ def handle_inspect(data):
             ]
             json_data = dataset_to_json(keys, bus_amount_compliance_query)
             report = {"payload": str2hex(f"{json_data}")}
+
+        case "subsidio_total":
+            logger.info("Subsídio Total")
+            subsidio_total_query = db.select_total_subsidy(conn)
+            logger.info(f"Total Subsidy query result: {subsidio_total_query}")
+
+            keys = [
+                "id",
+                "consorcium",
+                "total_subsidy",
+                "date",
+            ]
+            json_data = dataset_to_json(keys, subsidio_total_query)
+            report = {"payload": str2hex(f"{json_data}")}
+
+        case _:
+            logger.info("Unknown type of input")
+            return "reject"
 
     response = requests.post(rollup_server + "/report", json=report)
     logger.info(f"Received report status {response.status_code}")

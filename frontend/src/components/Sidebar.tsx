@@ -61,7 +61,20 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedChart }) => {
           fontWeight: 'bold'
         }}>Frotas Disponíveis</span>
       ),
-      onClick: () => setSelectedChart('AvaiableFleetchartData'),
+      onClick: () => setSelectedChart('AvaiableFleetChartData'),
+    },
+    {
+      key: '5',
+      icon: <BarChartOutlined style={{color: 'rgb(245, 121, 43)'}}/>,
+      label: (
+        <span style={{
+          color: 'rgb(245, 121, 43)',
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '20px',
+          fontWeight: 'bold'
+        }}>Subsídio Total</span>
+      ),
+      onClick: () => setSelectedChart('TotalSubsidyChartData'),
     },
   ];
 

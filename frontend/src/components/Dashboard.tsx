@@ -1,8 +1,8 @@
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, PointElement, Title, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { fetchAvaiableFleetData, fetchClimatizationData, fetchCompletedTripsData, fetchTraveledKmData, } from '../api/dashboardService';
-import { AvaiableFleetData, ClimatizationData, dappResponseData, TraveledKmData, TripsCompletedData } from '../types/DashboardData';
+import { fetchAvaiableFleetData, fetchClimatizationData, fetchCompletedTripsData, fetchTotalSubsidy, fetchTraveledKmData, } from '../api/dashboardService';
+import { AvaiableFleetData, ClimatizationData, dappResponseData, TotalSubsidyData, TraveledKmData, TripsCompletedData } from '../types/DashboardData';
 import { hex2str } from '../utils/ether';
 import HeaderBar from './Header';
 import SelectButton from './SelectButton';
@@ -18,6 +18,7 @@ const Dashboard: React.FC = () => {
   const [traveledKm, setTraveledKm] = useState<TraveledKmData | null>(null);
   const [climatization, setClimatization] = useState<ClimatizationData | null>(null);
   const [avaiableFleet, setAvaibleFleet] = useState<AvaiableFleetData | null>(null);
+  const [totalSubsidy, setTotalSubsidy] = useState<TotalSubsidyData | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   
   useEffect(() => {
@@ -89,10 +90,28 @@ const Dashboard: React.FC = () => {
       }
     };
 
+    const getTotalSubsidy = async () => {
+      try {
+        const result: dappResponseData = await fetchTotalSubsidy();
+        if (result.reports && result.reports.length > 0) {
+          const hexPayload = result.reports[0].payload;
+          const stringPayload = hex2str(hexPayload);
+          const jsonPayload: TotalSubsidyData = JSON.parse(stringPayload);
+          
+          setTotalSubsidy(jsonPayload);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     getCompletedTripsData();
     getTraveledKmData();
     getClimatizationData();
     getFleetData();
+    getTotalSubsidy();
   }, []);
 
   if (loading) {
@@ -201,7 +220,7 @@ const Dashboard: React.FC = () => {
     ],
   };
 
-  const AvaiableFleetchartData = {
+  const AvaiableFleetChartData = {
     labels: selectedDate
       ? [...new Set(avaiableFleet?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
       : [...new Set(avaiableFleet?.map((dado) => dado.date))],
@@ -228,6 +247,40 @@ const Dashboard: React.FC = () => {
               (selectedDate ? dado.date === selectedDate : true)
           )
           .map((dado) => dado.subsidy) || [],
+        backgroundColor: 'rgba(245, 121, 43, 0.45)',
+        borderColor: 'rgba(255, 0, 0, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const TotalSubsidyChartData = {
+    labels: selectedDate
+      ? [...new Set(totalSubsidy?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
+      : [...new Set(totalSubsidy?.map((dado) => dado.date))],
+    datasets: [
+      {
+        label: 'TransNit',
+        data: totalSubsidy
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transnit' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.total_subsidy) || [],
+        backgroundColor: 'rgba(54, 96, 235, 0.45)',
+        borderColor: 'rgba(0, 0, 255, 1)',
+        borderWidth: 1,
+      },
+      {
+        label: 'TransOceânica',
+        data: totalSubsidy
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transoceânico' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.total_subsidy) || [],
         backgroundColor: 'rgba(245, 121, 43, 0.45)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -279,7 +332,9 @@ const Dashboard: React.FC = () => {
       case 'ClimatizationChartData':
         return <Bar data={ClimatizationChartData} options={chartOptions} width={500} height={400} />;
       case 'AvaiableFleetchartData':
-        return <Bar data={AvaiableFleetchartData} options={chartOptions} width={500} height={400} />;
+        return <Bar data={AvaiableFleetChartData} options={chartOptions} width={500} height={400} />;
+      case 'TotalSubsidyChartData':
+        return <Bar data={TotalSubsidyChartData} options={chartOptions} width={500} height={400} />;
       default:
         return <Bar data={TripsCompletedChartData} options={chartOptions} width={500} height={400} />;
     }

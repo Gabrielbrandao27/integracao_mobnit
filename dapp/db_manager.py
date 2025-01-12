@@ -172,32 +172,6 @@ def create_database(conn):
 
 ###################################################################
 #                                                                 #
-#                         AUX FUNCTIONS                           #
-#                                                                 #
-###################################################################
-def str_to_coords(coords_str: str):
-    coords = coords_str.split(";")
-
-    for i in range(len(coords)):
-        coords[i] = list(map(float, coords[i].split(",")))
-
-    return coords
-
-
-def list_to_str(my_list: list):
-    s = ""
-    if type(my_list[0]) == list:  # coordinates list: [[lat0, lon0], [lat1, lon1],...]
-        for coord in my_list:
-            s += f"{coord[0]},{coord[1]};"  # lat0,lon1;lat1,lon1;lat2,lon2
-    else:  # schedule list: ['07:45:0', '07:46:0',...]
-        for ts in my_list:
-            s += f"{ts};"
-
-    return s[:-1]  # remove last ";"
-
-
-###################################################################
-#                                                                 #
 #                            INSERTS                              #
 #                                                                 #
 ###################################################################
@@ -232,7 +206,7 @@ def insert_bus_trip_compliance_data(conn, date, payload):
                 payload["dados"]["compliance"]["total_viagens_realizadas"],
                 payload["dados"]["porcentagem_conclusao"],
                 payload["dados"]["subsidio_concedido"],
-                date
+                date,
             ),
         )
         conn.commit()
@@ -257,7 +231,7 @@ def insert_bus_km_compliance_data(conn, date, payload):
                 payload["dados"]["compliance"]["total_realizada"],
                 payload["dados"]["porcentagem_conclusao"],
                 payload["dados"]["subsidio_concedido"],
-                date
+                date,
             ),
         )
         conn.commit()
@@ -282,7 +256,7 @@ def insert_bus_climatization_compliance_data(conn, date, payload):
                 payload["dados"]["compliance"]["nao_climatizados"],
                 payload["dados"]["porcentagem_conclusao"],
                 payload["dados"]["subsidio_concedido"],
-                date
+                date,
             ),
         )
         conn.commit()
@@ -307,7 +281,7 @@ def insert_bus_amount_compliance_data(conn, date, payload):
                 payload["dados"]["compliance"]["total_frotas_disponiveis"],
                 payload["dados"]["porcentagem_conclusao"],
                 payload["dados"]["subsidio_concedido"],
-                date
+                date,
             ),
         )
         conn.commit()
@@ -371,6 +345,14 @@ def select_bus_climatization_compliance_data(conn):
 
 def select_bus_amount_compliance_data(conn):
     sql = """ SELECT * FROM bus_amount_compliance """
+    cur = conn.cursor()
+    cur.execute(sql)
+
+    return cur.fetchall()
+
+
+def select_total_subsidy(conn):
+    sql = """ SELECT * FROM total_subsidy """
     cur = conn.cursor()
     cur.execute(sql)
 

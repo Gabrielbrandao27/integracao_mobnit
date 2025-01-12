@@ -1,27 +1,15 @@
-.title {
-    color: #ff5e00;
-    width: 100%;
-    top: -20px;
-    left: 0;
-    text-align: center; /* Center the title text */
-    font-family: 'Arial, sans-serif';
-    font-weight: 700;
-    font-size: 5rem;
-    border-radius: 10px;
-}
-
 .dashboard {
     display: flex;
-    flex-direction: row; /* Ensure the sidebar and chart are side by side */
-    align-items: flex-start; /* Align items to the start of the container */
-    height: 100vh; /* Ensure the dashboard takes the full height of the viewport */
-    margin-top: 60px; /* Add margin to account for the fixed title */
+    flex-direction: row;
+    align-items: flex-start;
+    height: 100vh;
+    margin-top: 60px;
 }
 
 .sidebar {
     width: 350px;
     height: 100vh;
-    position: fixed; /* Fix the sidebar to the left side */
+    position: fixed; 
     left: 0;
     top: 50px;
     display: flex;
@@ -33,15 +21,15 @@
 }
 
 .chart-container {
-    margin-left: 0; /* Add margin to the left to make space for the fixed sidebar */
-    margin-top: 0; /* Add margin to the top to make space for the fixed title */
+    margin-left: 0;
+    margin-top: 0;
     flex-grow: 1;
     padding: 20px;
     border: 1px solid #ccc;
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 600px; /* Increase the height to make the charts taller */
-    width: 700px /* Increase the width to make the charts wider */
+    height: 600px;
+    width: 700px
 }
 
 .select-button {

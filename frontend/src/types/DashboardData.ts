@@ -56,3 +56,12 @@ export interface AvaiableFleetItem {
   subsidy: number;
   date: string;
 }
+
+export type TotalSubsidyData = TotalSubsidyItem[];
+
+export interface TotalSubsidyItem {
+  id: number;
+  consorcium: string;
+  total_subsidy: number;
+  date: string;
+}

@@ -26,5 +26,8 @@ Projeto de integração com a aplicação de mobilidade niteroiense "MobNit".
 1. `cartesi address-book` para buscar o endereço do contrato InputBox
 2. `cd dapp` para entrar na pasta do dApp e `cartesi build` para buildar o dApp
 3. `cartesi run` para rodar o dApp e a blockchain local utilizando Docker
-4. `cd ../migrador` em um novo terminal para entrar na pasta do migrador que enviará o input para a blockchain
-5. `python migrador.py` para executar o script e enviar o input
+4. `cd../frontend` em um novo terminal para entrar na pasta do frontend
+5. `npm install` para instalar as dependências e `npm run dev` para rodar o frontend
+6. `cd ../migrador` em um novo terminal para entrar na pasta do migrador que enviará o input para a blockchain
+7. `python migrador.py` para executar o script e enviar o input
+8. Visualize tanto no console do terminal na aba do dapp quanto na web page os dados expostos
