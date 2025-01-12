@@ -229,6 +229,7 @@ if __name__ == "__main__":
     fim = "1730419199999"
     empresas = 'INGÁ'
     consorcio = "transoceânico"
+    # consorcio = "transnit"
 
     # Item 1- Quilometragem Programada
     response_viagens_programadas = viagem_programada(consorcio)
@@ -250,18 +251,18 @@ if __name__ == "__main__":
     today = datetime.date.today().replace(day=1)
     data_aferida = datetime.datetime.strftime((today - datetime.timedelta(days=1)), "%Y-%m-%d")
 
-    # payload = {
-    #     "tipoInput": "compliance/subsidios",
-    #     "consorcio": consorcio,
-    #     "subsidio_total": subsidio_total,
-    #     "data_aferida": data_aferida,
-    #     "dados": [
-    #         response_viagens_programadas,
-    #         response_km_programada,
-    #         response_climatizacao,
-    #         response_frota_disponivel,
-    #     ],
-    # }
+    payload = {
+        "tipoInput": "compliance/subsidios",
+        "consorcio": consorcio,
+        "subsidio_total": subsidio_total,
+        "data_aferida": data_aferida,
+        "dados": [
+            response_viagens_programadas,
+            response_km_programada,
+            response_climatizacao,
+            response_frota_disponivel,
+        ],
+    }
     # print("\n", payload)
 
 
@@ -269,7 +270,7 @@ if __name__ == "__main__":
         "tipoInput": "compliance/subsidios",
         "consorcio": consorcio,
         "subsidio_total": 46.25,
-        "data_aferida": "2024-10-31",
+        "data_aferida": "2024-11-31",
         "dados": [
             {
                 "tipoInput": "compliance/numero_viagens",
@@ -293,7 +294,7 @@ if __name__ == "__main__":
                         "total_realizada": 407235.46
                     },
                     "porcentagem_conclusao": 62.0,
-                    "subsidio_concedido": 70
+                    "subsidio_concedido": 100
                 }
             },
             {
@@ -305,7 +306,7 @@ if __name__ == "__main__":
                         "nao_climatizados": 3
                     },
                     "porcentagem_conclusao": 98.62,
-                    "subsidio_concedido": 85
+                    "subsidio_concedido": 70
                 }
             },
             {
@@ -317,7 +318,7 @@ if __name__ == "__main__":
                         "total_frotas_disponiveis": 179.0
                     },
                     "porcentagem_conclusao": 56.0,
-                    "subsidio_concedido": 70
+                    "subsidio_concedido": 85
                 }
             }
         ]

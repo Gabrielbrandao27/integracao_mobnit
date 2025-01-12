@@ -105,18 +105,32 @@ const Dashboard: React.FC = () => {
   };
   
   const TripsCompletedChartData = {
-    labels: filterDataByDate(completedTrips)?.map((dado) => dado.date) || [],
+    labels: selectedDate
+      ? [...new Set(completedTrips?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
+      : [...new Set(completedTrips?.map((dado) => dado.date))],
     datasets: [
       {
         label: 'TransNit',
-        data: completedTrips?.filter((dado) => dado.consorcium === 'transnit').map((dado) => dado.subsidy) || [],
+        data: completedTrips
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transnit' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(0, 0, 255, 0.2)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
-        label: 'TransOceânico',
-        data: completedTrips?.filter((dado) => dado.consorcium === 'transoceânico').map((dado) => dado.subsidy) || [],
+        label: 'TransOceânica',
+        data: completedTrips
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transoceânico' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -125,18 +139,32 @@ const Dashboard: React.FC = () => {
   };
 
   const TraveledKmChartData = {
-    labels: filterDataByDate(traveledKm)?.map((dado) => dado.date) || [],
+    labels: selectedDate
+      ? [...new Set(traveledKm?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
+      : [...new Set(traveledKm?.map((dado) => dado.date))],
     datasets: [
       {
         label: 'TransNit',
-        data: traveledKm?.filter((dado) => dado.consorcium === 'transnit').map((dado) => dado.subsidy) || [],
+        data: traveledKm
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transnit' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(0, 0, 255, 0.2)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
-        label: 'TransOceânico',
-        data: traveledKm?.filter((dado) => dado.consorcium === 'transoceânico').map((dado) => dado.subsidy) || [],
+        label: 'TransOceânica',
+        data: traveledKm
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transoceânico' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -145,18 +173,32 @@ const Dashboard: React.FC = () => {
   };
 
   const ClimatizationChartData = {
-    labels: filterDataByDate(climatization)?.map((dado) => dado.date) || [],
+    labels: selectedDate
+      ? [...new Set(climatization?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
+      : [...new Set(climatization?.map((dado) => dado.date))],
     datasets: [
       {
         label: 'TransNit',
-        data: climatization?.filter((dado) => dado.consorcium === 'transnit').map((dado) => dado.subsidy) || [],
+        data: climatization
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transnit' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(0, 0, 255, 0.2)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
-        label: 'TransOceânico',
-        data: climatization?.filter((dado) => dado.consorcium === 'transoceânico').map((dado) => dado.subsidy) || [],
+        label: 'TransOceânica',
+        data: climatization
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transoceânico' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -165,18 +207,32 @@ const Dashboard: React.FC = () => {
   };
 
   const AvaiableFleetchartData = {
-    labels: filterDataByDate(climatization)?.map((dado) => dado.date) || [],
+    labels: selectedDate
+      ? [...new Set(avaiableFleet?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
+      : [...new Set(avaiableFleet?.map((dado) => dado.date))],
     datasets: [
       {
         label: 'TransNit',
-        data: avaiableFleet?.filter((dado) => dado.consorcium === 'transnit').map((dado) => dado.subsidy) || [],
+        data: avaiableFleet
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transnit' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(0, 0, 255, 0.2)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
-        label: 'TransOceânico',
-        data: avaiableFleet?.filter((dado) => dado.consorcium === 'transoceânico').map((dado) => dado.subsidy) || [],
+        label: 'TransOceânica',
+        data: avaiableFleet
+          ?.filter(
+            (dado) =>
+              dado.consorcium === 'transoceânico' &&
+              (selectedDate ? dado.date === selectedDate : true)
+          )
+          .map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -217,8 +273,6 @@ const Dashboard: React.FC = () => {
     ]),
   ];
 
-  console.log(completedTrips)
-  console.log(UniqueDates)
   console.log(TripsCompletedChartData)
 
   const renderChart = () => {
