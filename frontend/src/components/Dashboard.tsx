@@ -1,6 +1,6 @@
-import { CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, Tooltip } from 'chart.js';
+import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, PointElement, Title, Tooltip } from 'chart.js';
 import React, { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
+import { Bar } from 'react-chartjs-2';
 import { fetchAvaiableFleetData, fetchClimatizationData, fetchCompletedTripsData, fetchTraveledKmData, } from '../api/dashboardService';
 import { AvaiableFleetData, ClimatizationData, dappResponseData, TraveledKmData, TripsCompletedData } from '../types/DashboardData';
 import { hex2str } from '../utils/ether';
@@ -9,7 +9,7 @@ import SelectButton from './SelectButton';
 import Sidebar from './Sidebar';
 import './styles.css';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend);
 
 const Dashboard: React.FC = () => {
   const [selectedChart, setSelectedChart] = useState('TripsCompletedChartData');
@@ -109,14 +109,14 @@ const Dashboard: React.FC = () => {
     datasets: [
       {
         label: 'TransNit',
-        data: completedTrips?.filter((dado) => dado.consorcium === 'TransNit').map((dado) => dado.subsidy) || [],
+        data: completedTrips?.filter((dado) => dado.consorcium === 'transnit').map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(0, 0, 255, 0.2)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
-        label: 'TransOceânica',
-        data: completedTrips?.filter((dado) => dado.consorcium === 'TransOceanica').map((dado) => dado.subsidy) || [],
+        label: 'TransOceânico',
+        data: completedTrips?.filter((dado) => dado.consorcium === 'transoceânico').map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -129,14 +129,14 @@ const Dashboard: React.FC = () => {
     datasets: [
       {
         label: 'TransNit',
-        data: traveledKm?.filter((dado) => dado.consorcium === 'TransNit').map((dado) => dado.subsidy) || [],
+        data: traveledKm?.filter((dado) => dado.consorcium === 'transnit').map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(0, 0, 255, 0.2)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
-        label: 'TransOceânica',
-        data: traveledKm?.filter((dado) => dado.consorcium === 'TransOceanica').map((dado) => dado.subsidy) || [],
+        label: 'TransOceânico',
+        data: traveledKm?.filter((dado) => dado.consorcium === 'transoceânico').map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -149,14 +149,14 @@ const Dashboard: React.FC = () => {
     datasets: [
       {
         label: 'TransNit',
-        data: climatization?.filter((dado) => dado.consorcium === 'TransNit').map((dado) => dado.subsidy) || [],
+        data: climatization?.filter((dado) => dado.consorcium === 'transnit').map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(0, 0, 255, 0.2)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
-        label: 'TransOceânica',
-        data: climatization?.filter((dado) => dado.consorcium === 'TransOceanica').map((dado) => dado.subsidy) || [],
+        label: 'TransOceânico',
+        data: climatization?.filter((dado) => dado.consorcium === 'transoceânico').map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -169,14 +169,14 @@ const Dashboard: React.FC = () => {
     datasets: [
       {
         label: 'TransNit',
-        data: avaiableFleet?.filter((dado) => dado.consorcium === 'TransNit').map((dado) => dado.subsidy) || [],
+        data: avaiableFleet?.filter((dado) => dado.consorcium === 'transnit').map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(0, 0, 255, 0.2)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
       },
       {
-        label: 'TransOceânica',
-        data: avaiableFleet?.filter((dado) => dado.consorcium === 'TransOceanica').map((dado) => dado.subsidy) || [],
+        label: 'TransOceânico',
+        data: avaiableFleet?.filter((dado) => dado.consorcium === 'transoceânico').map((dado) => dado.subsidy) || [],
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -217,20 +217,26 @@ const Dashboard: React.FC = () => {
     ]),
   ];
 
+  console.log(completedTrips)
+  console.log(UniqueDates)
+  console.log(TripsCompletedChartData)
+
   const renderChart = () => {
     switch (selectedChart) {
       case 'TripsCompletedChartData':
-        return <Line data={TripsCompletedChartData} options={chartOptions} width={500} height={400} />;
+        return <Bar data={TripsCompletedChartData} options={chartOptions} width={500} height={400} />;
       case 'TraveledKmChartData':
-        return <Line data={TraveledKmChartData} options={chartOptions} width={500} height={400} />;
+        return <Bar data={TraveledKmChartData} options={chartOptions} width={500} height={400} />;
       case 'ClimatizationChartData':
-        return <Line data={ClimatizationChartData} options={chartOptions} width={500} height={400} />;
+        return <Bar data={ClimatizationChartData} options={chartOptions} width={500} height={400} />;
       case 'AvaiableFleetchartData':
-        return <Line data={AvaiableFleetchartData} options={chartOptions} width={500} height={400} />;
+        return <Bar data={AvaiableFleetchartData} options={chartOptions} width={500} height={400} />;
       default:
-        return <Line data={TripsCompletedChartData} options={chartOptions} width={500} height={400} />;
+        return <Bar data={TripsCompletedChartData} options={chartOptions} width={500} height={400} />;
     }
   };
+
+  console.log(selectedChart)
 
   const handleDateChange = (value) => {
     setSelectedDate(value);
