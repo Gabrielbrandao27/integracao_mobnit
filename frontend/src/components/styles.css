@@ -1,21 +1,37 @@
-.dashboard-title {
-    color: rgb(0, 0, 0);
+.dashboard {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    height: 100vh;
+    margin-top: 60px;
 }
 
-.charts-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px 200px;
-    justify-items: center;
-    align-items: center;
+.sidebar {
+    width: 350px;
+    height: 100vh;
+    position: fixed; 
+    left: 0;
+    top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: hsl(0, 0%, 43%);
+    padding: 20px;
+    font-size: larger;
 }
 
 .chart-container {
-    width: 100%;
-    max-width: 500px; /* Increase the max-width to make the charts wider */
-    padding: 20px; /* Add padding inside the box */
-    margin: 10px; /* Add margin outside the box */
-    border: 1px solid #ccc; /* Add a border around the box */
-    background-color: #f9f9f9; /* Set a background color for the box */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow for better visual separation */
+    margin-left: 0;
+    margin-top: 0;
+    flex-grow: 1;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 600px;
+    width: 700px
+}
+
+.select-button {
+    margin-left: 30px;
 }
