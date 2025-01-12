@@ -11,7 +11,7 @@ const HeaderBar: React.FC = () => {
         left: 0,
         zIndex: 1000,
         width: '100%',
-        backgroundColor: '#ff5e00',
+        backgroundColor: 'rgb(245, 121, 43)',
         display: 'flex',
         alignItems: 'center'
     }}>

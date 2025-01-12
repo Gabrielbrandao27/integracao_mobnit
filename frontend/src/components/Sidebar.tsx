@@ -1,4 +1,4 @@
-import { LineChartOutlined } from '@ant-design/icons';
+import { BarChartOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import React from 'react';
@@ -13,10 +13,10 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedChart }) => {
   const items: MenuItem[] = [
     {
       key: '1',
-      icon: <LineChartOutlined style={{color: 'orange'}}/>,
+      icon: <BarChartOutlined style={{color: 'rgb(245, 121, 43)'}}/>,
       label: (
         <span style={{
-          color: 'orange',
+          color: 'rgb(245, 121, 43)',
           fontFamily: 'Arial, sans-serif',
           fontSize: '20px',
           fontWeight: 'bold'
@@ -26,10 +26,10 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedChart }) => {
     },
     {
       key: '2',
-      icon: <LineChartOutlined style={{color: 'orange'}}/>,
+      icon: <BarChartOutlined style={{color: 'rgb(245, 121, 43)'}}/>,
       label: (
         <span style={{
-          color: 'orange',
+          color: 'rgb(245, 121, 43)',
           fontFamily: 'Arial, sans-serif',
           fontSize: '20px',
           fontWeight: 'bold'
@@ -39,10 +39,10 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedChart }) => {
     },
     {
       key: '3',
-      icon: <LineChartOutlined style={{color: 'orange'}}/>,
+      icon: <BarChartOutlined style={{color: 'rgb(245, 121, 43)'}}/>,
       label: (
         <span style={{
-          color: 'orange',
+          color: 'rgb(245, 121, 43)',
           fontFamily: 'Arial, sans-serif',
           fontSize: '20px',
           fontWeight: 'bold'
@@ -52,10 +52,10 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedChart }) => {
     },
     {
       key: '4',
-      icon: <LineChartOutlined style={{color: 'orange'}}/>,
+      icon: <BarChartOutlined style={{color: 'rgb(245, 121, 43)'}}/>,
       label: (
         <span style={{
-          color: 'orange',
+          color: 'rgb(245, 121, 43)',
           fontFamily: 'Arial, sans-serif',
           fontSize: '20px',
           fontWeight: 'bold'
