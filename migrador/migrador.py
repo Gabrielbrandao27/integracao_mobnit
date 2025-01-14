@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 import os
+import locale
 from datetime import datetime
 from web3 import Web3
 from dotenv import load_dotenv
@@ -260,10 +261,12 @@ if __name__ == "__main__":
         + response_climatizacao["dados"]["subsidio_concedido"]
         + response_frota_disponivel["dados"]["subsidio_concedido"]
     ) / 4
+
+    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+
     today = datetime.date.today().replace(day=1)
-    data_aferida = datetime.datetime.strftime(
-        (today - datetime.timedelta(days=1)), "%Y-%m-%d"
-    )
+    data_aferida = (today - datetime.timedelta(days=1)).strftime("%B/%Y")
+
 
     payload = {
         "tipoInput": "compliance/subsidios",
@@ -277,61 +280,61 @@ if __name__ == "__main__":
             response_frota_disponivel,
         ],
     }
-    # print("\n", payload)
+    print("\n", payload)
 
-    # payload = {
-    #     "tipoInput": "compliance/subsidios",
-    #     "consorcio": consorcio,
-    #     "subsidio_total": 46.25,
-    #     "data_aferida": "2024-11-31",
-    #     "dados": [
-    #         {
-    #             "tipoInput": "compliance/numero_viagens",
-    #             "dados": {
-    #                 "consorcio": consorcio,
-    #                 "viagensRealizadas": 2441756,
-    #                 "compliance": {
-    #                     "meta_viagens_realizadas": 2823858,
-    #                     "total_viagens_realizadas": 2441756,
-    #                 },
-    #                 "porcentagem_conclusao": 86.47,
-    #                 "subsidio_concedido": 100,
-    #             },
-    #         },
-    #         {
-    #             "tipoInput": "compliance/quilometragem_percorrida",
-    #             "dados": {
-    #                 "consorcio": consorcio,
-    #                 "compliance": {
-    #                     "total_programada": 658999.78,
-    #                     "total_realizada": 407235.46,
-    #                 },
-    #                 "porcentagem_conclusao": 62.0,
-    #                 "subsidio_concedido": 70,
-    #             },
-    #         },
-    #         {
-    #             "tipoInput": "compliance/climatizacao",
-    #             "dados": {
-    #                 "consorcio": consorcio,
-    #                 "compliance": {"total_onibus": 218, "nao_climatizados": 3},
-    #                 "porcentagem_conclusao": 98.62,
-    #                 "subsidio_concedido": 85,
-    #             },
-    #         },
-    #         {
-    #             "tipoInput": "compliance/frota_disponivel",
-    #             "dados": {
-    #                 "consorcio": consorcio,
-    #                 "compliance": {
-    #                     "total_frotas_programadas": 321.0,
-    #                     "total_frotas_disponiveis": 179.0,
-    #                 },
-    #                 "porcentagem_conclusao": 56.0,
-    #                 "subsidio_concedido": 95,
-    #             },
-    #         },
-    #     ],
-    # }
+    payload = {
+        "tipoInput": "compliance/subsidios",
+        "consorcio": consorcio,
+        "subsidio_total": 46.25,
+        "data_aferida": "novembro/2024",
+        "dados": [
+            {
+                "tipoInput": "compliance/numero_viagens",
+                "dados": {
+                    "consorcio": consorcio,
+                    "viagensRealizadas": 2441756,
+                    "compliance": {
+                        "meta_viagens_realizadas": 2823858,
+                        "total_viagens_realizadas": 2441756,
+                    },
+                    "porcentagem_conclusao": 86.47,
+                    "subsidio_concedido": 100,
+                },
+            },
+            {
+                "tipoInput": "compliance/quilometragem_percorrida",
+                "dados": {
+                    "consorcio": consorcio,
+                    "compliance": {
+                        "total_programada": 658999.78,
+                        "total_realizada": 407235.46,
+                    },
+                    "porcentagem_conclusao": 62.0,
+                    "subsidio_concedido": 70,
+                },
+            },
+            {
+                "tipoInput": "compliance/climatizacao",
+                "dados": {
+                    "consorcio": consorcio,
+                    "compliance": {"total_onibus": 218, "nao_climatizados": 3},
+                    "porcentagem_conclusao": 98.62,
+                    "subsidio_concedido": 85,
+                },
+            },
+            {
+                "tipoInput": "compliance/frota_disponivel",
+                "dados": {
+                    "consorcio": consorcio,
+                    "compliance": {
+                        "total_frotas_programadas": 321.0,
+                        "total_frotas_disponiveis": 179.0,
+                    },
+                    "porcentagem_conclusao": 56.0,
+                    "subsidio_concedido": 95,
+                },
+            },
+        ],
+    }
 
     envia_input_dapp(payload)

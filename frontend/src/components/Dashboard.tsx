@@ -293,6 +293,17 @@ const Dashboard: React.FC = () => {
       legend: {
         labels: {
           color: 'black',
+          font: {
+            size: 16, 
+          },
+        },
+      },
+      tooltip: {
+        titleFont: {
+          size: 16, 
+        },
+        bodyFont: {
+          size: 16, 
         },
       },
     },
@@ -300,14 +311,20 @@ const Dashboard: React.FC = () => {
       x: {
         ticks: {
           color: 'black',
+          font: {
+            size: 16,
+          },
         },
       },
       y: {
         ticks: {
           color: 'black',
+          font: {
+            size: 16,
+          },
+          min: 0,
+          max: 100,
         },
-        min: 0,
-        max: 100,
       },
     },
   };
