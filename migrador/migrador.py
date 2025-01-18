@@ -236,8 +236,8 @@ def envia_input_dapp(payload):
 
 if __name__ == "__main__":
     # Parâmetro para as requisições
-    # consorcio = "transoceânico"
-    consorcio = "transnit"
+    consorcio = "transoceânico"
+    # consorcio = "transnit"
 
     # Item 1- Quilometragem Programada
     response_viagens_programadas = viagem_programada(consorcio)
@@ -285,8 +285,8 @@ if __name__ == "__main__":
     payload = {
         "tipoInput": "compliance/subsidios",
         "consorcio": consorcio,
-        "subsidio_total": 88.75,
-        "data_aferida": "agosto/2024",
+        "subsidio_total": 87.5,
+        "data_aferida": "dezembro/2024",
         "dados": [
             {
                 "tipoInput": "compliance/numero_viagens",
@@ -298,7 +298,7 @@ if __name__ == "__main__":
                         "total_viagens_realizadas": 2441756,
                     },
                     "porcentagem_conclusao": 86.47,
-                    "subsidio_concedido": 100,
+                    "subsidio_concedido": 85,
                 },
             },
             {
@@ -319,7 +319,7 @@ if __name__ == "__main__":
                     "consorcio": consorcio,
                     "compliance": {"total_onibus": 218, "nao_climatizados": 3},
                     "porcentagem_conclusao": 98.62,
-                    "subsidio_concedido": 85,
+                    "subsidio_concedido": 100,
                 },
             },
             {
@@ -331,7 +331,7 @@ if __name__ == "__main__":
                         "total_frotas_disponiveis": 179.0,
                     },
                     "porcentagem_conclusao": 56.0,
-                    "subsidio_concedido": 100,
+                    "subsidio_concedido": 95,
                 },
             },
         ],
