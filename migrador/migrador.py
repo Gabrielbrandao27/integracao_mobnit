@@ -236,8 +236,8 @@ def envia_input_dapp(payload):
 
 if __name__ == "__main__":
     # Parâmetro para as requisições
-    consorcio = "transoceânico"
-    # consorcio = "transnit"
+    # consorcio = "transoceânico"
+    consorcio = "transnit"
 
     # Item 1- Quilometragem Programada
     response_viagens_programadas = viagem_programada(consorcio)
@@ -285,8 +285,8 @@ if __name__ == "__main__":
     payload = {
         "tipoInput": "compliance/subsidios",
         "consorcio": consorcio,
-        "subsidio_total": 46.25,
-        "data_aferida": "novembro/2024",
+        "subsidio_total": 88.75,
+        "data_aferida": "agosto/2024",
         "dados": [
             {
                 "tipoInput": "compliance/numero_viagens",
@@ -331,7 +331,7 @@ if __name__ == "__main__":
                         "total_frotas_disponiveis": 179.0,
                     },
                     "porcentagem_conclusao": 56.0,
-                    "subsidio_concedido": 95,
+                    "subsidio_concedido": 100,
                 },
             },
         ],
