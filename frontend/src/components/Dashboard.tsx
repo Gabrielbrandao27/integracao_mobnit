@@ -137,7 +137,7 @@ const Dashboard: React.FC = () => {
         borderWidth: 1,
       },
       {
-        label: 'TransOceânica',
+        label: 'TransOceânico',
         data: completedTrips
           ?.filter(
             (dado) =>
@@ -171,7 +171,7 @@ const Dashboard: React.FC = () => {
         borderWidth: 1,
       },
       {
-        label: 'TransOceânica',
+        label: 'TransOceânico',
         data: traveledKm
           ?.filter(
             (dado) =>
@@ -205,7 +205,7 @@ const Dashboard: React.FC = () => {
         borderWidth: 1,
       },
       {
-        label: 'TransOceânica',
+        label: 'TransOceânico',
         data: climatization
           ?.filter(
             (dado) =>
@@ -239,7 +239,7 @@ const Dashboard: React.FC = () => {
         borderWidth: 1,
       },
       {
-        label: 'TransOceânica',
+        label: 'TransOceânico',
         data: avaiableFleet
           ?.filter(
             (dado) =>
@@ -273,7 +273,7 @@ const Dashboard: React.FC = () => {
         borderWidth: 1,
       },
       {
-        label: 'TransOceânica',
+        label: 'TransOceânico',
         data: totalSubsidy
           ?.filter(
             (dado) =>
