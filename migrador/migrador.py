@@ -262,11 +262,10 @@ if __name__ == "__main__":
         + response_frota_disponivel["dados"]["subsidio_concedido"]
     ) / 4
 
-    locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+    locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
 
     today = datetime.date.today().replace(day=1)
     data_aferida = (today - datetime.timedelta(days=1)).strftime("%B/%Y")
-
 
     payload = {
         "tipoInput": "compliance/subsidios",
