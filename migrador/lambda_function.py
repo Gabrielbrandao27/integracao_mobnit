@@ -214,7 +214,7 @@ def envia_input_dapp(payload):
     ## Conecta à rede Foundry para interagir com o dApp
     DAPP_ADDRESS = os.getenv("DAPP_ADDRESS")
 
-    w3 = Web3(Web3.HTTPProvider("http://localhost:8545"))
+    w3 = Web3(Web3.HTTPProvider("https://eth-sepolia.g.alchemy.com/v2/FJ7ZicZFKOFpDMTAiYjyLV-9t-lVjsa7"))
     if w3.isConnected:
         print("conectado")
 
@@ -233,13 +233,8 @@ def envia_input_dapp(payload):
 
     return transaction
 
-
-if __name__ == "__main__":
-    # Parâmetro para as requisições
-    consorcio = "transoceânico"
-    # consorcio = "transnit"
-
-    # Item 1- Quilometragem Programada
+def get_consortium_subsidy_data(consorcio):
+    
     response_viagens_programadas = viagem_programada(consorcio)
     print("\n", response_viagens_programadas)
 
@@ -267,7 +262,6 @@ if __name__ == "__main__":
     today = datetime.date.today().replace(day=1)
     data_aferida = (today - datetime.timedelta(days=1)).strftime("%B/%Y")
 
-
     payload = {
         "tipoInput": "compliance/subsidios",
         "consorcio": consorcio,
@@ -280,61 +274,117 @@ if __name__ == "__main__":
             response_frota_disponivel,
         ],
     }
-    print("\n", payload)
 
-    payload = {
-        "tipoInput": "compliance/subsidios",
-        "consorcio": consorcio,
-        "subsidio_total": 87.5,
-        "data_aferida": "dezembro/2024",
-        "dados": [
-            {
-                "tipoInput": "compliance/numero_viagens",
-                "dados": {
-                    "consorcio": consorcio,
-                    "viagensRealizadas": 2441756,
-                    "compliance": {
-                        "meta_viagens_realizadas": 2823858,
-                        "total_viagens_realizadas": 2441756,
-                    },
-                    "porcentagem_conclusao": 86.47,
-                    "subsidio_concedido": 85,
-                },
-            },
-            {
-                "tipoInput": "compliance/quilometragem_percorrida",
-                "dados": {
-                    "consorcio": consorcio,
-                    "compliance": {
-                        "total_programada": 658999.78,
-                        "total_realizada": 407235.46,
-                    },
-                    "porcentagem_conclusao": 62.0,
-                    "subsidio_concedido": 70,
-                },
-            },
-            {
-                "tipoInput": "compliance/climatizacao",
-                "dados": {
-                    "consorcio": consorcio,
-                    "compliance": {"total_onibus": 218, "nao_climatizados": 3},
-                    "porcentagem_conclusao": 98.62,
-                    "subsidio_concedido": 100,
-                },
-            },
-            {
-                "tipoInput": "compliance/frota_disponivel",
-                "dados": {
-                    "consorcio": consorcio,
-                    "compliance": {
-                        "total_frotas_programadas": 321.0,
-                        "total_frotas_disponiveis": 179.0,
-                    },
-                    "porcentagem_conclusao": 56.0,
-                    "subsidio_concedido": 95,
-                },
-            },
-        ],
-    }
+    return payload
 
-    envia_input_dapp(payload)
+def lambda_handler(event, context):
+    payload_transnit = get_consortium_subsidy_data('transnit')
+    payload_transoceanico = get_consortium_subsidy_data('transoceânico')
+    envia_input_dapp(payload_transnit)
+    envia_input_dapp(payload_transoceanico)
+    return True
+
+# if __name__ == "__main__":
+#     # Parâmetro para as requisições
+#     consorcio = "transoceânico"
+#     # consorcio = "transnit"
+
+#     # Item 1- Quilometragem Programada
+#     response_viagens_programadas = viagem_programada(consorcio)
+#     print("\n", response_viagens_programadas)
+
+#     # Item 2- Quilometragem Programada
+#     response_km_programada = bus_km_compliance(consorcio)
+#     print("\n", response_km_programada)
+
+#     # Item 3 - Climatização da Frota
+#     response_climatizacao = climatizacao(consorcio)
+#     print("\n", response_climatizacao)
+
+#     # Item 4- Quantidade de Ônibus
+#     response_frota_disponivel = bus_amount_compliance(consorcio)
+#     print("\n", response_frota_disponivel)
+
+#     subsidio_total = (
+#         response_viagens_programadas["dados"]["subsidio_concedido"]
+#         + response_km_programada["dados"]["subsidio_concedido"]
+#         + response_climatizacao["dados"]["subsidio_concedido"]
+#         + response_frota_disponivel["dados"]["subsidio_concedido"]
+#     ) / 4
+
+#     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+
+#     today = datetime.date.today().replace(day=1)
+#     data_aferida = (today - datetime.timedelta(days=1)).strftime("%B/%Y")
+
+
+#     payload = {
+#         "tipoInput": "compliance/subsidios",
+#         "consorcio": consorcio,
+#         "subsidio_total": subsidio_total,
+#         "data_aferida": data_aferida,
+#         "dados": [
+#             response_viagens_programadas,
+#             response_km_programada,
+#             response_climatizacao,
+#             response_frota_disponivel,
+#         ],
+#     }
+#     print("\n", payload)
+
+#     payload = {
+#         "tipoInput": "compliance/subsidios",
+#         "consorcio": consorcio,
+#         "subsidio_total": 87.5,
+#         "data_aferida": "dezembro/2024",
+#         "dados": [
+#             {
+#                 "tipoInput": "compliance/numero_viagens",
+#                 "dados": {
+#                     "consorcio": consorcio,
+#                     "viagensRealizadas": 2441756,
+#                     "compliance": {
+#                         "meta_viagens_realizadas": 2823858,
+#                         "total_viagens_realizadas": 2441756,
+#                     },
+#                     "porcentagem_conclusao": 86.47,
+#                     "subsidio_concedido": 85,
+#                 },
+#             },
+#             {
+#                 "tipoInput": "compliance/quilometragem_percorrida",
+#                 "dados": {
+#                     "consorcio": consorcio,
+#                     "compliance": {
+#                         "total_programada": 658999.78,
+#                         "total_realizada": 407235.46,
+#                     },
+#                     "porcentagem_conclusao": 62.0,
+#                     "subsidio_concedido": 70,
+#                 },
+#             },
+#             {
+#                 "tipoInput": "compliance/climatizacao",
+#                 "dados": {
+#                     "consorcio": consorcio,
+#                     "compliance": {"total_onibus": 218, "nao_climatizados": 3},
+#                     "porcentagem_conclusao": 98.62,
+#                     "subsidio_concedido": 100,
+#                 },
+#             },
+#             {
+#                 "tipoInput": "compliance/frota_disponivel",
+#                 "dados": {
+#                     "consorcio": consorcio,
+#                     "compliance": {
+#                         "total_frotas_programadas": 321.0,
+#                         "total_frotas_disponiveis": 179.0,
+#                     },
+#                     "porcentagem_conclusao": 56.0,
+#                     "subsidio_concedido": 95,
+#                 },
+#             },
+#         ],
+#     }
+
+#     envia_input_dapp(payload)
