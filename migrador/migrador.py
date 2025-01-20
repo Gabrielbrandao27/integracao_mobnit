@@ -12,6 +12,7 @@ load_dotenv()
 
 MOBNIT_API_URL = os.getenv("MOBNIT_API_URL")
 MANAGER_TOKEN = os.getenv("MANAGER_TOKEN")
+PRIVATE_KEY= os.environ.get('PRIVATE_KEY')
 
 # METAS DE NUMERO DE VIAGENS - AMBAS OBTIDAS DO MÊS DE SETEMBRO DE 2024
 META_VIAGENS_TRANSNIT = 2823858
@@ -214,21 +215,23 @@ def envia_input_dapp(payload):
     ## Conecta à rede Foundry para interagir com o dApp
     DAPP_ADDRESS = os.getenv("DAPP_ADDRESS")
 
-    w3 = Web3(Web3.HTTPProvider("http://localhost:8545"))
-    if w3.isConnected:
-        print("conectado")
+    w3 = Web3(Web3.HTTPProvider("https://eth-sepolia.g.alchemy.com/v2/FJ7ZicZFKOFpDMTAiYjyLV-9t-lVjsa7"))
 
     # Busca os dados do Contrato que usaremos para enviar Inputs para o dApp (InputBox)
     INPUT_BOX_ADDRESS = os.getenv("INPUT_BOX_ADDRESS")
     abi = '[ { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" }, { "internalType": "uint256", "name": "inputLength", "type": "uint256" }, { "internalType": "uint256", "name": "maxInputLength", "type": "uint256" } ], "name": "InputTooLarge", "type": "error" }, { "anonymous": false, "inputs": [ { "indexed": true, "internalType": "address", "name": "appContract", "type": "address" }, { "indexed": true, "internalType": "uint256", "name": "index", "type": "uint256" }, { "indexed": false, "internalType": "bytes", "name": "input", "type": "bytes" } ], "name": "InputAdded", "type": "event" }, { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" }, { "internalType": "bytes", "name": "payload", "type": "bytes" } ], "name": "addInput", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" }, { "internalType": "uint256", "name": "index", "type": "uint256" } ], "name": "getInputHash", "outputs": [ { "internalType": "bytes32", "name": "", "type": "bytes32" } ], "stateMutability": "view", "type": "function" }, { "inputs": [ { "internalType": "address", "name": "appContract", "type": "address" } ], "name": "getNumberOfInputs", "outputs": [ { "internalType": "uint256", "name": "", "type": "uint256" } ], "stateMutability": "view", "type": "function" } ]'
     contract_instance = w3.eth.contract(address=INPUT_BOX_ADDRESS, abi=abi)
-
+    wallet = w3.eth.account.from_key(PRIVATE_KEY)
     # Cria e executa a transação para a rede
     payload_binario = json.dumps(payload, indent=2).encode("utf-8")
-    print(payload_binario)
     transaction = contract_instance.functions.addInput(
         DAPP_ADDRESS, payload_binario
-    ).transact()
+    ).build_transaction({
+        "from": wallet.address,
+        "nonce": w3.eth.get_transaction_count(wallet.address)
+    })
+    signed_tx = w3.eth.account.sign_transaction(transaction, private_key=wallet.key)
+    w3.eth.send_raw_transaction(signed_tx.raw_transaction)
     print(transaction)
 
     return transaction
