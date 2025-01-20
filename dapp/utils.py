@@ -1,5 +1,6 @@
 import json
 
+
 def hex2str(hex):
     """
     Decodes a hex string into a regular string
