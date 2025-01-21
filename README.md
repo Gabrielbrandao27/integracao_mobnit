@@ -21,9 +21,16 @@ Projeto de integração com a aplicação de mobilidade niteroiense "MobNit".
 
 
 
-# Tutorial para execução:
+# Passos para execução do projeto:
 
-1. `cartesi address-book` para buscar o endereço do contrato InputBox
+## Pré-requisitos:
+* Utilizando versão python 3.7 ou superior.
+- Migrador: `pip install pandas web3 python-dotenv brotli requests`
+- DApp: podem ser encontrados através deste link da documentação da Cartesi: https://docs.cartesi.io/cartesi-rollups/1.5/development/installation/
+- Frontend: Node.js (instalado no requisito do dApp)
+
+## Tutorial:
+1. Abrir o Docker Desktop
 2. `cd dapp` para entrar na pasta do dApp e `cartesi build` para buildar o dApp
 3. `cartesi run` para rodar o dApp e a blockchain local utilizando Docker
 4. `cd../frontend` em um novo terminal para entrar na pasta do frontend
