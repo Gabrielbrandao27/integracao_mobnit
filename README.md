@@ -39,8 +39,12 @@ Projeto de integração com a aplicação de mobilidade niteroiense "MobNit".
 7. `python migrador.py` para executar o script e enviar o input
 8. Visualize tanto no console do terminal na aba do dapp quanto na web page os dados expostos
 
-
+<br><br>
 # Instruções para execução em "Self-Host Mode":
+
+Este tutorial irá possibilitar a visualização dos logs e reports sendo gerados na Blockchain Testnet através do Inspect para o dApp quando o usuário interage com o Dashboard na web page.
+Além disso, é possível visualizar os logs do método Advance quando o Migrador executa todo primeiro dia do mês e envia um input para o dApp.
+<br>
 
 ## Pré-requisitos (este tutorial leva em consideração um ambiente baseado em Linux):
 - Docker Desktop pode ser instalado através deste link: https://docs.docker.com/desktop/setup/install/linux/ após escolher a sua plataforma
