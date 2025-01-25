@@ -47,7 +47,10 @@ Projeto de integração com a aplicação de mobilidade niteroiense "MobNit".
 - postgreSQL instalado com `apt install postgresql`
 - imagem do postgreSQL no Docker `docker run --name some-postgres -p 15432:5432 -e POSTGRES_PASSWORD=mysecretpassword -d postgres`
 
-## Tutorial
+## Tutorial:
 1. `cd dapp` para entrar na pasta do dApp
 2. Se estiver usando uma máquina virtual, deve adicionar o repositório "integracao_mobnit" à sua VM
-3. `docker run --network host --env-file 0x70aaf0ca43414eee87991f5bc3b1773d629b364f61c5d6d4fde1d3a7e0b1c09d.env -p 10000:10000  gabrielbrandao2711/integracao_mobnit_dapp_build` para baixar a imagem do Docker Hub, adicionar ao seu Docker local e executá-la.
+ via `git clone https://github.com/Gabrielbrandao27/integracao_mobnit.git`
+3. `docker run --network host --env-file 0x70aaf0ca43414eee87991f5bc3b1773d629b364f61c5d6d4fde1d3a7e0b1c09d.env -p 10000:10000  gabrielbrandao2711/integracao_mobnit_dapp_build`
+ para baixar a imagem do Docker Hub, adicionar ao seu Docker local e executá-la.
+4. Acesse o website via [Subsídio MobNit Dashboard](http://dashboard-subsidios.s3-website.us-east-2.amazonaws.com/)
