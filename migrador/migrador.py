@@ -242,7 +242,7 @@ if __name__ == "__main__":
     consorcio = "transoceânico"
     # consorcio = "transnit"
 
-    # Item 1- Quilometragem Programada
+    # Item 1- Viagens Programadas
     response_viagens_programadas = viagem_programada(consorcio)
     print("\n", response_viagens_programadas)
 
