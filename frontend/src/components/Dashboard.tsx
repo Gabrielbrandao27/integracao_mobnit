@@ -120,8 +120,8 @@ const Dashboard: React.FC = () => {
   
   const TripsCompletedChartData = {
     labels: selectedDate
-      ? [...new Set(completedTrips?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
-      : [...new Set(completedTrips?.map((dado) => dado.date))],
+      ? [...new Set(completedTrips?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))].slice(3)
+      : [...new Set(completedTrips?.map((dado) => dado.date))].slice(3),
     datasets: [
       {
         label: 'TransNit',
@@ -131,7 +131,8 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transnit' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.subsidy) || [],
+          .map((dado) => dado.subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(54, 96, 235, 0.45)',
         borderColor: 'rgb(0, 0, 255, 1)',
         borderWidth: 1,
@@ -144,18 +145,19 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transoceânico' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.subsidy) || [],
+          .map((dado) => dado.subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(245, 121, 43, 0.45)',
         borderColor: 'rgb(255, 0, 0, 1)',
         borderWidth: 1,
       },
     ],
   };
-
+  
   const TraveledKmChartData = {
     labels: selectedDate
-      ? [...new Set(traveledKm?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
-      : [...new Set(traveledKm?.map((dado) => dado.date))],
+      ? [...new Set(traveledKm?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))].slice(3)
+      : [...new Set(traveledKm?.map((dado) => dado.date))].slice(3),
     datasets: [
       {
         label: 'TransNit',
@@ -165,7 +167,8 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transnit' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.subsidy) || [],
+          .map((dado) => dado.subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(54, 96, 235, 0.45)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
@@ -178,18 +181,19 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transoceânico' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.subsidy) || [],
+          .map((dado) => dado.subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(245, 121, 43, 0.45)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
       },
     ],
   };
-
+  
   const ClimatizationChartData = {
     labels: selectedDate
-      ? [...new Set(climatization?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
-      : [...new Set(climatization?.map((dado) => dado.date))],
+      ? [...new Set(climatization?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))].slice(3)
+      : [...new Set(climatization?.map((dado) => dado.date))].slice(3),
     datasets: [
       {
         label: 'TransNit',
@@ -199,7 +203,8 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transnit' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.subsidy) || [],
+          .map((dado) => dado.subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(54, 96, 235, 0.45)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
@@ -212,18 +217,19 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transoceânico' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.subsidy) || [],
+          .map((dado) => dado.subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(245, 121, 43, 0.45)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
       },
     ],
   };
-
+  
   const AvailableFleetChartData = {
     labels: selectedDate
-      ? [...new Set(availableFleet?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
-      : [...new Set(availableFleet?.map((dado) => dado.date))],
+      ? [...new Set(availableFleet?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))].slice(3)
+      : [...new Set(availableFleet?.map((dado) => dado.date))].slice(3),
     datasets: [
       {
         label: 'TransNit',
@@ -233,7 +239,8 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transnit' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.subsidy) || [],
+          .map((dado) => dado.subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(54, 96, 235, 0.45)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
@@ -246,18 +253,19 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transoceânico' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.subsidy) || [],
+          .map((dado) => dado.subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(245, 121, 43, 0.45)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
       },
     ],
   };
-
+  
   const TotalSubsidyChartData = {
     labels: selectedDate
-      ? [...new Set(totalSubsidy?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
-      : [...new Set(totalSubsidy?.map((dado) => dado.date))],
+      ? [...new Set(totalSubsidy?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))].slice(3)
+      : [...new Set(totalSubsidy?.map((dado) => dado.date))].slice(3),
     datasets: [
       {
         label: 'TransNit',
@@ -267,7 +275,8 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transnit' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.total_subsidy) || [],
+          .map((dado) => dado.total_subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(54, 96, 235, 0.45)',
         borderColor: 'rgba(0, 0, 255, 1)',
         borderWidth: 1,
@@ -280,7 +289,8 @@ const Dashboard: React.FC = () => {
               dado.consorcium === 'transoceânico' &&
               (selectedDate ? dado.date === selectedDate : true)
           )
-          .map((dado) => dado.total_subsidy) || [],
+          .map((dado) => dado.total_subsidy)
+          .slice(3) || [],
         backgroundColor: 'rgba(245, 121, 43, 0.45)',
         borderColor: 'rgba(255, 0, 0, 1)',
         borderWidth: 1,
@@ -336,9 +346,7 @@ const Dashboard: React.FC = () => {
       ...climatization?.map((dado) => dado.date) || [],
       ...availableFleet?.map((dado) => dado.date) || [],
     ]),
-  ];
-
-  console.log(TripsCompletedChartData)
+  ].slice(3);
 
   const renderChart = () => {
     switch (selectedChart) {
@@ -356,8 +364,6 @@ const Dashboard: React.FC = () => {
         return <Bar data={TripsCompletedChartData} options={chartOptions} width={500} height={400} />;
     }
   };
-
-  console.log(selectedChart)
 
   const handleDateChange = (value: string | null) => {
     setSelectedDate(value);
