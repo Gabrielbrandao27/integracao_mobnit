@@ -45,9 +45,9 @@ export interface ClimatizationItem {
   date: string;
 }
 
-export type AvaiableFleetData = AvaiableFleetItem[];
+export type AvailableFleetData = AvailableFleetItem[];
 
-export interface AvaiableFleetItem {
+export interface AvailableFleetItem {
   id: number;
   consorcium: string;
   expected_bus_amount: number;

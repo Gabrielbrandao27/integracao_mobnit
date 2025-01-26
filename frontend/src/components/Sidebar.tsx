@@ -61,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ setSelectedChart }) => {
           fontWeight: 'bold'
         }}>Frotas Disponíveis</span>
       ),
-      onClick: () => setSelectedChart('AvaiableFleetChartData'),
+      onClick: () => setSelectedChart('AvailableFleetChartData'),
     },
     {
       key: '5',

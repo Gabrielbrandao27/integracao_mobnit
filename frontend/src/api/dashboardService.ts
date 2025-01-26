@@ -30,7 +30,7 @@ export const fetchClimatizationData = async () => {
   }
 };
 
-export const fetchAvaiableFleetData = async () => {
+export const fetchAvailableFleetData = async () => {
   try {
     const response = await axiosInstance.get("/frota_disponivel");
     return response.data;

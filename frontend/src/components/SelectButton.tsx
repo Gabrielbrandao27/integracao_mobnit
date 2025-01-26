@@ -7,7 +7,15 @@ interface SelectButtonProps {
 }
 
 const SelectButton: React.FC<SelectButtonProps> = ({ options, onChange }) => {
-  const extendedOptions = [{ value: '', label: 'Remover Filtro' }, ...options];
+  const sortedOptions = options.sort((a, b) => {
+    const [monthA, yearA] = a.value.split('/');
+    const [monthB, yearB] = b.value.split('/');
+    const dateA = new Date(`${yearA}-${monthA}-01`);
+    const dateB = new Date(`${yearB}-${monthB}-01`);
+    return dateA.getTime() - dateB.getTime();
+  });
+
+  const extendedOptions = [{ value: '', label: 'Remover Filtro' }, ...sortedOptions];
 
   return (
     <Select
@@ -16,9 +24,6 @@ const SelectButton: React.FC<SelectButtonProps> = ({ options, onChange }) => {
       style={{ width: 200 }}
       placeholder="Search to Select"
       optionFilterProp="label"
-      filterSort={(optionA, optionB) =>
-        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-      }
       options={extendedOptions}
       onChange={(value) => {
         if (value === '') {
