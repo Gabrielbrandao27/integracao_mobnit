@@ -18,46 +18,6 @@ PRIVATE_KEY= os.environ.get('PRIVATE_KEY')
 META_VIAGENS_TRANSNIT = 2823858
 META_VIAGENS_TRANSOCEANICO = 3847979
 
-
-def get_standard_trip_number():
-    standard_trips = [  # viagens no consorcio transnit
-        {"totalViagens": 115685, "data": 1730419200000, "tipoDia": "Útil"},
-        {"totalViagens": 38928, "data": 1730505600000, "tipoDia": "Feriado"},
-        {"totalViagens": 26077, "data": 1730592000000, "tipoDia": "Domingo"},
-        {"totalViagens": 126530, "data": 1730678400000, "tipoDia": "Útil"},
-        {"totalViagens": 135085, "data": 1730764800000, "tipoDia": "Útil"},
-        {"totalViagens": 132477, "data": 1730851200000, "tipoDia": "Útil"},
-        {"totalViagens": 133825, "data": 1730937600000, "tipoDia": "Útil"},
-        {"totalViagens": 123410, "data": 1731024000000, "tipoDia": "Útil"},
-        {"totalViagens": 50698, "data": 1731110400000, "tipoDia": "Sábado"},
-        {"totalViagens": 24268, "data": 1731196800000, "tipoDia": "Domingo"},
-        {"totalViagens": 129262, "data": 1731283200000, "tipoDia": "Útil"},
-        {"totalViagens": 132589, "data": 1731369600000, "tipoDia": "Útil"},
-        {"totalViagens": 108967, "data": 1731456000000, "tipoDia": "Útil"},
-        {"totalViagens": 131161, "data": 1731542400000, "tipoDia": "Útil"},
-        {"totalViagens": 31538, "data": 1731628800000, "tipoDia": "Feriado"},
-        {"totalViagens": 39668, "data": 1731715200000, "tipoDia": "Sábado"},
-        {"totalViagens": 23422, "data": 1731801600000, "tipoDia": "Domingo"},
-        {"totalViagens": 114290, "data": 1731888000000, "tipoDia": "Útil"},
-        {"totalViagens": 116456, "data": 1731974400000, "tipoDia": "Útil"},
-        {"totalViagens": 32612, "data": 1732060800000, "tipoDia": "Feriado"},
-        {"totalViagens": 124006, "data": 1732147200000, "tipoDia": "Útil"},
-        {"totalViagens": 114882, "data": 1732233600000, "tipoDia": "Feriado"},
-        {"totalViagens": 43931, "data": 1732320000000, "tipoDia": "Sábado"},
-        {"totalViagens": 20363, "data": 1732406400000, "tipoDia": "Domingo"},
-        {"totalViagens": 121339, "data": 1732492800000, "tipoDia": "Útil"},
-        {"totalViagens": 124180, "data": 1732579200000, "tipoDia": "Útil"},
-        {"totalViagens": 125001, "data": 1732665600000, "tipoDia": "Útil"},
-        {"totalViagens": 122591, "data": 1732752000000, "tipoDia": "Útil"},
-        {"totalViagens": 115971, "data": 1732838400000, "tipoDia": "Útil"},
-        {"totalViagens": 49725, "data": 1732924800000, "tipoDia": "Sábado"},
-    ]
-
-    df_viagens = pd.DataFrame.from_dict(standard_trips)
-    soma_viagens = df_viagens["totalViagens"].sum().item()
-    return soma_viagens
-
-
 def calcular_subsidio(compliance):
     if compliance > 100 or (100 >= compliance and compliance >= 95):
         return 100
@@ -231,8 +191,8 @@ def envia_input_dapp(payload):
         "nonce": w3.eth.get_transaction_count(wallet.address)
     })
     signed_tx = w3.eth.account.sign_transaction(transaction, private_key=wallet.key)
-    w3.eth.send_raw_transaction(signed_tx.raw_transaction)
-    print(transaction)
+    tx_result = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+    w3.eth.wait_for_transaction_receipt(tx_result)
 
     return transaction
 
@@ -286,108 +246,3 @@ def lambda_handler(event, context):
     envia_input_dapp(payload_transnit)
     envia_input_dapp(payload_transoceanico)
     return True
-
-# if __name__ == "__main__":
-#     # Parâmetro para as requisições
-#     consorcio = "transoceânico"
-#     # consorcio = "transnit"
-
-#     # Item 1- Quilometragem Programada
-#     response_viagens_programadas = viagem_programada(consorcio)
-#     print("\n", response_viagens_programadas)
-
-#     # Item 2- Quilometragem Programada
-#     response_km_programada = bus_km_compliance(consorcio)
-#     print("\n", response_km_programada)
-
-#     # Item 3 - Climatização da Frota
-#     response_climatizacao = climatizacao(consorcio)
-#     print("\n", response_climatizacao)
-
-#     # Item 4- Quantidade de Ônibus
-#     response_frota_disponivel = bus_amount_compliance(consorcio)
-#     print("\n", response_frota_disponivel)
-
-#     subsidio_total = (
-#         response_viagens_programadas["dados"]["subsidio_concedido"]
-#         + response_km_programada["dados"]["subsidio_concedido"]
-#         + response_climatizacao["dados"]["subsidio_concedido"]
-#         + response_frota_disponivel["dados"]["subsidio_concedido"]
-#     ) / 4
-
-#     locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
-
-#     today = datetime.date.today().replace(day=1)
-#     data_aferida = (today - datetime.timedelta(days=1)).strftime("%B/%Y")
-
-
-#     payload = {
-#         "tipoInput": "compliance/subsidios",
-#         "consorcio": consorcio,
-#         "subsidio_total": subsidio_total,
-#         "data_aferida": data_aferida,
-#         "dados": [
-#             response_viagens_programadas,
-#             response_km_programada,
-#             response_climatizacao,
-#             response_frota_disponivel,
-#         ],
-#     }
-#     print("\n", payload)
-
-#     payload = {
-#         "tipoInput": "compliance/subsidios",
-#         "consorcio": consorcio,
-#         "subsidio_total": 87.5,
-#         "data_aferida": "dezembro/2024",
-#         "dados": [
-#             {
-#                 "tipoInput": "compliance/numero_viagens",
-#                 "dados": {
-#                     "consorcio": consorcio,
-#                     "viagensRealizadas": 2441756,
-#                     "compliance": {
-#                         "meta_viagens_realizadas": 2823858,
-#                         "total_viagens_realizadas": 2441756,
-#                     },
-#                     "porcentagem_conclusao": 86.47,
-#                     "subsidio_concedido": 85,
-#                 },
-#             },
-#             {
-#                 "tipoInput": "compliance/quilometragem_percorrida",
-#                 "dados": {
-#                     "consorcio": consorcio,
-#                     "compliance": {
-#                         "total_programada": 658999.78,
-#                         "total_realizada": 407235.46,
-#                     },
-#                     "porcentagem_conclusao": 62.0,
-#                     "subsidio_concedido": 70,
-#                 },
-#             },
-#             {
-#                 "tipoInput": "compliance/climatizacao",
-#                 "dados": {
-#                     "consorcio": consorcio,
-#                     "compliance": {"total_onibus": 218, "nao_climatizados": 3},
-#                     "porcentagem_conclusao": 98.62,
-#                     "subsidio_concedido": 100,
-#                 },
-#             },
-#             {
-#                 "tipoInput": "compliance/frota_disponivel",
-#                 "dados": {
-#                     "consorcio": consorcio,
-#                     "compliance": {
-#                         "total_frotas_programadas": 321.0,
-#                         "total_frotas_disponiveis": 179.0,
-#                     },
-#                     "porcentagem_conclusao": 56.0,
-#                     "subsidio_concedido": 95,
-#                 },
-#             },
-#         ],
-#     }
-
-#     envia_input_dapp(payload)
