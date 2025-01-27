@@ -12,7 +12,7 @@ load_dotenv()
 
 MOBNIT_API_URL = os.getenv("MOBNIT_API_URL")
 MANAGER_TOKEN = os.getenv("MANAGER_TOKEN")
-PRIVATE_KEY= os.environ.get('PRIVATE_KEY')
+PRIVATE_KEY = os.environ.get("PRIVATE_KEY")
 
 # METAS DE NUMERO DE VIAGENS - AMBAS OBTIDAS DO MÊS DE SETEMBRO DE 2024
 META_VIAGENS_TRANSNIT = 2823858
@@ -38,6 +38,8 @@ def calcular_subsidio(compliance):
 
 
 def viagem_programada(consorcio):
+    # Item 1- Viagens Programadas
+
     response = get_from_api(consorcio, "viagens")
     df_viagens = pd.DataFrame.from_dict(response)
     soma_viagens = df_viagens["totalViagens"].sum().item()
@@ -175,7 +177,11 @@ def envia_input_dapp(payload):
     ## Conecta à rede Foundry para interagir com o dApp
     DAPP_ADDRESS = os.getenv("DAPP_ADDRESS")
 
-    w3 = Web3(Web3.HTTPProvider("https://eth-sepolia.g.alchemy.com/v2/FJ7ZicZFKOFpDMTAiYjyLV-9t-lVjsa7"))
+    w3 = Web3(
+        Web3.HTTPProvider(
+            "https://eth-sepolia.g.alchemy.com/v2/FJ7ZicZFKOFpDMTAiYjyLV-9t-lVjsa7"
+        )
+    )
 
     # Busca os dados do Contrato que usaremos para enviar Inputs para o dApp (InputBox)
     INPUT_BOX_ADDRESS = os.getenv("INPUT_BOX_ADDRESS")
@@ -186,18 +192,18 @@ def envia_input_dapp(payload):
     payload_binario = json.dumps(payload, indent=2).encode("utf-8")
     transaction = contract_instance.functions.addInput(
         DAPP_ADDRESS, payload_binario
-    ).build_transaction({
-        "from": wallet.address,
-        "nonce": w3.eth.get_transaction_count(wallet.address)
-    })
+    ).build_transaction(
+        {"from": wallet.address, "nonce": w3.eth.get_transaction_count(wallet.address)}
+    )
     signed_tx = w3.eth.account.sign_transaction(transaction, private_key=wallet.key)
     tx_result = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
     w3.eth.wait_for_transaction_receipt(tx_result)
 
     return transaction
 
+
 def get_consortium_subsidy_data(consorcio):
-    
+    # Item 1- Viagens Programadas
     response_viagens_programadas = viagem_programada(consorcio)
     print("\n", response_viagens_programadas)
 
@@ -240,9 +246,10 @@ def get_consortium_subsidy_data(consorcio):
 
     return payload
 
+
 def lambda_handler(event, context):
-    payload_transnit = get_consortium_subsidy_data('transnit')
-    payload_transoceanico = get_consortium_subsidy_data('transoceânico')
+    payload_transnit = get_consortium_subsidy_data("transnit")
+    payload_transoceanico = get_consortium_subsidy_data("transoceânico")
     envia_input_dapp(payload_transnit)
     envia_input_dapp(payload_transoceanico)
     return True
