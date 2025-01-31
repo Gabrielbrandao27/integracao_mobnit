@@ -1,11 +1,3 @@
-.dashboard {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    height: 100vh;
-    margin-top: 60px;
-}
-
 .sidebar {
     width: 350px;
     height: 100vh;
@@ -20,18 +12,50 @@
     font-size: larger;
 }
 
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .chart-container {
-    margin-left: 0;
-    margin-top: 0;
+    margin-top: 20px;
     flex-grow: 1;
     padding: 20px;
     border: 1px solid #ccc;
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 600px;
-    width: 700px
+    width: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-and-select-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
 }
 
 .select-button {
-    margin-left: 30px;
+    margin-top: 20px;
+}
+
+.expected-recorded-values {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin-left: -200px;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    gap: 40px;
 }

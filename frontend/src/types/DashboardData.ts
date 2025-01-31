@@ -14,8 +14,8 @@ export type TripsCompletedData = TripsCompletedItem[];
 export interface TripsCompletedItem {
   id: number;
   consorcium: string;
-  expected_trips: number;
-  recorded_trips: number;
+  trips_scheduled: number;
+  trips_completed: number;
   conclusion_percentage: number;
   subsidy: number;
   date: string;
@@ -26,8 +26,8 @@ export type TraveledKmData = TraveledKmItem[];
 export interface TraveledKmItem {
   id: number;
   consorcium: string;
-  expected_traveled_distance_km: number;
-  recorded_travel_distance_km: number;
+  km_scheduled: number;
+  km_completed: number;
   conclusion_percentage: number;
   subsidy: number;
   date: string;
@@ -50,8 +50,8 @@ export type AvailableFleetData = AvailableFleetItem[];
 export interface AvailableFleetItem {
   id: number;
   consorcium: string;
-  expected_bus_amount: number;
-  recorded_bus_amount: number;
+  scheduled_fleets: number;
+  recorded_fleets: number;
   conclusion_percentage: number;
   subsidy: number;
   date: string;

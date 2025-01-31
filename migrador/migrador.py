@@ -263,7 +263,7 @@ if __name__ == "__main__":
 
     # today = datetime.date.today().replace(day=1)
     # data_aferida = (today - datetime.timedelta(days=1)).strftime("%B/%Y")
-    data_aferida = "julho/2024"
+    data_aferida = "setembro/2024"
 
     payload = {
         "tipoInput": "compliance/subsidios",

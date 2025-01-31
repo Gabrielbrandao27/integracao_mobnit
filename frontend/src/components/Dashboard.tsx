@@ -117,7 +117,7 @@ const Dashboard: React.FC = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-  
+
   const TripsCompletedChartData = {
     labels: selectedDate
       ? [...new Set(completedTrips?.filter((dado) => dado.date === selectedDate).map((dado) => dado.date))] 
@@ -338,8 +338,6 @@ const Dashboard: React.FC = () => {
     ]),
   ];
 
-  console.log(TripsCompletedChartData)
-
   const renderChart = () => {
     switch (selectedChart) {
       case 'TripsCompletedChartData':
@@ -357,7 +355,91 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  console.log(selectedChart)
+  const expectedAndRecordedValues = () => {
+    if (!selectedDate) {
+      return (
+        <div>Para Visualizar os valores esperados e registrados, selecione uma data</div>
+      );
+    }
+
+    switch (selectedChart) {
+      case 'TripsCompletedChartData':
+        return (
+          <div className="flex-container">
+            <div>
+              <h3>TransNit</h3>
+              <p>Viagens Esperadas: {completedTrips?.filter(dado => dado.consorcium === 'transnit' && dado.date === selectedDate)[0]?.trips_scheduled}</p>
+              <p>Viagens Registradas: {completedTrips?.filter(dado => dado.consorcium === 'transnit' && dado.date === selectedDate)[0]?.trips_completed}</p>
+            </div>
+            <div>
+              <h3>TransOceânico</h3>
+              <p>Viagens Esperadas: {completedTrips?.filter(dado => dado.consorcium === 'transoceânico' && dado.date === selectedDate)[0]?.trips_scheduled}</p>
+              <p>Viagens Registradas: {completedTrips?.filter(dado => dado.consorcium === 'transoceânico' && dado.date === selectedDate)[0]?.trips_completed}</p>
+            </div>
+          </div>
+        );
+      case 'TraveledKmChartData':
+        return (
+          <div className="flex-container">
+            <div>
+              <h3>TransNit</h3>
+              <p>Distância Percorrida Esperada: {traveledKm?.filter(dado => dado.consorcium === 'transnit' && dado.date === selectedDate)[0]?.km_scheduled}</p>
+              <p>Distância Percorrida Registrada: {traveledKm?.filter(dado => dado.consorcium === 'transnit' && dado.date === selectedDate)[0]?.km_completed}</p>
+            </div>
+            <div>
+              <h3>TransOceânico</h3>
+              <p>Distância Percorrida Esperada: {traveledKm?.filter(dado => dado.consorcium === 'transoceânico' && dado.date === selectedDate)[0]?.km_scheduled}</p>
+              <p>Distância Percorrida Registrada: {traveledKm?.filter(dado => dado.consorcium === 'transoceânico' && dado.date === selectedDate)[0]?.km_completed}</p>
+            </div>
+          </div>
+        );
+      case 'ClimatizationChartData':
+        return (
+          <div className="flex-container">
+            <div>
+              <h3>TransNit</h3>
+              <p>Total de Ônibus: {climatization?.filter(dado => dado.consorcium === 'transnit' && dado.date === selectedDate)[0]?.total_busses}</p>
+              <p>Ônibus sem Climatização: {climatization?.filter(dado => dado.consorcium === 'transnit' && dado.date === selectedDate)[0]?.busses_without_climatization}</p>
+            </div>
+            <div>
+              <h3>TransOceânico</h3>
+              <p>Total de Ônibus: {climatization?.filter(dado => dado.consorcium === 'transoceânico' && dado.date === selectedDate)[0]?.total_busses}</p>
+              <p>Ônibus sem Climatização: {climatization?.filter(dado => dado.consorcium === 'transoceânico' && dado.date === selectedDate)[0]?.busses_without_climatization}</p>
+            </div>
+          </div>
+        );
+      case 'AvailableFleetChartData':
+        return (
+          <div className="flex-container">
+            <div>
+              <h3>TransNit</h3>
+              <p>Frota Esperada: {availableFleet?.filter(dado => dado.consorcium === 'transnit' && dado.date === selectedDate)[0]?.scheduled_fleets}</p>
+              <p>Frota Disponível: {availableFleet?.filter(dado => dado.consorcium === 'transnit' && dado.date === selectedDate)[0]?.recorded_fleets}</p>
+            </div>
+            <div>
+              <h3>TransOceânico</h3>
+              <p>Frota Esperada: {availableFleet?.filter(dado => dado.consorcium === 'transoceânico' && dado.date === selectedDate)[0]?.scheduled_fleets}</p>
+              <p>Frota Disponível: {availableFleet?.filter(dado => dado.consorcium === 'transoceânico' && dado.date === selectedDate)[0]?.recorded_fleets}</p>
+            </div>
+          </div>
+        );
+      case 'TotalSubsidyChartData':
+        return (
+          <div className="flex-container">
+            <div>
+              <h3>TransNit</h3>
+              <p>Total Subsidy: {totalSubsidy?.filter(dado => dado.consorcium === 'transnit')[0]?.total_subsidy}</p>
+            </div>
+            <div>
+              <h3>TransOceânico</h3>
+              <p>Total Subsidy: {totalSubsidy?.filter(dado => dado.consorcium === 'transoceânico')[0]?.total_subsidy}</p>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   const handleDateChange = (value: string | null) => {
     setSelectedDate(value);
@@ -368,10 +450,15 @@ const Dashboard: React.FC = () => {
       <HeaderBar/>
       <div className='dashboard'>
         <Sidebar setSelectedChart={setSelectedChart}/>
-        <div className='chart-container'>
-          {renderChart()}
+        <div className='expected-recorded-values'>
+          {expectedAndRecordedValues()}
         </div>
-        <SelectButton options={UniqueDates.map(date => ({ value: date, label: date}))} onChange={handleDateChange}/>
+        <div className='chart-and-select-container'>
+          <div className='chart-container'>
+            {renderChart()}
+          </div>
+          <SelectButton options={UniqueDates.map(date => ({ value: date, label: date}))} onChange={handleDateChange}/>
+        </div>
       </div>
     </div>
   );
