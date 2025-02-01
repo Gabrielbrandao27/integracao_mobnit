@@ -48,7 +48,7 @@ def get_first_and_last_day_previous_month(month=None, year=None):
 
 
 def get_from_api(consortium, queryType):
-    data_inicio, data_fim = get_first_and_last_day_previous_month(month=9, year=2024)
+    data_inicio, data_fim = get_first_and_last_day_previous_month(month=12, year=2024)
     query = get_query(consortium, queryType, data_inicio, data_fim)
     query_brotli = brotli.compress(query.encode("utf-8"))
     query_safe = urlsafe_b64encode(query_brotli).decode()

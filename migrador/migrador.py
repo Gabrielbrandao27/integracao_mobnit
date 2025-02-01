@@ -232,9 +232,10 @@ def envia_input_dapp(payload):
 
 
 if __name__ == "__main__":
+    data_aferida = "dezembro/2024"
+
     # Parâmetro para as requisições
     consorcio = "transoceânico"
-    # consorcio = "transnit"
 
     # Item 1- Viagens Programadas
     response_viagens_programadas = viagem_programada(consorcio)
@@ -259,11 +260,10 @@ if __name__ == "__main__":
         + response_frota_disponivel["dados"]["subsidio_concedido"]
     ) / 4
 
-    locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
+    # locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
 
     # today = datetime.date.today().replace(day=1)
     # data_aferida = (today - datetime.timedelta(days=1)).strftime("%B/%Y")
-    data_aferida = "setembro/2024"
 
     payload = {
         "tipoInput": "compliance/subsidios",
@@ -278,6 +278,53 @@ if __name__ == "__main__":
         ],
     }
     print("\n", payload)
+    envia_input_dapp(payload)
+
+    consorcio = "transnit"
+
+    # Item 1- Viagens Programadas
+    response_viagens_programadas = viagem_programada(consorcio)
+    print("\n", response_viagens_programadas)
+
+    # Item 2- Quilometragem Programada
+    response_km_programada = bus_km_compliance(consorcio)
+    print("\n", response_km_programada)
+
+    # Item 3 - Climatização da Frota
+    response_climatizacao = climatizacao(consorcio)
+    print("\n", response_climatizacao)
+
+    # Item 4- Quantidade de Ônibus
+    response_frota_disponivel = bus_amount_compliance(consorcio)
+    print("\n", response_frota_disponivel)
+
+    subsidio_total = (
+        response_viagens_programadas["dados"]["subsidio_concedido"]
+        + response_km_programada["dados"]["subsidio_concedido"]
+        + response_climatizacao["dados"]["subsidio_concedido"]
+        + response_frota_disponivel["dados"]["subsidio_concedido"]
+    ) / 4
+
+    # locale.setlocale(locale.LC_TIME, "pt_BR.UTF-8")
+
+    # today = datetime.date.today().replace(day=1)
+    # data_aferida = (today - datetime.timedelta(days=1)).strftime("%B/%Y")
+
+    payload = {
+        "tipoInput": "compliance/subsidios",
+        "consorcio": consorcio,
+        "subsidio_total": subsidio_total,
+        "data_aferida": data_aferida,
+        "dados": [
+            response_viagens_programadas,
+            response_km_programada,
+            response_climatizacao,
+            response_frota_disponivel,
+        ],
+    }
+    print("\n", payload)
+    envia_input_dapp(payload)
+
 
     # payload = {
     #     "tipoInput": "compliance/subsidios",
@@ -334,4 +381,4 @@ if __name__ == "__main__":
     #     ],
     # }
 
-    envia_input_dapp(payload)
+    # envia_input_dapp(payload)
